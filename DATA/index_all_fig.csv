@@ -1,0 +1,649 @@
+Locality_A;Locality_B;hodnota;guild;distance;Index
+Elem;Morox;0.201504189619751;Caterpillars - subsampled;90.77472995;Chao-Sorensen
+Elem;Niksek;0.185401234619245;Caterpillars - subsampled;154.0061049;Chao-Sorensen
+Elem;Ohu1;0.159726949861684;Caterpillars - subsampled;201.258343;Chao-Sorensen
+Elem;Ohu2;0.173862380707929;Caterpillars - subsampled;201.258343;Chao-Sorensen
+Elem;Utai;0.184440554059106;Caterpillars - subsampled;303.431804;Chao-Sorensen
+Elem;Wamangu;0.126760131530309;Caterpillars - subsampled;117.5739756;Chao-Sorensen
+Elem;Wanang;0.232704016647653;Caterpillars - subsampled;147.5878248;Chao-Sorensen
+Elem;Yapsiei;0.250478655898056;Caterpillars - subsampled;313.4830669;Chao-Sorensen
+Morox;Elem;0.201504189619751;Caterpillars - subsampled;90.77472995;Chao-Sorensen
+Morox;Niksek;0.266836696555752;Caterpillars - subsampled;189.606269;Chao-Sorensen
+Morox;Ohu1;0.127333183669123;Caterpillars - subsampled;221.2815185;Chao-Sorensen
+Morox;Ohu2;0.149408813896768;Caterpillars - subsampled;221.2815185;Chao-Sorensen
+Morox;Utai;0.230277837692254;Caterpillars - subsampled;287.9158341;Chao-Sorensen
+Morox;Wamangu;0.175280683207309;Caterpillars - subsampled;55.84802219;Chao-Sorensen
+Morox;Wanang;0.322373610215179;Caterpillars - subsampled;180.1038462;Chao-Sorensen
+Morox;Yapsiei;0.28921234576336;Caterpillars - subsampled;340.1027542;Chao-Sorensen
+Niksek;Elem;0.185401234619245;Caterpillars - subsampled;154.0061049;Chao-Sorensen
+Niksek;Morox;0.266836696555752;Caterpillars - subsampled;189.606269;Chao-Sorensen
+Niksek;Ohu1;0.236154381726222;Caterpillars - subsampled;354.2902715;Chao-Sorensen
+Niksek;Ohu2;0.239487664614251;Caterpillars - subsampled;354.2902715;Chao-Sorensen
+Niksek;Utai;0.182578630400281;Caterpillars - subsampled;179.5646836;Chao-Sorensen
+Niksek;Wamangu;0.210148636322046;Caterpillars - subsampled;160.0472464;Chao-Sorensen
+Niksek;Wanang;0.194275285583712;Caterpillars - subsampled;299.5385578;Chao-Sorensen
+Niksek;Yapsiei;0.150649286072749;Caterpillars - subsampled;159.5281216;Chao-Sorensen
+Ohu1;Elem;0.159726949861684;Caterpillars - subsampled;201.258343;Chao-Sorensen
+Ohu1;Morox;0.127333183669123;Caterpillars - subsampled;221.2815185;Chao-Sorensen
+Ohu1;Niksek;0.236154381726222;Caterpillars - subsampled;354.2902715;Chao-Sorensen
+Ohu1;Ohu2;0.0396043196616218;Caterpillars - subsampled;0;Chao-Sorensen
+Ohu1;Utai;0.18786175949649;Caterpillars - subsampled;498.6813381;Chao-Sorensen
+Ohu1;Wamangu;0.149614284774114;Caterpillars - subsampled;276.383076;Chao-Sorensen
+Ohu1;Wanang;0.28368365524303;Caterpillars - subsampled;55.5963261;Chao-Sorensen
+Ohu1;Yapsiei;0.239753636308205;Caterpillars - subsampled;513.0151492;Chao-Sorensen
+Ohu2;Elem;0.173862380707929;Caterpillars - subsampled;201.258343;Chao-Sorensen
+Ohu2;Morox;0.149408813896768;Caterpillars - subsampled;221.2815185;Chao-Sorensen
+Ohu2;Niksek;0.239487664614251;Caterpillars - subsampled;354.2902715;Chao-Sorensen
+Ohu2;Ohu1;0.0396043196616218;Caterpillars - subsampled;0;Chao-Sorensen
+Ohu2;Utai;0.235740940917124;Caterpillars - subsampled;498.6813381;Chao-Sorensen
+Ohu2;Wamangu;0.170414761753339;Caterpillars - subsampled;276.383076;Chao-Sorensen
+Ohu2;Wanang;0.32972162746751;Caterpillars - subsampled;55.5963261;Chao-Sorensen
+Ohu2;Yapsiei;0.321498101426002;Caterpillars - subsampled;513.0151492;Chao-Sorensen
+Utai;Elem;0.184440554059106;Caterpillars - subsampled;303.431804;Chao-Sorensen
+Utai;Morox;0.230277837692254;Caterpillars - subsampled;287.9158341;Chao-Sorensen
+Utai;Niksek;0.182578630400281;Caterpillars - subsampled;179.5646836;Chao-Sorensen
+Utai;Ohu1;0.18786175949649;Caterpillars - subsampled;498.6813381;Chao-Sorensen
+Utai;Ohu2;0.235740940917124;Caterpillars - subsampled;498.6813381;Chao-Sorensen
+Utai;Wamangu;0.178289629226194;Caterpillars - subsampled;233.8469256;Chao-Sorensen
+Utai;Wanang;0.189479305988668;Caterpillars - subsampled;448.3681427;Chao-Sorensen
+Utai;Yapsiei;0.284457381173642;Caterpillars - subsampled;147.8936648;Chao-Sorensen
+Wamangu;Elem;0.126760131530309;Caterpillars - subsampled;117.5739756;Chao-Sorensen
+Wamangu;Morox;0.175280683207309;Caterpillars - subsampled;55.84802219;Chao-Sorensen
+Wamangu;Niksek;0.210148636322046;Caterpillars - subsampled;160.0472464;Chao-Sorensen
+Wamangu;Ohu1;0.149614284774114;Caterpillars - subsampled;276.383076;Chao-Sorensen
+Wamangu;Ohu2;0.170414761753339;Caterpillars - subsampled;276.383076;Chao-Sorensen
+Wamangu;Utai;0.178289629226194;Caterpillars - subsampled;233.8469256;Chao-Sorensen
+Wamangu;Wanang;0.173091866891932;Caterpillars - subsampled;233.0409132;Chao-Sorensen
+Wamangu;Yapsiei;0.223902286517353;Caterpillars - subsampled;298.4922871;Chao-Sorensen
+Wanang;Elem;0.232704016647653;Caterpillars - subsampled;147.5878248;Chao-Sorensen
+Wanang;Morox;0.322373610215179;Caterpillars - subsampled;180.1038462;Chao-Sorensen
+Wanang;Niksek;0.194275285583712;Caterpillars - subsampled;299.5385578;Chao-Sorensen
+Wanang;Ohu1;0.28368365524303;Caterpillars - subsampled;55.5963261;Chao-Sorensen
+Wanang;Ohu2;0.32972162746751;Caterpillars - subsampled;55.5963261;Chao-Sorensen
+Wanang;Utai;0.189479305988668;Caterpillars - subsampled;448.3681427;Chao-Sorensen
+Wanang;Wamangu;0.173091866891932;Caterpillars - subsampled;233.0409132;Chao-Sorensen
+Wanang;Yapsiei;0.18693138316498;Caterpillars - subsampled;457.8881304;Chao-Sorensen
+Yapsiei;Elem;0.250478655898056;Caterpillars - subsampled;313.4830669;Chao-Sorensen
+Yapsiei;Morox;0.28921234576336;Caterpillars - subsampled;340.1027542;Chao-Sorensen
+Yapsiei;Niksek;0.150649286072749;Caterpillars - subsampled;159.5281216;Chao-Sorensen
+Yapsiei;Ohu1;0.239753636308205;Caterpillars - subsampled;513.0151492;Chao-Sorensen
+Yapsiei;Ohu2;0.321498101426002;Caterpillars - subsampled;513.0151492;Chao-Sorensen
+Yapsiei;Utai;0.284457381173642;Caterpillars - subsampled;147.8936648;Chao-Sorensen
+Yapsiei;Wamangu;0.223902286517353;Caterpillars - subsampled;298.4922871;Chao-Sorensen
+Yapsiei;Wanang;0.18693138316498;Caterpillars - subsampled;457.8881304;Chao-Sorensen
+Elem;Morox;0.376595460760482;Parasitoids;90.77472995;Chao-Sorensen
+Elem;Niksek;0.57206988014359;Parasitoids;154.0061049;Chao-Sorensen
+Elem;Ohu1;0.407185869108713;Parasitoids;201.258343;Chao-Sorensen
+Elem;Ohu2;0.311042854556728;Parasitoids;201.258343;Chao-Sorensen
+Elem;Utai;0.110526477265755;Parasitoids;303.431804;Chao-Sorensen
+Elem;Wamangu;0.21496492547933;Parasitoids;117.5739756;Chao-Sorensen
+Elem;Wanang;0.295559601722995;Parasitoids;147.5878248;Chao-Sorensen
+Elem;Yapsiei;0.232652876885557;Parasitoids;313.4830669;Chao-Sorensen
+Morox;Elem;0.376595460760482;Parasitoids;90.77472995;Chao-Sorensen
+Morox;Niksek;0.41958889843376;Parasitoids;189.606269;Chao-Sorensen
+Morox;Ohu1;0.509851978128134;Parasitoids;221.2815185;Chao-Sorensen
+Morox;Ohu2;0.531330757476273;Parasitoids;221.2815185;Chao-Sorensen
+Morox;Utai;0.267134446852712;Parasitoids;287.9158341;Chao-Sorensen
+Morox;Wamangu;0.393524114495991;Parasitoids;55.84802219;Chao-Sorensen
+Morox;Wanang;0.278683138020571;Parasitoids;180.1038462;Chao-Sorensen
+Morox;Yapsiei;0.321032209227021;Parasitoids;340.1027542;Chao-Sorensen
+Niksek;Elem;0.57206988014359;Parasitoids;154.0061049;Chao-Sorensen
+Niksek;Morox;0.41958889843376;Parasitoids;189.606269;Chao-Sorensen
+Niksek;Ohu1;0.525070315239909;Parasitoids;354.2902715;Chao-Sorensen
+Niksek;Ohu2;0.67452265592468;Parasitoids;354.2902715;Chao-Sorensen
+Niksek;Utai;0.30677804194784;Parasitoids;179.5646836;Chao-Sorensen
+Niksek;Wamangu;0.526388216920263;Parasitoids;160.0472464;Chao-Sorensen
+Niksek;Wanang;0.617391221131573;Parasitoids;299.5385578;Chao-Sorensen
+Niksek;Yapsiei;0.270338665993599;Parasitoids;159.5281216;Chao-Sorensen
+Ohu1;Elem;0.407185869108713;Parasitoids;201.258343;Chao-Sorensen
+Ohu1;Morox;0.509851978128134;Parasitoids;221.2815185;Chao-Sorensen
+Ohu1;Niksek;0.525070315239909;Parasitoids;354.2902715;Chao-Sorensen
+Ohu1;Ohu2;0.134502241492599;Parasitoids;0;Chao-Sorensen
+Ohu1;Utai;0.453082549634274;Parasitoids;498.6813381;Chao-Sorensen
+Ohu1;Wamangu;0.363378232418546;Parasitoids;276.383076;Chao-Sorensen
+Ohu1;Wanang;0.461002797687781;Parasitoids;55.5963261;Chao-Sorensen
+Ohu1;Yapsiei;0.695164984650664;Parasitoids;513.0151492;Chao-Sorensen
+Ohu2;Elem;0.311042854556728;Parasitoids;201.258343;Chao-Sorensen
+Ohu2;Morox;0.531330757476273;Parasitoids;221.2815185;Chao-Sorensen
+Ohu2;Niksek;0.67452265592468;Parasitoids;354.2902715;Chao-Sorensen
+Ohu2;Ohu1;0.134502241492599;Parasitoids;0;Chao-Sorensen
+Ohu2;Utai;0.610332603967837;Parasitoids;498.6813381;Chao-Sorensen
+Ohu2;Wamangu;0.26793281820274;Parasitoids;276.383076;Chao-Sorensen
+Ohu2;Wanang;0.486610654290835;Parasitoids;55.5963261;Chao-Sorensen
+Ohu2;Yapsiei;0.676074421113513;Parasitoids;513.0151492;Chao-Sorensen
+Utai;Elem;0.110526477265755;Parasitoids;303.431804;Chao-Sorensen
+Utai;Morox;0.267134446852712;Parasitoids;287.9158341;Chao-Sorensen
+Utai;Niksek;0.30677804194784;Parasitoids;179.5646836;Chao-Sorensen
+Utai;Ohu1;0.453082549634274;Parasitoids;498.6813381;Chao-Sorensen
+Utai;Ohu2;0.610332603967837;Parasitoids;498.6813381;Chao-Sorensen
+Utai;Wamangu;0.301079066556094;Parasitoids;233.8469256;Chao-Sorensen
+Utai;Wanang;0.328527386402372;Parasitoids;448.3681427;Chao-Sorensen
+Utai;Yapsiei;0.218058879084077;Parasitoids;147.8936648;Chao-Sorensen
+Wamangu;Elem;0.21496492547933;Parasitoids;117.5739756;Chao-Sorensen
+Wamangu;Morox;0.393524114495991;Parasitoids;55.84802219;Chao-Sorensen
+Wamangu;Niksek;0.526388216920263;Parasitoids;160.0472464;Chao-Sorensen
+Wamangu;Ohu1;0.363378232418546;Parasitoids;276.383076;Chao-Sorensen
+Wamangu;Ohu2;0.26793281820274;Parasitoids;276.383076;Chao-Sorensen
+Wamangu;Utai;0.301079066556094;Parasitoids;233.8469256;Chao-Sorensen
+Wamangu;Wanang;0.37263599661892;Parasitoids;233.0409132;Chao-Sorensen
+Wamangu;Yapsiei;0.509710231006159;Parasitoids;298.4922871;Chao-Sorensen
+Wanang;Elem;0.295559601722995;Parasitoids;147.5878248;Chao-Sorensen
+Wanang;Morox;0.278683138020571;Parasitoids;180.1038462;Chao-Sorensen
+Wanang;Niksek;0.617391221131573;Parasitoids;299.5385578;Chao-Sorensen
+Wanang;Ohu1;0.461002797687781;Parasitoids;55.5963261;Chao-Sorensen
+Wanang;Ohu2;0.486610654290835;Parasitoids;55.5963261;Chao-Sorensen
+Wanang;Utai;0.328527386402372;Parasitoids;448.3681427;Chao-Sorensen
+Wanang;Wamangu;0.37263599661892;Parasitoids;233.0409132;Chao-Sorensen
+Wanang;Yapsiei;0.486545139332439;Parasitoids;457.8881304;Chao-Sorensen
+Yapsiei;Elem;0.232652876885557;Parasitoids;313.4830669;Chao-Sorensen
+Yapsiei;Morox;0.321032209227021;Parasitoids;340.1027542;Chao-Sorensen
+Yapsiei;Niksek;0.270338665993599;Parasitoids;159.5281216;Chao-Sorensen
+Yapsiei;Ohu1;0.695164984650664;Parasitoids;513.0151492;Chao-Sorensen
+Yapsiei;Ohu2;0.676074421113513;Parasitoids;513.0151492;Chao-Sorensen
+Yapsiei;Utai;0.218058879084077;Parasitoids;147.8936648;Chao-Sorensen
+Yapsiei;Wamangu;0.509710231006159;Parasitoids;298.4922871;Chao-Sorensen
+Yapsiei;Wanang;0.486545139332439;Parasitoids;457.8881304;Chao-Sorensen
+Elem;Morox;0.0365653820586571;Caterpillars;90.77472995;Chao-Sorensen
+Elem;Niksek;0.152657945776693;Caterpillars;154.0061049;Chao-Sorensen
+Elem;Ohu1;0.0178441559815934;Caterpillars;201.258343;Chao-Sorensen
+Elem;Ohu2;0.0284039943229444;Caterpillars;201.258343;Chao-Sorensen
+Elem;Utai;0.108384260765614;Caterpillars;303.431804;Chao-Sorensen
+Elem;Wamangu;0.0939713008802799;Caterpillars;117.5739756;Chao-Sorensen
+Elem;Wanang;0.0887586583709334;Caterpillars;147.5878248;Chao-Sorensen
+Elem;Yapsiei;0.115594839157663;Caterpillars;313.4830669;Chao-Sorensen
+Morox;Elem;0.0365653820586571;Caterpillars;90.77472995;Chao-Sorensen
+Morox;Niksek;0.212625418418157;Caterpillars;189.606269;Chao-Sorensen
+Morox;Ohu1;0.0788392827549088;Caterpillars;221.2815185;Chao-Sorensen
+Morox;Ohu2;0.0659510751857596;Caterpillars;221.2815185;Chao-Sorensen
+Morox;Utai;0.0723416111349429;Caterpillars;287.9158341;Chao-Sorensen
+Morox;Wamangu;0.0586582194581666;Caterpillars;55.84802219;Chao-Sorensen
+Morox;Wanang;0.154184306103628;Caterpillars;180.1038462;Chao-Sorensen
+Morox;Yapsiei;0.178312579059286;Caterpillars;340.1027542;Chao-Sorensen
+Niksek;Elem;0.152657945776693;Caterpillars;154.0061049;Chao-Sorensen
+Niksek;Morox;0.212625418418157;Caterpillars;189.606269;Chao-Sorensen
+Niksek;Ohu1;0.222500916299322;Caterpillars;354.2902715;Chao-Sorensen
+Niksek;Ohu2;0.214204758177331;Caterpillars;354.2902715;Chao-Sorensen
+Niksek;Utai;0.18168953920595;Caterpillars;179.5646836;Chao-Sorensen
+Niksek;Wamangu;0.135238147773245;Caterpillars;160.0472464;Chao-Sorensen
+Niksek;Wanang;0.145517755591689;Caterpillars;299.5385578;Chao-Sorensen
+Niksek;Yapsiei;0.0884457781627778;Caterpillars;159.5281216;Chao-Sorensen
+Ohu1;Elem;0.0178441559815934;Caterpillars;201.258343;Chao-Sorensen
+Ohu1;Morox;0.0788392827549088;Caterpillars;221.2815185;Chao-Sorensen
+Ohu1;Niksek;0.222500916299322;Caterpillars;354.2902715;Chao-Sorensen
+Ohu1;Ohu2;0.012584510321265;Caterpillars;0;Chao-Sorensen
+Ohu1;Utai;0.0827175363777943;Caterpillars;498.6813381;Chao-Sorensen
+Ohu1;Wamangu;0.0334141596594595;Caterpillars;276.383076;Chao-Sorensen
+Ohu1;Wanang;0.111170509908101;Caterpillars;55.5963261;Chao-Sorensen
+Ohu1;Yapsiei;0.103757976763067;Caterpillars;513.0151492;Chao-Sorensen
+Ohu2;Elem;0.0284039943229444;Caterpillars;201.258343;Chao-Sorensen
+Ohu2;Morox;0.0659510751857596;Caterpillars;221.2815185;Chao-Sorensen
+Ohu2;Niksek;0.214204758177331;Caterpillars;354.2902715;Chao-Sorensen
+Ohu2;Ohu1;0.012584510321265;Caterpillars;0;Chao-Sorensen
+Ohu2;Utai;0.135370268484126;Caterpillars;498.6813381;Chao-Sorensen
+Ohu2;Wamangu;0.0982539781944902;Caterpillars;276.383076;Chao-Sorensen
+Ohu2;Wanang;0.150962859257492;Caterpillars;55.5963261;Chao-Sorensen
+Ohu2;Yapsiei;0.129254509300817;Caterpillars;513.0151492;Chao-Sorensen
+Utai;Elem;0.108384260765614;Caterpillars;303.431804;Chao-Sorensen
+Utai;Morox;0.0723416111349429;Caterpillars;287.9158341;Chao-Sorensen
+Utai;Niksek;0.18168953920595;Caterpillars;179.5646836;Chao-Sorensen
+Utai;Ohu1;0.0827175363777943;Caterpillars;498.6813381;Chao-Sorensen
+Utai;Ohu2;0.135370268484126;Caterpillars;498.6813381;Chao-Sorensen
+Utai;Wamangu;0.107021966974417;Caterpillars;233.8469256;Chao-Sorensen
+Utai;Wanang;0.064308405024254;Caterpillars;448.3681427;Chao-Sorensen
+Utai;Yapsiei;0.178924354700572;Caterpillars;147.8936648;Chao-Sorensen
+Wamangu;Elem;0.0939713008802799;Caterpillars;117.5739756;Chao-Sorensen
+Wamangu;Morox;0.0586582194581666;Caterpillars;55.84802219;Chao-Sorensen
+Wamangu;Niksek;0.135238147773245;Caterpillars;160.0472464;Chao-Sorensen
+Wamangu;Ohu1;0.0334141596594595;Caterpillars;276.383076;Chao-Sorensen
+Wamangu;Ohu2;0.0982539781944902;Caterpillars;276.383076;Chao-Sorensen
+Wamangu;Utai;0.107021966974417;Caterpillars;233.8469256;Chao-Sorensen
+Wamangu;Wanang;0.0775437003772361;Caterpillars;233.0409132;Chao-Sorensen
+Wamangu;Yapsiei;0.0913628125357742;Caterpillars;298.4922871;Chao-Sorensen
+Wanang;Elem;0.0887586583709334;Caterpillars;147.5878248;Chao-Sorensen
+Wanang;Morox;0.154184306103628;Caterpillars;180.1038462;Chao-Sorensen
+Wanang;Niksek;0.145517755591689;Caterpillars;299.5385578;Chao-Sorensen
+Wanang;Ohu1;0.111170509908101;Caterpillars;55.5963261;Chao-Sorensen
+Wanang;Ohu2;0.150962859257492;Caterpillars;55.5963261;Chao-Sorensen
+Wanang;Utai;0.064308405024254;Caterpillars;448.3681427;Chao-Sorensen
+Wanang;Wamangu;0.0775437003772361;Caterpillars;233.0409132;Chao-Sorensen
+Wanang;Yapsiei;0.00828497793381089;Caterpillars;457.8881304;Chao-Sorensen
+Yapsiei;Elem;0.115594839157663;Caterpillars;313.4830669;Chao-Sorensen
+Yapsiei;Morox;0.178312579059286;Caterpillars;340.1027542;Chao-Sorensen
+Yapsiei;Niksek;0.0884457781627778;Caterpillars;159.5281216;Chao-Sorensen
+Yapsiei;Ohu1;0.103757976763067;Caterpillars;513.0151492;Chao-Sorensen
+Yapsiei;Ohu2;0.129254509300817;Caterpillars;513.0151492;Chao-Sorensen
+Yapsiei;Utai;0.178924354700572;Caterpillars;147.8936648;Chao-Sorensen
+Yapsiei;Wamangu;0.0913628125357742;Caterpillars;298.4922871;Chao-Sorensen
+Yapsiei;Wanang;0.00828497793381089;Caterpillars;457.8881304;Chao-Sorensen
+Elem;Morox;0.547396289985367;Caterpillars - subsampled;90.77472995;Sorensen
+Elem;Niksek;0.482628586284181;Caterpillars - subsampled;154.0061049;Sorensen
+Elem;Ohu1;0.500463237551149;Caterpillars - subsampled;201.258343;Sorensen
+Elem;Ohu2;0.487048693709806;Caterpillars - subsampled;201.258343;Sorensen
+Elem;Utai;0.501675115656136;Caterpillars - subsampled;303.431804;Sorensen
+Elem;Wamangu;0.489913238666879;Caterpillars - subsampled;117.5739756;Sorensen
+Elem;Wanang;0.552223594276845;Caterpillars - subsampled;147.5878248;Sorensen
+Elem;Yapsiei;0.51387139989582;Caterpillars - subsampled;313.4830669;Sorensen
+Morox;Elem;0.547396289985367;Caterpillars - subsampled;90.77472995;Sorensen
+Morox;Niksek;0.518707150310132;Caterpillars - subsampled;189.606269;Sorensen
+Morox;Ohu1;0.461341097782533;Caterpillars - subsampled;221.2815185;Sorensen
+Morox;Ohu2;0.475098055649505;Caterpillars - subsampled;221.2815185;Sorensen
+Morox;Utai;0.530837739868869;Caterpillars - subsampled;287.9158341;Sorensen
+Morox;Wamangu;0.506884085809578;Caterpillars - subsampled;55.84802219;Sorensen
+Morox;Wanang;0.634017620244707;Caterpillars - subsampled;180.1038462;Sorensen
+Morox;Yapsiei;0.606718801632385;Caterpillars - subsampled;340.1027542;Sorensen
+Niksek;Elem;0.482628586284181;Caterpillars - subsampled;154.0061049;Sorensen
+Niksek;Morox;0.518707150310132;Caterpillars - subsampled;189.606269;Sorensen
+Niksek;Ohu1;0.523151874621691;Caterpillars - subsampled;354.2902715;Sorensen
+Niksek;Ohu2;0.51765831862066;Caterpillars - subsampled;354.2902715;Sorensen
+Niksek;Utai;0.465893349800635;Caterpillars - subsampled;179.5646836;Sorensen
+Niksek;Wamangu;0.515500329941539;Caterpillars - subsampled;160.0472464;Sorensen
+Niksek;Wanang;0.554349518614294;Caterpillars - subsampled;299.5385578;Sorensen
+Niksek;Yapsiei;0.483685473360299;Caterpillars - subsampled;159.5281216;Sorensen
+Ohu1;Elem;0.500463237551149;Caterpillars - subsampled;201.258343;Sorensen
+Ohu1;Morox;0.461341097782533;Caterpillars - subsampled;221.2815185;Sorensen
+Ohu1;Niksek;0.523151874621691;Caterpillars - subsampled;354.2902715;Sorensen
+Ohu1;Ohu2;0.329739189561903;Caterpillars - subsampled;0;Sorensen
+Ohu1;Utai;0.551963431494026;Caterpillars - subsampled;498.6813381;Sorensen
+Ohu1;Wamangu;0.485968506406149;Caterpillars - subsampled;276.383076;Sorensen
+Ohu1;Wanang;0.604137249538752;Caterpillars - subsampled;55.5963261;Sorensen
+Ohu1;Yapsiei;0.582524598177959;Caterpillars - subsampled;513.0151492;Sorensen
+Ohu2;Elem;0.487048693709806;Caterpillars - subsampled;201.258343;Sorensen
+Ohu2;Morox;0.475098055649505;Caterpillars - subsampled;221.2815185;Sorensen
+Ohu2;Niksek;0.51765831862066;Caterpillars - subsampled;354.2902715;Sorensen
+Ohu2;Ohu1;0.329739189561903;Caterpillars - subsampled;0;Sorensen
+Ohu2;Utai;0.548975308326972;Caterpillars - subsampled;498.6813381;Sorensen
+Ohu2;Wamangu;0.497881465021129;Caterpillars - subsampled;276.383076;Sorensen
+Ohu2;Wanang;0.599459172288675;Caterpillars - subsampled;55.5963261;Sorensen
+Ohu2;Yapsiei;0.601164442800342;Caterpillars - subsampled;513.0151492;Sorensen
+Utai;Elem;0.501675115656136;Caterpillars - subsampled;303.431804;Sorensen
+Utai;Morox;0.530837739868869;Caterpillars - subsampled;287.9158341;Sorensen
+Utai;Niksek;0.465893349800635;Caterpillars - subsampled;179.5646836;Sorensen
+Utai;Ohu1;0.551963431494026;Caterpillars - subsampled;498.6813381;Sorensen
+Utai;Ohu2;0.548975308326972;Caterpillars - subsampled;498.6813381;Sorensen
+Utai;Wamangu;0.515773581420136;Caterpillars - subsampled;233.8469256;Sorensen
+Utai;Wanang;0.531111564364051;Caterpillars - subsampled;448.3681427;Sorensen
+Utai;Yapsiei;0.541475388309345;Caterpillars - subsampled;147.8936648;Sorensen
+Wamangu;Elem;0.489913238666879;Caterpillars - subsampled;117.5739756;Sorensen
+Wamangu;Morox;0.506884085809578;Caterpillars - subsampled;55.84802219;Sorensen
+Wamangu;Niksek;0.515500329941539;Caterpillars - subsampled;160.0472464;Sorensen
+Wamangu;Ohu1;0.485968506406149;Caterpillars - subsampled;276.383076;Sorensen
+Wamangu;Ohu2;0.497881465021129;Caterpillars - subsampled;276.383076;Sorensen
+Wamangu;Utai;0.515773581420136;Caterpillars - subsampled;233.8469256;Sorensen
+Wamangu;Wanang;0.540443324802654;Caterpillars - subsampled;233.0409132;Sorensen
+Wamangu;Yapsiei;0.530373003131539;Caterpillars - subsampled;298.4922871;Sorensen
+Wanang;Elem;0.552223594276845;Caterpillars - subsampled;147.5878248;Sorensen
+Wanang;Morox;0.634017620244707;Caterpillars - subsampled;180.1038462;Sorensen
+Wanang;Niksek;0.554349518614294;Caterpillars - subsampled;299.5385578;Sorensen
+Wanang;Ohu1;0.604137249538752;Caterpillars - subsampled;55.5963261;Sorensen
+Wanang;Ohu2;0.599459172288675;Caterpillars - subsampled;55.5963261;Sorensen
+Wanang;Utai;0.531111564364051;Caterpillars - subsampled;448.3681427;Sorensen
+Wanang;Wamangu;0.540443324802654;Caterpillars - subsampled;233.0409132;Sorensen
+Wanang;Yapsiei;0.52106809169036;Caterpillars - subsampled;457.8881304;Sorensen
+Yapsiei;Elem;0.51387139989582;Caterpillars - subsampled;313.4830669;Sorensen
+Yapsiei;Morox;0.606718801632385;Caterpillars - subsampled;340.1027542;Sorensen
+Yapsiei;Niksek;0.483685473360299;Caterpillars - subsampled;159.5281216;Sorensen
+Yapsiei;Ohu1;0.582524598177959;Caterpillars - subsampled;513.0151492;Sorensen
+Yapsiei;Ohu2;0.601164442800342;Caterpillars - subsampled;513.0151492;Sorensen
+Yapsiei;Utai;0.541475388309345;Caterpillars - subsampled;147.8936648;Sorensen
+Yapsiei;Wamangu;0.530373003131539;Caterpillars - subsampled;298.4922871;Sorensen
+Yapsiei;Wanang;0.52106809169036;Caterpillars - subsampled;457.8881304;Sorensen
+Elem;Morox;0.662650602409639;Parasitoids;90.77472995;Sorensen
+Elem;Niksek;0.572649572649573;Parasitoids;154.0061049;Sorensen
+Elem;Ohu1;0.734265734265734;Parasitoids;201.258343;Sorensen
+Elem;Ohu2;0.704918032786885;Parasitoids;201.258343;Sorensen
+Elem;Utai;0.590909090909091;Parasitoids;303.431804;Sorensen
+Elem;Wamangu;0.6;Parasitoids;117.5739756;Sorensen
+Elem;Wanang;0.666666666666667;Parasitoids;147.5878248;Sorensen
+Elem;Yapsiei;0.619834710743802;Parasitoids;313.4830669;Sorensen
+Morox;Elem;0.662650602409639;Parasitoids;90.77472995;Sorensen
+Morox;Niksek;0.610810810810811;Parasitoids;189.606269;Sorensen
+Morox;Ohu1;0.734597156398104;Parasitoids;221.2815185;Sorensen
+Morox;Ohu2;0.726315789473684;Parasitoids;221.2815185;Sorensen
+Morox;Utai;0.66;Parasitoids;287.9158341;Sorensen
+Morox;Wamangu;0.639344262295082;Parasitoids;55.84802219;Sorensen
+Morox;Wanang;0.734177215189873;Parasitoids;180.1038462;Sorensen
+Morox;Yapsiei;0.64021164021164;Parasitoids;340.1027542;Sorensen
+Niksek;Elem;0.572649572649573;Parasitoids;154.0061049;Sorensen
+Niksek;Morox;0.610810810810811;Parasitoids;189.606269;Sorensen
+Niksek;Ohu1;0.728395061728395;Parasitoids;354.2902715;Sorensen
+Niksek;Ohu2;0.74468085106383;Parasitoids;354.2902715;Sorensen
+Niksek;Utai;0.576158940397351;Parasitoids;179.5646836;Sorensen
+Niksek;Wamangu;0.597014925373134;Parasitoids;160.0472464;Sorensen
+Niksek;Wanang;0.743119266055046;Parasitoids;299.5385578;Sorensen
+Niksek;Yapsiei;0.571428571428571;Parasitoids;159.5281216;Sorensen
+Ohu1;Elem;0.734265734265734;Parasitoids;201.258343;Sorensen
+Ohu1;Morox;0.734597156398104;Parasitoids;221.2815185;Sorensen
+Ohu1;Niksek;0.728395061728395;Parasitoids;354.2902715;Sorensen
+Ohu1;Ohu2;0.532934131736527;Parasitoids;0;Sorensen
+Ohu1;Utai;0.796610169491525;Parasitoids;498.6813381;Sorensen
+Ohu1;Wamangu;0.75;Parasitoids;276.383076;Sorensen
+Ohu1;Wanang;0.807407407407407;Parasitoids;55.5963261;Sorensen
+Ohu1;Yapsiei;0.807228915662651;Parasitoids;513.0151492;Sorensen
+Ohu2;Elem;0.704918032786885;Parasitoids;201.258343;Sorensen
+Ohu2;Morox;0.726315789473684;Parasitoids;221.2815185;Sorensen
+Ohu2;Niksek;0.74468085106383;Parasitoids;354.2902715;Sorensen
+Ohu2;Ohu1;0.532934131736527;Parasitoids;0;Sorensen
+Ohu2;Utai;0.782051282051282;Parasitoids;498.6813381;Sorensen
+Ohu2;Wamangu;0.726618705035971;Parasitoids;276.383076;Sorensen
+Ohu2;Wanang;0.754385964912281;Parasitoids;55.5963261;Sorensen
+Ohu2;Yapsiei;0.779310344827586;Parasitoids;513.0151492;Sorensen
+Utai;Elem;0.590909090909091;Parasitoids;303.431804;Sorensen
+Utai;Morox;0.66;Parasitoids;287.9158341;Sorensen
+Utai;Niksek;0.576158940397351;Parasitoids;179.5646836;Sorensen
+Utai;Ohu1;0.796610169491525;Parasitoids;498.6813381;Sorensen
+Utai;Ohu2;0.782051282051282;Parasitoids;498.6813381;Sorensen
+Utai;Wamangu;0.63758389261745;Parasitoids;233.8469256;Sorensen
+Utai;Wanang;0.758064516129032;Parasitoids;448.3681427;Sorensen
+Utai;Yapsiei;0.587096774193548;Parasitoids;147.8936648;Sorensen
+Wamangu;Elem;0.6;Parasitoids;117.5739756;Sorensen
+Wamangu;Morox;0.639344262295082;Parasitoids;55.84802219;Sorensen
+Wamangu;Niksek;0.597014925373134;Parasitoids;160.0472464;Sorensen
+Wamangu;Ohu1;0.75;Parasitoids;276.383076;Sorensen
+Wamangu;Ohu2;0.726618705035971;Parasitoids;276.383076;Sorensen
+Wamangu;Utai;0.63758389261745;Parasitoids;233.8469256;Sorensen
+Wamangu;Wanang;0.738317757009346;Parasitoids;233.0409132;Sorensen
+Wamangu;Yapsiei;0.623188405797101;Parasitoids;298.4922871;Sorensen
+Wanang;Elem;0.666666666666667;Parasitoids;147.5878248;Sorensen
+Wanang;Morox;0.734177215189873;Parasitoids;180.1038462;Sorensen
+Wanang;Niksek;0.743119266055046;Parasitoids;299.5385578;Sorensen
+Wanang;Ohu1;0.807407407407407;Parasitoids;55.5963261;Sorensen
+Wanang;Ohu2;0.754385964912281;Parasitoids;55.5963261;Sorensen
+Wanang;Utai;0.758064516129032;Parasitoids;448.3681427;Sorensen
+Wanang;Wamangu;0.738317757009346;Parasitoids;233.0409132;Sorensen
+Wanang;Yapsiei;0.716814159292035;Parasitoids;457.8881304;Sorensen
+Yapsiei;Elem;0.619834710743802;Parasitoids;313.4830669;Sorensen
+Yapsiei;Morox;0.64021164021164;Parasitoids;340.1027542;Sorensen
+Yapsiei;Niksek;0.571428571428571;Parasitoids;159.5281216;Sorensen
+Yapsiei;Ohu1;0.807228915662651;Parasitoids;513.0151492;Sorensen
+Yapsiei;Ohu2;0.779310344827586;Parasitoids;513.0151492;Sorensen
+Yapsiei;Utai;0.587096774193548;Parasitoids;147.8936648;Sorensen
+Yapsiei;Wamangu;0.623188405797101;Parasitoids;298.4922871;Sorensen
+Yapsiei;Wanang;0.716814159292035;Parasitoids;457.8881304;Sorensen
+Elem;Morox;0.515789473684211;Caterpillars;90.77472995;Sorensen
+Elem;Niksek;0.477477477477477;Caterpillars;154.0061049;Sorensen
+Elem;Ohu1;0.461038961038961;Caterpillars;201.258343;Sorensen
+Elem;Ohu2;0.415384615384615;Caterpillars;201.258343;Sorensen
+Elem;Utai;0.463414634146341;Caterpillars;303.431804;Sorensen
+Elem;Wamangu;0.52112676056338;Caterpillars;117.5739756;Sorensen
+Elem;Wanang;0.433476394849785;Caterpillars;147.5878248;Sorensen
+Elem;Yapsiei;0.537254901960784;Caterpillars;313.4830669;Sorensen
+Morox;Elem;0.515789473684211;Caterpillars;90.77472995;Sorensen
+Morox;Niksek;0.536679536679537;Caterpillars;189.606269;Sorensen
+Morox;Ohu1;0.449275362318841;Caterpillars;221.2815185;Sorensen
+Morox;Ohu2;0.441077441077441;Caterpillars;221.2815185;Sorensen
+Morox;Utai;0.477031802120141;Caterpillars;287.9158341;Sorensen
+Morox;Wamangu;0.457943925233645;Caterpillars;55.84802219;Sorensen
+Morox;Wanang;0.540740740740741;Caterpillars;180.1038462;Sorensen
+Morox;Yapsiei;0.589041095890411;Caterpillars;340.1027542;Sorensen
+Niksek;Elem;0.477477477477477;Caterpillars;154.0061049;Sorensen
+Niksek;Morox;0.536679536679537;Caterpillars;189.606269;Sorensen
+Niksek;Ohu1;0.531914893617021;Caterpillars;354.2902715;Sorensen
+Niksek;Ohu2;0.47008547008547;Caterpillars;354.2902715;Sorensen
+Niksek;Utai;0.472727272727273;Caterpillars;179.5646836;Sorensen
+Niksek;Wamangu;0.527131782945736;Caterpillars;160.0472464;Sorensen
+Niksek;Wanang;0.458937198067633;Caterpillars;299.5385578;Sorensen
+Niksek;Yapsiei;0.510917030567686;Caterpillars;159.5281216;Sorensen
+Ohu1;Elem;0.461038961038961;Caterpillars;201.258343;Sorensen
+Ohu1;Morox;0.449275362318841;Caterpillars;221.2815185;Sorensen
+Ohu1;Niksek;0.531914893617021;Caterpillars;354.2902715;Sorensen
+Ohu1;Ohu2;0.29375;Caterpillars;0;Sorensen
+Ohu1;Utai;0.503267973856209;Caterpillars;498.6813381;Sorensen
+Ohu1;Wamangu;0.453488372093023;Caterpillars;276.383076;Sorensen
+Ohu1;Wanang;0.488054607508532;Caterpillars;55.5963261;Sorensen
+Ohu1;Yapsiei;0.568253968253968;Caterpillars;513.0151492;Sorensen
+Ohu2;Elem;0.415384615384615;Caterpillars;201.258343;Sorensen
+Ohu2;Morox;0.441077441077441;Caterpillars;221.2815185;Sorensen
+Ohu2;Niksek;0.47008547008547;Caterpillars;354.2902715;Sorensen
+Ohu2;Ohu1;0.29375;Caterpillars;0;Sorensen
+Ohu2;Utai;0.441860465116279;Caterpillars;498.6813381;Sorensen
+Ohu2;Wamangu;0.445945945945946;Caterpillars;276.383076;Sorensen
+Ohu2;Wanang;0.453061224489796;Caterpillars;55.5963261;Sorensen
+Ohu2;Yapsiei;0.565543071161049;Caterpillars;513.0151492;Sorensen
+Utai;Elem;0.463414634146341;Caterpillars;303.431804;Sorensen
+Utai;Morox;0.477031802120141;Caterpillars;287.9158341;Sorensen
+Utai;Niksek;0.472727272727273;Caterpillars;179.5646836;Sorensen
+Utai;Ohu1;0.503267973856209;Caterpillars;498.6813381;Sorensen
+Utai;Ohu2;0.441860465116279;Caterpillars;498.6813381;Sorensen
+Utai;Wamangu;0.51063829787234;Caterpillars;233.8469256;Sorensen
+Utai;Wanang;0.497835497835498;Caterpillars;448.3681427;Sorensen
+Utai;Yapsiei;0.573122529644269;Caterpillars;147.8936648;Sorensen
+Wamangu;Elem;0.52112676056338;Caterpillars;117.5739756;Sorensen
+Wamangu;Morox;0.457943925233645;Caterpillars;55.84802219;Sorensen
+Wamangu;Niksek;0.527131782945736;Caterpillars;160.0472464;Sorensen
+Wamangu;Ohu1;0.453488372093023;Caterpillars;276.383076;Sorensen
+Wamangu;Ohu2;0.445945945945946;Caterpillars;276.383076;Sorensen
+Wamangu;Utai;0.51063829787234;Caterpillars;233.8469256;Sorensen
+Wamangu;Wanang;0.50185873605948;Caterpillars;233.0409132;Sorensen
+Wamangu;Yapsiei;0.54639175257732;Caterpillars;298.4922871;Sorensen
+Wanang;Elem;0.433476394849785;Caterpillars;147.5878248;Sorensen
+Wanang;Morox;0.540740740740741;Caterpillars;180.1038462;Sorensen
+Wanang;Niksek;0.458937198067633;Caterpillars;299.5385578;Sorensen
+Wanang;Ohu1;0.488054607508532;Caterpillars;55.5963261;Sorensen
+Wanang;Ohu2;0.453061224489796;Caterpillars;55.5963261;Sorensen
+Wanang;Utai;0.497835497835498;Caterpillars;448.3681427;Sorensen
+Wanang;Wamangu;0.50185873605948;Caterpillars;233.0409132;Sorensen
+Wanang;Yapsiei;0.533333333333333;Caterpillars;457.8881304;Sorensen
+Yapsiei;Elem;0.537254901960784;Caterpillars;313.4830669;Sorensen
+Yapsiei;Morox;0.589041095890411;Caterpillars;340.1027542;Sorensen
+Yapsiei;Niksek;0.510917030567686;Caterpillars;159.5281216;Sorensen
+Yapsiei;Ohu1;0.568253968253968;Caterpillars;513.0151492;Sorensen
+Yapsiei;Ohu2;0.565543071161049;Caterpillars;513.0151492;Sorensen
+Yapsiei;Utai;0.573122529644269;Caterpillars;147.8936648;Sorensen
+Yapsiei;Wamangu;0.54639175257732;Caterpillars;298.4922871;Sorensen
+Yapsiei;Wanang;0.533333333333333;Caterpillars;457.8881304;Sorensen
+Elem;Morox;0.563597658328898;Caterpillars;90.77472995;Bray-Curtis
+Elem;Niksek;0.580050293378039;Caterpillars;154.0061049;Bray-Curtis
+Elem;Ohu1;0.618573311850007;Caterpillars;201.258343;Bray-Curtis
+Elem;Ohu2;0.531963908619697;Caterpillars;201.258343;Bray-Curtis
+Elem;Utai;0.579232855482371;Caterpillars;303.431804;Bray-Curtis
+Elem;Wamangu;0.486600306278714;Caterpillars;117.5739756;Bray-Curtis
+Elem;Wanang;0.58105147864184;Caterpillars;147.5878248;Bray-Curtis
+Elem;Yapsiei;0.562370493162039;Caterpillars;313.4830669;Bray-Curtis
+Morox;Elem;0.563597658328898;Caterpillars;90.77472995;Bray-Curtis
+Morox;Niksek;0.668666359021689;Caterpillars;189.606269;Bray-Curtis
+Morox;Ohu1;0.531323048153343;Caterpillars;221.2815185;Bray-Curtis
+Morox;Ohu2;0.484577688094552;Caterpillars;221.2815185;Bray-Curtis
+Morox;Utai;0.622115803221593;Caterpillars;287.9158341;Bray-Curtis
+Morox;Wamangu;0.481662591687042;Caterpillars;55.84802219;Bray-Curtis
+Morox;Wanang;0.677011707860992;Caterpillars;180.1038462;Bray-Curtis
+Morox;Yapsiei;0.603051106025934;Caterpillars;340.1027542;Bray-Curtis
+Niksek;Elem;0.580050293378039;Caterpillars;154.0061049;Bray-Curtis
+Niksek;Morox;0.668666359021689;Caterpillars;189.606269;Bray-Curtis
+Niksek;Ohu1;0.660902353400078;Caterpillars;354.2902715;Bray-Curtis
+Niksek;Ohu2;0.668368187057467;Caterpillars;354.2902715;Bray-Curtis
+Niksek;Utai;0.51742449385994;Caterpillars;179.5646836;Bray-Curtis
+Niksek;Wamangu;0.562746386333771;Caterpillars;160.0472464;Bray-Curtis
+Niksek;Wanang;0.549601417183348;Caterpillars;299.5385578;Bray-Curtis
+Niksek;Yapsiei;0.444991212653779;Caterpillars;159.5281216;Bray-Curtis
+Ohu1;Elem;0.618573311850007;Caterpillars;201.258343;Bray-Curtis
+Ohu1;Morox;0.531323048153343;Caterpillars;221.2815185;Bray-Curtis
+Ohu1;Niksek;0.660902353400078;Caterpillars;354.2902715;Bray-Curtis
+Ohu1;Ohu2;0.305610236220472;Caterpillars;0;Bray-Curtis
+Ohu1;Utai;0.70473951243658;Caterpillars;498.6813381;Bray-Curtis
+Ohu1;Wamangu;0.548078103892914;Caterpillars;276.383076;Bray-Curtis
+Ohu1;Wanang;0.712676913711764;Caterpillars;55.5963261;Bray-Curtis
+Ohu1;Yapsiei;0.682633957391866;Caterpillars;513.0151492;Bray-Curtis
+Ohu2;Elem;0.531963908619697;Caterpillars;201.258343;Bray-Curtis
+Ohu2;Morox;0.484577688094552;Caterpillars;221.2815185;Bray-Curtis
+Ohu2;Niksek;0.668368187057467;Caterpillars;354.2902715;Bray-Curtis
+Ohu2;Ohu1;0.305610236220472;Caterpillars;0;Bray-Curtis
+Ohu2;Utai;0.681881479189231;Caterpillars;498.6813381;Bray-Curtis
+Ohu2;Wamangu;0.529808429118774;Caterpillars;276.383076;Bray-Curtis
+Ohu2;Wanang;0.660004037956794;Caterpillars;55.5963261;Bray-Curtis
+Ohu2;Yapsiei;0.722866002937816;Caterpillars;513.0151492;Bray-Curtis
+Utai;Elem;0.579232855482371;Caterpillars;303.431804;Bray-Curtis
+Utai;Morox;0.622115803221593;Caterpillars;287.9158341;Bray-Curtis
+Utai;Niksek;0.51742449385994;Caterpillars;179.5646836;Bray-Curtis
+Utai;Ohu1;0.70473951243658;Caterpillars;498.6813381;Bray-Curtis
+Utai;Ohu2;0.681881479189231;Caterpillars;498.6813381;Bray-Curtis
+Utai;Wamangu;0.530101883297314;Caterpillars;233.8469256;Bray-Curtis
+Utai;Wanang;0.624133713819812;Caterpillars;448.3681427;Bray-Curtis
+Utai;Yapsiei;0.577960526315789;Caterpillars;147.8936648;Bray-Curtis
+Wamangu;Elem;0.486600306278714;Caterpillars;117.5739756;Bray-Curtis
+Wamangu;Morox;0.481662591687042;Caterpillars;55.84802219;Bray-Curtis
+Wamangu;Niksek;0.562746386333771;Caterpillars;160.0472464;Bray-Curtis
+Wamangu;Ohu1;0.548078103892914;Caterpillars;276.383076;Bray-Curtis
+Wamangu;Ohu2;0.529808429118774;Caterpillars;276.383076;Bray-Curtis
+Wamangu;Utai;0.530101883297314;Caterpillars;233.8469256;Bray-Curtis
+Wamangu;Wanang;0.583333333333333;Caterpillars;233.0409132;Bray-Curtis
+Wamangu;Yapsiei;0.580267014001954;Caterpillars;298.4922871;Bray-Curtis
+Wanang;Elem;0.58105147864184;Caterpillars;147.5878248;Bray-Curtis
+Wanang;Morox;0.677011707860992;Caterpillars;180.1038462;Bray-Curtis
+Wanang;Niksek;0.549601417183348;Caterpillars;299.5385578;Bray-Curtis
+Wanang;Ohu1;0.712676913711764;Caterpillars;55.5963261;Bray-Curtis
+Wanang;Ohu2;0.660004037956794;Caterpillars;55.5963261;Bray-Curtis
+Wanang;Utai;0.624133713819812;Caterpillars;448.3681427;Bray-Curtis
+Wanang;Wamangu;0.583333333333333;Caterpillars;233.0409132;Bray-Curtis
+Wanang;Yapsiei;0.578993435448578;Caterpillars;457.8881304;Bray-Curtis
+Yapsiei;Elem;0.562370493162039;Caterpillars;313.4830669;Bray-Curtis
+Yapsiei;Morox;0.603051106025934;Caterpillars;340.1027542;Bray-Curtis
+Yapsiei;Niksek;0.444991212653779;Caterpillars;159.5281216;Bray-Curtis
+Yapsiei;Ohu1;0.682633957391866;Caterpillars;513.0151492;Bray-Curtis
+Yapsiei;Ohu2;0.722866002937816;Caterpillars;513.0151492;Bray-Curtis
+Yapsiei;Utai;0.577960526315789;Caterpillars;147.8936648;Bray-Curtis
+Yapsiei;Wamangu;0.580267014001954;Caterpillars;298.4922871;Bray-Curtis
+Yapsiei;Wanang;0.578993435448578;Caterpillars;457.8881304;Bray-Curtis
+Elem;Morox;0.760445682451253;Parasitoids;90.77472995;Bray-Curtis
+Elem;Niksek;0.744945567651633;Parasitoids;154.0061049;Bray-Curtis
+Elem;Ohu1;0.764192139737991;Parasitoids;201.258343;Bray-Curtis
+Elem;Ohu2;0.682875264270613;Parasitoids;201.258343;Bray-Curtis
+Elem;Utai;0.692832764505119;Parasitoids;303.431804;Bray-Curtis
+Elem;Wamangu;0.745302713987474;Parasitoids;117.5739756;Bray-Curtis
+Elem;Wanang;0.77027027027027;Parasitoids;147.5878248;Bray-Curtis
+Elem;Yapsiei;0.815668202764977;Parasitoids;313.4830669;Bray-Curtis
+Morox;Elem;0.760445682451253;Parasitoids;90.77472995;Bray-Curtis
+Morox;Niksek;0.779543197616683;Parasitoids;189.606269;Bray-Curtis
+Morox;Ohu1;0.796384395813511;Parasitoids;221.2815185;Bray-Curtis
+Morox;Ohu2;0.83273596176822;Parasitoids;221.2815185;Bray-Curtis
+Morox;Utai;0.749473684210526;Parasitoids;287.9158341;Bray-Curtis
+Morox;Wamangu;0.741399762752076;Parasitoids;55.84802219;Bray-Curtis
+Morox;Wanang;0.824242424242424;Parasitoids;180.1038462;Bray-Curtis
+Morox;Yapsiei;0.784461152882206;Parasitoids;340.1027542;Bray-Curtis
+Niksek;Elem;0.744945567651633;Parasitoids;154.0061049;Bray-Curtis
+Niksek;Morox;0.779543197616683;Parasitoids;189.606269;Bray-Curtis
+Niksek;Ohu1;0.854508196721312;Parasitoids;354.2902715;Bray-Curtis
+Niksek;Ohu2;0.866141732283465;Parasitoids;354.2902715;Bray-Curtis
+Niksek;Utai;0.693714285714286;Parasitoids;179.5646836;Bray-Curtis
+Niksek;Wamangu;0.794270833333333;Parasitoids;160.0472464;Bray-Curtis
+Niksek;Wanang;0.856410256410256;Parasitoids;299.5385578;Bray-Curtis
+Niksek;Yapsiei;0.756569847856155;Parasitoids;159.5281216;Bray-Curtis
+Ohu1;Elem;0.764192139737991;Parasitoids;201.258343;Bray-Curtis
+Ohu1;Morox;0.796384395813511;Parasitoids;221.2815185;Bray-Curtis
+Ohu1;Niksek;0.854508196721312;Parasitoids;354.2902715;Bray-Curtis
+Ohu1;Ohu2;0.41439205955335;Parasitoids;0;Bray-Curtis
+Ohu1;Utai;0.852013057671382;Parasitoids;498.6813381;Bray-Curtis
+Ohu1;Wamangu;0.748768472906404;Parasitoids;276.383076;Bray-Curtis
+Ohu1;Wanang;0.8060413354531;Parasitoids;55.5963261;Bray-Curtis
+Ohu1;Yapsiei;0.900912646675359;Parasitoids;513.0151492;Bray-Curtis
+Ohu2;Elem;0.682875264270613;Parasitoids;201.258343;Bray-Curtis
+Ohu2;Morox;0.83273596176822;Parasitoids;221.2815185;Bray-Curtis
+Ohu2;Niksek;0.866141732283465;Parasitoids;354.2902715;Bray-Curtis
+Ohu2;Ohu1;0.41439205955335;Parasitoids;0;Bray-Curtis
+Ohu2;Utai;0.846808510638298;Parasitoids;498.6813381;Bray-Curtis
+Ohu2;Wamangu;0.762541806020067;Parasitoids;276.383076;Bray-Curtis
+Ohu2;Wanang;0.778313253012048;Parasitoids;55.5963261;Bray-Curtis
+Ohu2;Yapsiei;0.89873417721519;Parasitoids;513.0151492;Bray-Curtis
+Utai;Elem;0.692832764505119;Parasitoids;303.431804;Bray-Curtis
+Utai;Morox;0.749473684210526;Parasitoids;287.9158341;Bray-Curtis
+Utai;Niksek;0.693714285714286;Parasitoids;179.5646836;Bray-Curtis
+Utai;Ohu1;0.852013057671382;Parasitoids;498.6813381;Bray-Curtis
+Utai;Ohu2;0.846808510638298;Parasitoids;498.6813381;Bray-Curtis
+Utai;Wamangu;0.727144866385373;Parasitoids;233.8469256;Bray-Curtis
+Utai;Wanang;0.753787878787879;Parasitoids;448.3681427;Bray-Curtis
+Utai;Yapsiei;0.726726726726727;Parasitoids;147.8936648;Bray-Curtis
+Wamangu;Elem;0.745302713987474;Parasitoids;117.5739756;Bray-Curtis
+Wamangu;Morox;0.741399762752076;Parasitoids;55.84802219;Bray-Curtis
+Wamangu;Niksek;0.794270833333333;Parasitoids;160.0472464;Bray-Curtis
+Wamangu;Ohu1;0.748768472906404;Parasitoids;276.383076;Bray-Curtis
+Wamangu;Ohu2;0.762541806020067;Parasitoids;276.383076;Bray-Curtis
+Wamangu;Utai;0.727144866385373;Parasitoids;233.8469256;Bray-Curtis
+Wamangu;Wanang;0.73396674584323;Parasitoids;233.0409132;Bray-Curtis
+Wamangu;Yapsiei;0.792486583184258;Parasitoids;298.4922871;Bray-Curtis
+Wanang;Elem;0.77027027027027;Parasitoids;147.5878248;Bray-Curtis
+Wanang;Morox;0.824242424242424;Parasitoids;180.1038462;Bray-Curtis
+Wanang;Niksek;0.856410256410256;Parasitoids;299.5385578;Bray-Curtis
+Wanang;Ohu1;0.8060413354531;Parasitoids;55.5963261;Bray-Curtis
+Wanang;Ohu2;0.778313253012048;Parasitoids;55.5963261;Bray-Curtis
+Wanang;Utai;0.753787878787879;Parasitoids;448.3681427;Bray-Curtis
+Wanang;Wamangu;0.73396674584323;Parasitoids;233.0409132;Bray-Curtis
+Wanang;Yapsiei;0.813829787234043;Parasitoids;457.8881304;Bray-Curtis
+Yapsiei;Elem;0.815668202764977;Parasitoids;313.4830669;Bray-Curtis
+Yapsiei;Morox;0.784461152882206;Parasitoids;340.1027542;Bray-Curtis
+Yapsiei;Niksek;0.756569847856155;Parasitoids;159.5281216;Bray-Curtis
+Yapsiei;Ohu1;0.900912646675359;Parasitoids;513.0151492;Bray-Curtis
+Yapsiei;Ohu2;0.89873417721519;Parasitoids;513.0151492;Bray-Curtis
+Yapsiei;Utai;0.726726726726727;Parasitoids;147.8936648;Bray-Curtis
+Yapsiei;Wamangu;0.792486583184258;Parasitoids;298.4922871;Bray-Curtis
+Yapsiei;Wanang;0.813829787234043;Parasitoids;457.8881304;Bray-Curtis
+Elem;Morox;0.657142857142857;Caterpillars - subsampled;90.77472995;Bray-Curtis
+Elem;Niksek;0.667189952904239;Caterpillars - subsampled;154.0061049;Bray-Curtis
+Elem;Ohu1;0.662222222222222;Caterpillars - subsampled;201.258343;Bray-Curtis
+Elem;Ohu2;0.55;Caterpillars - subsampled;201.258343;Bray-Curtis
+Elem;Utai;0.641207815275311;Caterpillars - subsampled;303.431804;Bray-Curtis
+Elem;Wamangu;0.534591194968553;Caterpillars - subsampled;117.5739756;Bray-Curtis
+Elem;Wanang;0.632107023411371;Caterpillars - subsampled;147.5878248;Bray-Curtis
+Elem;Yapsiei;0.601851851851852;Caterpillars - subsampled;313.4830669;Bray-Curtis
+Morox;Elem;0.657142857142857;Caterpillars - subsampled;90.77472995;Bray-Curtis
+Morox;Niksek;0.702081051478642;Caterpillars - subsampled;189.606269;Bray-Curtis
+Morox;Ohu1;0.564668769716088;Caterpillars - subsampled;221.2815185;Bray-Curtis
+Morox;Ohu2;0.542328042328042;Caterpillars - subsampled;221.2815185;Bray-Curtis
+Morox;Utai;0.66150178784267;Caterpillars - subsampled;287.9158341;Bray-Curtis
+Morox;Wamangu;0.51394422310757;Caterpillars - subsampled;55.84802219;Bray-Curtis
+Morox;Wanang;0.76;Caterpillars - subsampled;180.1038462;Bray-Curtis
+Morox;Yapsiei;0.655367231638418;Caterpillars - subsampled;340.1027542;Bray-Curtis
+Niksek;Elem;0.667189952904239;Caterpillars - subsampled;154.0061049;Bray-Curtis
+Niksek;Morox;0.702081051478642;Caterpillars - subsampled;189.606269;Bray-Curtis
+Niksek;Ohu1;0.67223382045929;Caterpillars - subsampled;354.2902715;Bray-Curtis
+Niksek;Ohu2;0.709043250327654;Caterpillars - subsampled;354.2902715;Bray-Curtis
+Niksek;Utai;0.550827423167849;Caterpillars - subsampled;179.5646836;Bray-Curtis
+Niksek;Wamangu;0.605263157894737;Caterpillars - subsampled;160.0472464;Bray-Curtis
+Niksek;Wanang;0.728522336769759;Caterpillars - subsampled;299.5385578;Bray-Curtis
+Niksek;Yapsiei;0.538461538461538;Caterpillars - subsampled;159.5281216;Bray-Curtis
+Ohu1;Elem;0.662222222222222;Caterpillars - subsampled;201.258343;Bray-Curtis
+Ohu1;Morox;0.564668769716088;Caterpillars - subsampled;221.2815185;Bray-Curtis
+Ohu1;Niksek;0.67223382045929;Caterpillars - subsampled;354.2902715;Bray-Curtis
+Ohu1;Ohu2;0.368289637952559;Caterpillars - subsampled;0;Bray-Curtis
+Ohu1;Utai;0.70814479638009;Caterpillars - subsampled;498.6813381;Bray-Curtis
+Ohu1;Wamangu;0.651629072681704;Caterpillars - subsampled;276.383076;Bray-Curtis
+Ohu1;Wanang;0.8;Caterpillars - subsampled;55.5963261;Bray-Curtis
+Ohu1;Yapsiei;0.699867197875166;Caterpillars - subsampled;513.0151492;Bray-Curtis
+Ohu2;Elem;0.55;Caterpillars - subsampled;201.258343;Bray-Curtis
+Ohu2;Morox;0.542328042328042;Caterpillars - subsampled;221.2815185;Bray-Curtis
+Ohu2;Niksek;0.709043250327654;Caterpillars - subsampled;354.2902715;Bray-Curtis
+Ohu2;Ohu1;0.368289637952559;Caterpillars - subsampled;0;Bray-Curtis
+Ohu2;Utai;0.683599419448476;Caterpillars - subsampled;498.6813381;Bray-Curtis
+Ohu2;Wamangu;0.615257048092869;Caterpillars - subsampled;276.383076;Bray-Curtis
+Ohu2;Wanang;0.731764705882353;Caterpillars - subsampled;55.5963261;Bray-Curtis
+Ohu2;Yapsiei;0.695340501792115;Caterpillars - subsampled;513.0151492;Bray-Curtis
+Utai;Elem;0.641207815275311;Caterpillars - subsampled;303.431804;Bray-Curtis
+Utai;Morox;0.66150178784267;Caterpillars - subsampled;287.9158341;Bray-Curtis
+Utai;Niksek;0.550827423167849;Caterpillars - subsampled;179.5646836;Bray-Curtis
+Utai;Ohu1;0.70814479638009;Caterpillars - subsampled;498.6813381;Bray-Curtis
+Utai;Ohu2;0.683599419448476;Caterpillars - subsampled;498.6813381;Bray-Curtis
+Utai;Wamangu;0.553935860058309;Caterpillars - subsampled;233.8469256;Bray-Curtis
+Utai;Wanang;0.732283464566929;Caterpillars - subsampled;448.3681427;Bray-Curtis
+Utai;Yapsiei;0.594383775351014;Caterpillars - subsampled;147.8936648;Bray-Curtis
+Wamangu;Elem;0.534591194968553;Caterpillars - subsampled;117.5739756;Bray-Curtis
+Wamangu;Morox;0.51394422310757;Caterpillars - subsampled;55.84802219;Bray-Curtis
+Wamangu;Niksek;0.605263157894737;Caterpillars - subsampled;160.0472464;Bray-Curtis
+Wamangu;Ohu1;0.651629072681704;Caterpillars - subsampled;276.383076;Bray-Curtis
+Wamangu;Ohu2;0.615257048092869;Caterpillars - subsampled;276.383076;Bray-Curtis
+Wamangu;Utai;0.553935860058309;Caterpillars - subsampled;233.8469256;Bray-Curtis
+Wamangu;Wanang;0.672985781990521;Caterpillars - subsampled;233.0409132;Bray-Curtis
+Wamangu;Yapsiei;0.607207207207207;Caterpillars - subsampled;298.4922871;Bray-Curtis
+Wanang;Elem;0.632107023411371;Caterpillars - subsampled;147.5878248;Bray-Curtis
+Wanang;Morox;0.76;Caterpillars - subsampled;180.1038462;Bray-Curtis
+Wanang;Niksek;0.728522336769759;Caterpillars - subsampled;299.5385578;Bray-Curtis
+Wanang;Ohu1;0.8;Caterpillars - subsampled;55.5963261;Bray-Curtis
+Wanang;Ohu2;0.731764705882353;Caterpillars - subsampled;55.5963261;Bray-Curtis
+Wanang;Utai;0.732283464566929;Caterpillars - subsampled;448.3681427;Bray-Curtis
+Wanang;Wamangu;0.672985781990521;Caterpillars - subsampled;233.0409132;Bray-Curtis
+Wanang;Yapsiei;0.63395225464191;Caterpillars - subsampled;457.8881304;Bray-Curtis
+Yapsiei;Elem;0.601851851851852;Caterpillars - subsampled;313.4830669;Bray-Curtis
+Yapsiei;Morox;0.655367231638418;Caterpillars - subsampled;340.1027542;Bray-Curtis
+Yapsiei;Niksek;0.538461538461538;Caterpillars - subsampled;159.5281216;Bray-Curtis
+Yapsiei;Ohu1;0.699867197875166;Caterpillars - subsampled;513.0151492;Bray-Curtis
+Yapsiei;Ohu2;0.695340501792115;Caterpillars - subsampled;513.0151492;Bray-Curtis
+Yapsiei;Utai;0.594383775351014;Caterpillars - subsampled;147.8936648;Bray-Curtis
+Yapsiei;Wamangu;0.607207207207207;Caterpillars - subsampled;298.4922871;Bray-Curtis
+Yapsiei;Wanang;0.63395225464191;Caterpillars - subsampled;457.8881304;Bray-Curtis

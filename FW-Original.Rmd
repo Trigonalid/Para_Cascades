@@ -1,0 +1,2999 @@
+
+## 1. FW - FULL - PC 
+```{r include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(vegan)
+library(iNEXT)
+library(bipartiteD3)
+library(bipartite)
+library(betapart)
+library(usedist)
+library(readxl)
+library(writexl)
+library(openxlsx)
+```
+
+```{r include=FALSE}
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r include=FALSE}
+#Preparing contingency table - All cats
+Elem_full_PC<-testik %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Elem3_full_PC<-as.matrix(table(Elem_full_PC$cat_whole_name,Elem_full_PC$M_code_2)) # prepare the table
+
+Morox_full_PC<-testik %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Morox3_full_PC<-as.matrix(table(Morox_full_PC$cat_whole_name,Morox_full_PC$M_code_2)) # prepare the table
+
+Niksek_full_PC<-testik %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Niksek3_full_PC<-as.matrix(table(Niksek_full_PC$cat_whole_name,Niksek_full_PC$M_code_2)) # prepare the table
+
+Ohu1_full_PC<-testik %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu13_full_PC<-as.matrix(table(Ohu1_full_PC$cat_whole_name,Ohu1_full_PC$M_code_2)) # prepare the table
+
+Ohu2_full_PC<-testik %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu2_3_full_PC<-as.matrix(table(Ohu2_full_PC$cat_whole_name,Ohu2_full_PC$M_code_2)) # prepare the table
+
+Utai_full_PC<-testik %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Utai3_full_PC<-as.matrix(table(Utai_full_PC$cat_whole_name,Utai_full_PC$M_code_2)) # prepare the table
+
+Wamangu_full_PC<-testik %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wamangu3_full_PC<-as.matrix(table(Wamangu_full_PC$cat_whole_name,Wamangu_full_PC$M_code_2)) # prepare the table
+
+Wanang_full_PC<-testik %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wanang3_full_PC<-as.matrix(table(Wanang_full_PC$cat_whole_name,Wanang_full_PC$M_code_2)) # prepare the table
+
+Yapsiei_full_PC<-testik %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Yapsiei3_full_PC<-as.matrix(table(Yapsiei_full_PC$cat_whole_name,Yapsiei_full_PC$M_code_2)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_full_PC_results<-betalinkr_multi(webs2array(Elem3_full_PC,Morox3_full_PC,Niksek3_full_PC,Ohu13_full_PC,Ohu2_3_full_PC,Utai3_full_PC, Wamangu3_full_PC, Wanang3_full_PC, Yapsiei3_full_PC), partitioning="commondenom", partition.st=TRUE)
+FW_full_PC_results<-FW_full_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_ST_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST)
+FW_OS_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, OS)
+FW_WN_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, WN)
+FW_ST_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST)
+FW_ST.l_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST.l)
+FW_ST.h_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST.h)
+FW_ST.lh_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST.lh)
+
+```
+
+#FW - FULL - PC S - full dataset
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$S
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$S
+FW_S_full_PC<-xm
+mantel(FW_S_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_full_PC <- as.matrix(FW_S_full_PC)
+FW_S_full_PC_2 <- melt(FW_S_full_PC)
+FW_S_full_PC_2 <- rename(FW_S_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_full_PC_2<- merge(FW_S_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - FULL - PC OS - full dataset
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$OS
+FW_OS_full_PC<-xm
+mantel(FW_OS_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_full_PC <- as.matrix(FW_OS_full_PC)
+FW_OS_full_PC_2 <- melt(FW_OS_full_PC)
+FW_OS_full_PC_2 <- rename(FW_OS_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_full_PC_2<- merge(FW_OS_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - FULL - PC WN - full dataset
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$WN
+FW_WN_full_PC<-xm
+mantel(FW_WN_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_full_PC <- as.matrix(FW_WN_full_PC)
+FW_WN_full_PC_2 <- melt(FW_WN_full_PC)
+FW_WN_full_PC_2 <- rename(FW_WN_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_full_PC_2<- merge(FW_WN_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - FULL - PC ST- full dataset
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$ST
+FW_ST_full_PC<-xm
+mantel(FW_ST_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_full_PC <- as.matrix(FW_ST_full_PC)
+FW_ST_full_PC_2 <- melt(FW_ST_full_PC)
+FW_ST_full_PC_2 <- rename(FW_ST_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_full_PC_2<- merge(FW_ST_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - FULL - PC ST.l- full dataset
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$ST.l
+FW_ST.l_full_PC<-xm
+mantel(FW_ST.l_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_full_PC <- as.matrix(FW_ST.l_full_PC)
+FW_ST.l_full_PC_2 <- melt(FW_ST.l_full_PC)
+FW_ST.l_full_PC_2 <- rename(FW_ST.l_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_full_PC_2<- merge(FW_ST.l_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - FULL - PC ST-h - full dataset
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$ST.h
+FW_ST.h_full_PC<-xm
+mantel(FW_ST.h_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_full_PC <- as.matrix(FW_ST.h_full_PC)
+FW_ST.h_full_PC_2 <- melt(FW_ST.h_full_PC)
+FW_ST.h_full_PC_2 <- rename(FW_ST.h_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_full_PC_2<- merge(FW_ST.h_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - FULL - PC ST.lh - full dataset
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_full_PC_results$i,FW_full_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_PC_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_full_PC_results$ST.lh
+FW_ST.lh_full_PC<-xm
+mantel(FW_ST.lh_full_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_full_PC <- as.matrix(FW_ST.lh_full_PC)
+FW_ST.lh_full_PC_2 <- melt(FW_ST.lh_full_PC)
+FW_ST.lh_full_PC_2 <- rename(FW_ST.lh_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_full_PC_2<- merge(FW_ST.lh_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - FULL - PC - Mantel test
+```{r}
+# Perform Mantel tests
+mantel_FW_S_full_PC <- mantel(FW_S_full_PC, Distance, method = "spear")
+mantel_FW_OS_full_PC <- mantel(FW_OS_full_PC, Distance, method = "spear")
+mantel_FW_ST_full_PC <- mantel(FW_ST_full_PC, Distance, method = "spear")
+mantel_FW_WN_full_PC <- mantel(FW_WN_full_PC, Distance, method = "spear")
+mantel_FW_ST_l_full_PC <- mantel(FW_ST.l_full_PC, Distance, method = "spear")
+mantel_FW_ST_h_full_PC <- mantel(FW_ST.h_full_PC, Distance, method = "spear")
+mantel_FW_ST_lh_full_PC <- mantel(FW_ST.lh_full_PC, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_full_PC <- summarise(FW_S_full_PC_2, mean_S = mean(hodnota), sd_S = sd(hodnota))
+summary_FW_OS_full_PC <- summarise(FW_OS_full_PC_2, mean_OS = mean(hodnota), sd_OS = sd(hodnota))
+summary_FW_WN_full_PC <- summarise(FW_WN_full_PC_2, mean_WN = mean(hodnota), sd_WN = sd(hodnota))
+summary_FW_ST_full_PC <- summarise(FW_ST_full_PC_2, mean_ST = mean(hodnota), sd_ST = sd(hodnota))
+summary_FW_ST_l_full_PC <- summarise(FW_ST.l_full_PC_2, mean_ST_l = mean(hodnota), sd_ST_l = sd(hodnota))
+summary_FW_ST_h_full_PC <- summarise(FW_ST.h_full_PC_2, mean_ST_h = mean(hodnota), sd_ST_h = sd(hodnota))
+summary_FW_ST_lh_full_PC <- summarise(FW_ST.lh_full_PC_2, mean_ST_lh = mean(hodnota), sd_ST_lh = sd(hodnota))
+
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_full_PC", "FW_OS_full_PC", "FW_ST_full_PC", "FW_WN_full_PC", 
+           "FW_ST.l_full_PC", "FW_ST.h_full_PC", "FW_ST.lh_full_PC"),
+  Statistic = c(mantel_FW_S_full_PC$statistic, mantel_FW_OS_full_PC$statistic, mantel_FW_ST_full_PC$statistic, 
+                mantel_FW_WN_full_PC$statistic, mantel_FW_ST_l_full_PC$statistic, mantel_FW_ST_h_full_PC$statistic, 
+                mantel_FW_ST_lh_full_PC$statistic),
+  Significance = c(mantel_FW_S_full_PC$signif, mantel_FW_OS_full_PC$signif, mantel_FW_ST_full_PC$signif, 
+                   mantel_FW_WN_full_PC$signif, mantel_FW_ST_l_full_PC$signif, mantel_FW_ST_h_full_PC$signif, 
+                   mantel_FW_ST_lh_full_PC$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_full_PC", "FW_OS_full_PC", "FW_WN_full_PC", "FW_ST_full_PC", 
+            "FW_ST.l_full_PC", "FW_ST.h_full_PC", "FW_ST.lh_full_PC"),
+  Mean = c(summary_FW_S_full_PC$mean, summary_FW_OS_full_PC$mean, summary_FW_WN_full_PC$mean, 
+           summary_FW_ST_full_PC$mean, summary_FW_ST_l_full_PC$mean, summary_FW_ST_h_full_PC$mean, 
+           summary_FW_ST_lh_full_PC$mean),
+  SD = c(summary_FW_S_full_PC$sd, summary_FW_OS_full_PC$sd, summary_FW_WN_full_PC$sd, 
+         summary_FW_ST_full_PC$sd, summary_FW_ST_l_full_PC$sd, summary_FW_ST_h_full_PC$sd, 
+         summary_FW_ST_lh_full_PC$sd)
+)
+
+# Combine Mantel and summary results into one table
+combined_results_FULL_PAR_CAT <- merge(mantel_results, summary_results, by = "Group")
+
+
+```
+
+
+#FW - FULL - PC fig
+```{r include=FALSE}
+FW_full_PC_figure<- bind_rows (FW_OS_full_PC_2,FW_WN_full_PC_2, FW_ST_full_PC_2, FW_ST.l_full_PC_2 , FW_ST.h_full_PC_2, FW_ST.lh_full_PC_2 )
+
+FW_fig_full_PC<-ggplot(FW_full_PC_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_full_PC<-FW_fig_full_PC + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_full_PC
+ggsave("output/fig/FW_fig_full_PC.png",
+FW_fig_full_PC,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+
+
+FW_full_PC_figure_prezentace<- bind_rows (FW_OS_full_PC_2,FW_WN_full_PC_2, FW_ST_full_PC_2)
+
+FW_fig_full_PC_prezentace<-ggplot(FW_full_PC_figure_prezentace, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_full_PC_prezentace<-FW_fig_full_PC_prezentace + scale_color_manual(values=c("#757575","#FF9800", "#009688"))
+
+FW_fig_full_PC_prezentace
+ggsave("output/fig/FW_fig_full_PC_prezentace.png",
+FW_fig_full_PC_prezentace,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+
+
+
+```
+
+
+#FW - FULL - PC - Metaweb
+```{r}
+Metaweb_FW<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2<-as.matrix(table(Metaweb_FW$cat_whole_name,Metaweb_FW$M_code_2)) # prepare the table
+FW_full_PC_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2, Elem3_full_PC,Morox3_full_PC,Niksek3_full_PC,Ohu13_full_PC,Ohu2_3_full_PC,Utai3_full_PC, Wamangu3_full_PC, Wanang3_full_PC, Yapsiei3_full_PC), partitioning="commondenom", partition.st=TRUE)
+
+FW_full_PC_results_Meta<-FW_full_PC_results_Meta %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_Meta<- FW_full_PC_results_Meta %>% filter(i == "Metaweb_FW2") %>% add_column(type = "Metaweb")
+FW_Meta_others<- FW_full_PC_results_Meta %>% filter(i > "Metaweb_FW2") %>% add_column(type = "Others")
+FW_Meta_PC_full <- bind_rows(FW_Meta, FW_Meta_others)
+
+KW_S_Meta_full_PC <- kruskal.test(S~type, data= FW_Meta_PC_full); KW_S_Meta_full_PC 
+KW_WN_Meta_full_PC <- kruskal.test(WN~type, data= FW_Meta_PC_full); KW_WN_Meta_full_PC
+KW_OS_Meta_full_PC <-kruskal.test(OS~type, data= FW_Meta_PC_full); KW_OS_Meta_full_PC
+KW_ST_Meta_full_PC <- kruskal.test(ST~type, data= FW_Meta_PC_full); KW_ST_Meta_full_PC
+```
+
+
+#2. FW - FULL - CPL - full dataset
+```{r include=FALSE}
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+```
+
+```{r include=FALSE}
+#Preparing contingency table - All cats + plants
+Elem_full_CPL<-testik %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Elem3_full_CPL<-as.matrix(table(Elem_full_CPL$sample_code,Elem_full_CPL$cat_whole_name)) # prepare the table
+
+Morox_full_CPL<-testik %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Morox3_full_CPL<-as.matrix(table(Morox_full_CPL$sample_code,Morox_full_CPL$cat_whole_name)) # prepare the table
+
+Niksek_full_CPL<-testik %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Niksek3_full_CPL<-as.matrix(table(Niksek_full_CPL$sample_code,Niksek_full_CPL$cat_whole_name)) # prepare the table
+
+Ohu1_full_CPL<-testik %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu13_full_CPL<-as.matrix(table(Ohu1_full_CPL$sample_code,Ohu1_full_CPL$cat_whole_name)) # prepare the table
+
+Ohu2_full_CPL<-testik %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu2_3_full_CPL<-as.matrix(table(Ohu2_full_CPL$sample_code,Ohu2_full_CPL$cat_whole_name)) # prepare the table
+
+Utai_full_CPL<-testik %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Utai3_full_CPL<-as.matrix(table(Utai_full_CPL$sample_code,Utai_full_CPL$cat_whole_name)) # prepare the table
+
+Wamangu_full_CPL<-testik %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wamangu3_full_CPL<-as.matrix(table(Wamangu_full_CPL$sample_code,Wamangu_full_CPL$cat_whole_name)) # prepare the table
+
+Wanang_full_CPL<-testik %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wanang3_full_CPL<-as.matrix(table(Wanang_full_CPL$sample_code,Wanang_full_CPL$cat_whole_name)) # prepare the table
+
+Yapsiei_full_CPL<-testik %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Yapsiei3_full_CPL<-as.matrix(table(Yapsiei_full_CPL$sample_code,Yapsiei_full_CPL$cat_whole_name)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_full_CPL_results<-betalinkr_multi(webs2array(Elem3_full_CPL,Morox3_full_CPL,Niksek3_full_CPL,Ohu13_full_CPL,Ohu2_3_full_CPL,Utai3_full_CPL, Wamangu3_full_CPL, Wanang3_full_CPL, Yapsiei3_full_CPL), partitioning="commondenom", partition.st=TRUE)
+FW_full_CPL_results<-FW_full_CPL_results %>% add_column(dataset = "whole_CAT_PAR")
+#write.xlsx(FW_full_CPL_results, "C:/Users/Libra/ownCloud/000_/000_Papers/Beta/Feb_FW/FW_full_CPL_results_2.xlsx")
+
+
+FW_ST_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, ST)
+FW_OS_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, OS)
+FW_WN_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, WN)
+FW_ST_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, ST)
+FW_ST.l_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, ST.l)
+FW_ST.h_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, ST.h)
+FW_ST.lh_full_CPL<-pivot_to_numeric_matrix(FW_full_CPL_results, i, j, ST.lh)
+```
+
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$S
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$S
+FW_S_full_CPL<-xm
+mantel(FW_S_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_full_CPL <- as.matrix(FW_S_full_CPL)
+FW_S_full_CPL_2 <- melt(FW_S_full_CPL)
+FW_S_full_CPL_2 <- rename(FW_S_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_full_CPL_2<- merge(FW_S_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - FULL - CPL OS - full dataset
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$OS
+FW_OS_full_CPL<-xm
+mantel(FW_OS_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_full_CPL <- as.matrix(FW_OS_full_CPL)
+FW_OS_full_CPL_2 <- melt(FW_OS_full_CPL)
+FW_OS_full_CPL_2 <- rename(FW_OS_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_full_CPL_2<- merge(FW_OS_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - FULL - CPL WN - full dataset
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$WN
+FW_WN_full_CPL<-xm
+mantel(FW_WN_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_full_CPL <- as.matrix(FW_WN_full_CPL)
+FW_WN_full_CPL_2 <- melt(FW_WN_full_CPL)
+FW_WN_full_CPL_2 <- rename(FW_WN_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_full_CPL_2<- merge(FW_WN_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - FULL - CPL ST- full dataset
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$ST
+FW_ST_full_CPL<-xm
+mantel(FW_ST_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_full_CPL <- as.matrix(FW_ST_full_CPL)
+FW_ST_full_CPL_2 <- melt(FW_ST_full_CPL)
+FW_ST_full_CPL_2 <- rename(FW_ST_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_full_CPL_2<- merge(FW_ST_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - FULL - CPL ST.l- full dataset
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$ST.l
+FW_ST.l_full_CPL<-xm
+mantel(FW_ST.l_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_full_CPL <- as.matrix(FW_ST.l_full_CPL)
+FW_ST.l_full_CPL_2 <- melt(FW_ST.l_full_CPL)
+FW_ST.l_full_CPL_2 <- rename(FW_ST.l_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_full_CPL_2<- merge(FW_ST.l_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - FULL - CPL ST-h - full dataset
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$ST.h
+FW_ST.h_full_CPL<-xm
+mantel(FW_ST.h_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_full_CPL <- as.matrix(FW_ST.h_full_CPL)
+FW_ST.h_full_CPL_2 <- melt(FW_ST.h_full_CPL)
+FW_ST.h_full_CPL_2 <- rename(FW_ST.h_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_full_CPL_2<- merge(FW_ST.h_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - FULL - CPL ST.lh - full dataset
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_full_CPL_results$i,FW_full_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_full_CPL_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_full_CPL_results$ST.lh
+FW_ST.lh_full_CPL<-xm
+mantel(FW_ST.lh_full_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_full_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_full_CPL <- as.matrix(FW_ST.lh_full_CPL)
+FW_ST.lh_full_CPL_2 <- melt(FW_ST.lh_full_CPL)
+FW_ST.lh_full_CPL_2 <- rename(FW_ST.lh_full_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_full_CPL_2<- merge(FW_ST.lh_full_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - FULL - CPL - Mantel test
+```{r include=FALSE}
+# Perform Mantel tests
+
+mantel_FW_OS_full_CPL <- mantel(FW_OS_full_CPL, Distance, method = "spear")
+mantel_FW_ST_full_CPL <- mantel(FW_ST_full_CPL, Distance, method = "spear")
+mantel_FW_WN_full_CPL <- mantel(FW_WN_full_CPL, Distance, method = "spear")
+mantel_FW_ST_l_full_CPL <- mantel(FW_ST.l_full_CPL, Distance, method = "spear")
+mantel_FW_ST_h_full_CPL <- mantel(FW_ST.h_full_CPL, Distance, method = "spear")
+mantel_FW_ST_lh_full_CPL <- mantel(FW_ST.lh_full_CPL, Distance, method = "spear")
+
+# Summarize datasets
+
+summary_FW_OS_full_CPL <- summarise(FW_OS_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_WN_full_CPL <- summarise(FW_WN_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_full_CPL <- summarise(FW_ST_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_l_full_CPL <- summarise(FW_ST.l_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_h_full_CPL <- summarise(FW_ST.h_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_lh_full_CPL <- summarise(FW_ST.lh_full_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_OS_full_CPL", "FW_ST_full_CPL", "FW_WN_full_CPL", 
+            "FW_ST.l_full_CPL", "FW_ST.h_full_CPL", "FW_ST.lh_full_CPL"),
+  Statistic = c(mantel_FW_OS_full_CPL$statistic, mantel_FW_ST_full_CPL$statistic, 
+                mantel_FW_WN_full_CPL$statistic, mantel_FW_ST_l_full_CPL$statistic, mantel_FW_ST_h_full_CPL$statistic, 
+                mantel_FW_ST_lh_full_CPL$statistic),
+  Significance = c(mantel_FW_OS_full_CPL$signif, mantel_FW_ST_full_CPL$signif, 
+                   mantel_FW_WN_full_CPL$signif, mantel_FW_ST_l_full_CPL$signif, mantel_FW_ST_h_full_CPL$signif, 
+                   mantel_FW_ST_lh_full_CPL$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_OS_full_CPL", "FW_WN_full_CPL", "FW_ST_full_CPL", 
+            "FW_ST.l_full_CPL", "FW_ST.h_full_CPL", "FW_ST.lh_full_CPL"),
+  Mean = c(summary_FW_OS_full_CPL$mean, summary_FW_WN_full_CPL$mean, 
+           summary_FW_ST_full_CPL$mean, summary_FW_ST_l_full_CPL$mean, summary_FW_ST_h_full_CPL$mean, 
+           summary_FW_ST_lh_full_CPL$mean),
+  SD = c(summary_FW_OS_full_CPL$sd, summary_FW_WN_full_CPL$sd, 
+         summary_FW_ST_full_CPL$sd, summary_FW_ST_l_full_CPL$sd, summary_FW_ST_h_full_CPL$sd, 
+         summary_FW_ST_lh_full_CPL$sd)
+)
+
+# Combine Mantel and summary results into one table
+combined_results_full_CPL <-merge(mantel_results, summary_results, by = "Group")
+
+```
+
+
+#FW - FULL - CPL fig
+```{r echo=FALSE}
+FW_full_CPL_figure<- bind_rows (FW_OS_full_CPL_2,FW_WN_full_CPL_2, FW_ST_full_CPL_2, FW_ST.l_full_CPL_2 , FW_ST.h_full_CPL_2, FW_ST.lh_full_CPL_2 )
+
+FW_fig_full_CPL<-ggplot(FW_full_CPL_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_full_CPL<-FW_fig_full_CPL + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_full_CPL
+ggsave("output/fig/FW_fig_full_CPL.png",
+FW_fig_full_CPL,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+
+
+
+FW_full_CPL_figure_prezentace<- bind_rows (FW_OS_full_CPL_2,FW_WN_full_CPL_2, FW_ST_full_CPL_2)
+
+FW_fig_full_CPL_prezentace<-ggplot(FW_full_CPL_figure_prezentace, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_full_CPL_prezentace<-FW_fig_full_CPL_prezentace + scale_color_manual(values=c("#757575","#FF9800", "#009688"))
+
+FW_fig_full_CPL_prezentace
+ggsave("output/fig/FW_fig_full_CPL_prezentace.png",
+FW_fig_full_CPL_prezentace,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+
+fig_3_prezentace <-ggarrange(FW_fig_full_PC_prezentace, FW_fig_full_CPL_prezentace, common.legend = TRUE, legend = "bottom", nrow = 1)
+fig_3_prezentace
+ggsave("output/fig/fig_3_prezentacee.png",
+fig_3_prezentace,
+height = 12,
+width = 25,
+units = "cm")   # save the plot as .png
+
+```
+
+
+#FW - FULL - CPL - Metaweb
+```{r include=FALSE}
+Metaweb_FW<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_CPL<-as.matrix(table(Metaweb_FW$sample_code,Metaweb_FW$cat_whole_name)) # prepare the table
+FW_full_CPL_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_CPL, Elem3_full_CPL,Morox3_full_CPL,Niksek3_full_CPL,Ohu13_full_CPL,Ohu2_3_full_CPL,Utai3_full_CPL, Wamangu3_full_CPL, Wanang3_full_CPL, Yapsiei3_full_CPL), partitioning="commondenom", partition.st=TRUE)
+
+FW_full_CPL_results_Meta<-FW_full_CPL_results_Meta %>% add_column(dataset = "Full_CAT_PLANT")
+
+FW_Meta_CPL <- FW_full_CPL_results_Meta %>% filter(i == "Metaweb_FW2_CPL") %>% add_column(type = "Metaweb")
+FW_Meta_others_CPL <- FW_full_CPL_results_Meta %>% filter(i > "Metaweb_FW2_CPL") %>% add_column(type = "Others")
+FW_Meta_CPL_full <- bind_rows(FW_Meta_CPL, FW_Meta_others_CPL)
+
+KW_S_Meta_full_CPL <- kruskal.test(S~type, data= FW_Meta_CPL_full); KW_S_Meta_full_CPL 
+KW_WN_Meta_full_CPL <- kruskal.test(WN~type, data= FW_Meta_CPL_full); KW_WN_Meta_full_CPL
+KW_OS_Meta_full_CPL <-kruskal.test(OS~type, data= FW_Meta_CPL_full); KW_OS_Meta_full_CPL
+KW_ST_Meta_full_CPL <- kruskal.test(ST~type, data= FW_Meta_CPL_full); KW_ST_Meta_full_CPL
+```
+
+
+##5. FW - RED_CATS - PC
+
+```{r include=FALSE}
+# dataset with caterpillars with abundance 50+
+#full_PC -> red_PC
+# only full dataset - with singletons
+
+# Main dataset - reduced
+main_table <-  read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_red_PC <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0",fifty =="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r include=FALSE}
+#Preparing contingency table
+Elem_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Elem3_red_PC<-as.matrix(table(Elem_red_PC$cat_whole_name,Elem_red_PC$M_code_2)) # prepare the table
+
+Morox_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Morox3_red_PC<-as.matrix(table(Morox_red_PC$cat_whole_name,Morox_red_PC$M_code_2)) # prepare the table
+
+Niksek_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Niksek3_red_PC<-as.matrix(table(Niksek_red_PC$cat_whole_name,Niksek_red_PC$M_code_2)) # prepare the table
+
+Ohu1_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu13_red_PC<-as.matrix(table(Ohu1_red_PC$cat_whole_name,Ohu1_red_PC$M_code_2)) # prepare the table
+
+Ohu2_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu2_3_red_PC<-as.matrix(table(Ohu2_red_PC$cat_whole_name,Ohu2_red_PC$M_code_2)) # prepare the table
+
+Utai_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Utai3_red_PC<-as.matrix(table(Utai_red_PC$cat_whole_name,Utai_red_PC$M_code_2)) # prepare the table
+
+Wamangu_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wamangu3_red_PC<-as.matrix(table(Wamangu_red_PC$cat_whole_name,Wamangu_red_PC$M_code_2)) # prepare the table
+
+Wanang_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wanang3_red_PC<-as.matrix(table(Wanang_red_PC$cat_whole_name,Wanang_red_PC$M_code_2)) # prepare the table
+
+Yapsiei_red_PC<-testik_red_PC %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Yapsiei3_red_PC<-as.matrix(table(Yapsiei_red_PC$cat_whole_name,Yapsiei_red_PC$M_code_2)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_red_PC_results<-betalinkr_multi(webs2array(Elem3_red_PC,Morox3_red_PC,Niksek3_red_PC,Ohu13_red_PC,Ohu2_3_red_PC,Utai3_red_PC, Wamangu3_red_PC, Wanang3_red_PC, Yapsiei3_red_PC), partitioning="commondenom", partition.st=TRUE)
+FW_red_PC_results<-FW_red_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_ST_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, ST)
+FW_OS_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, OS)
+FW_WN_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, WN)
+FW_ST_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, ST)
+FW_ST.l_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, ST.l)
+FW_ST.h_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, ST.h)
+FW_ST.lh_red_PC<-pivot_to_numeric_matrix(FW_red_PC_results, i, j, ST.lh)
+
+```
+
+#FW - RED_PC - PC S - RED_CATS
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$S
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$S
+FW_S_red_PC<-xm
+mantel(FW_S_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_red_PC <- as.matrix(FW_S_red_PC)
+FW_S_red_PC_2 <- melt(FW_S_red_PC)
+FW_S_red_PC_2 <- rename(FW_S_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_red_PC_2<- merge(FW_S_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_PC - PC OSRED_CATS
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$OS
+FW_OS_red_PC<-xm
+mantel(FW_OS_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_red_PC <- as.matrix(FW_OS_red_PC)
+FW_OS_red_PC_2 <- melt(FW_OS_red_PC)
+FW_OS_red_PC_2 <- rename(FW_OS_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_red_PC_2<- merge(FW_OS_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - RED_PC - PC WN -RED_CATS
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$WN
+FW_WN_red_PC<-xm
+mantel(FW_WN_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_red_PC <- as.matrix(FW_WN_red_PC)
+FW_WN_red_PC_2 <- melt(FW_WN_red_PC)
+FW_WN_red_PC_2 <- rename(FW_WN_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_red_PC_2<- merge(FW_WN_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_PC - PC ST -RED_CATS
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$ST
+FW_ST_red_PC<-xm
+mantel(FW_ST_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_red_PC <- as.matrix(FW_ST_red_PC)
+FW_ST_red_PC_2 <- melt(FW_ST_red_PC)
+FW_ST_red_PC_2 <- rename(FW_ST_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_red_PC_2<- merge(FW_ST_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - RED_PC - PC ST.l- RED_CATS
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$ST.l
+FW_ST.l_red_PC<-xm
+mantel(FW_ST.l_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_red_PC <- as.matrix(FW_ST.l_red_PC)
+FW_ST.l_red_PC_2 <- melt(FW_ST.l_red_PC)
+FW_ST.l_red_PC_2 <- rename(FW_ST.l_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_red_PC_2<- merge(FW_ST.l_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_PC - PC ST-h - RED_CATS
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$ST.h
+FW_ST.h_red_PC<-xm
+mantel(FW_ST.h_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_red_PC <- as.matrix(FW_ST.h_red_PC)
+FW_ST.h_red_PC_2 <- melt(FW_ST.h_red_PC)
+FW_ST.h_red_PC_2 <- rename(FW_ST.h_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_red_PC_2<- merge(FW_ST.h_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - RED_PC - PC ST.lh - RED_CATS
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_red_PC_results$i,FW_red_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_red_PC_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_red_PC_results$ST.lh
+FW_ST.lh_red_PC<-xm
+mantel(FW_ST.lh_red_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_red_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_red_PC <- as.matrix(FW_ST.lh_red_PC)
+FW_ST.lh_red_PC_2 <- melt(FW_ST.lh_red_PC)
+FW_ST.lh_red_PC_2 <- rename(FW_ST.lh_red_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_red_PC_2<- merge(FW_ST.lh_red_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_PC - PC - Mantel test
+```{r}
+# Perform Mantel tests
+mantel_FW_S_red_PC <- mantel(FW_S_red_PC, Distance, method = "spear")
+mantel_FW_OS_red_PC <- mantel(FW_OS_red_PC, Distance, method = "spear")
+mantel_FW_ST_red_PC <- mantel(FW_ST_red_PC, Distance, method = "spear")
+mantel_FW_WN_red_PC <- mantel(FW_WN_red_PC, Distance, method = "spear")
+mantel_FW_ST_l_red_PC <- mantel(FW_ST.l_red_PC, Distance, method = "spear")
+mantel_FW_ST_h_red_PC <- mantel(FW_ST.h_red_PC, Distance, method = "spear")
+mantel_FW_ST_lh_red_PC <- mantel(FW_ST.lh_red_PC, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_red_PC <- summarise(FW_S_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_OS_red_PC <- summarise(FW_OS_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_WN_red_PC <- summarise(FW_WN_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_red_PC <- summarise(FW_ST_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_l_red_PC <- summarise(FW_ST.l_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_h_red_PC <- summarise(FW_ST.h_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_lh_red_PC <- summarise(FW_ST.lh_red_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_red_PC", "FW_OS_red_PC", "FW_ST_red_PC", "FW_WN_red_PC", 
+            "FW_ST.l_red_PC", "FW_ST.h_red_PC", "FW_ST.lh_red_PC"),
+  Statistic = c(mantel_FW_S_red_PC$statistic, mantel_FW_OS_red_PC$statistic, mantel_FW_ST_red_PC$statistic, 
+                mantel_FW_WN_red_PC$statistic, mantel_FW_ST_l_red_PC$statistic, mantel_FW_ST_h_red_PC$statistic, 
+                mantel_FW_ST_lh_red_PC$statistic),
+  Significance = c(mantel_FW_S_red_PC$signif, mantel_FW_OS_red_PC$signif, mantel_FW_ST_red_PC$signif, 
+                   mantel_FW_WN_red_PC$signif, mantel_FW_ST_l_red_PC$signif, mantel_FW_ST_h_red_PC$signif, 
+                   mantel_FW_ST_lh_red_PC$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_red_PC", "FW_OS_red_PC", "FW_WN_red_PC", "FW_ST_red_PC", 
+            "FW_ST.l_red_PC", "FW_ST.h_red_PC", "FW_ST.lh_red_PC"),
+  Mean = c(summary_FW_S_red_PC$mean, summary_FW_OS_red_PC$mean, summary_FW_WN_red_PC$mean, 
+           summary_FW_ST_red_PC$mean, summary_FW_ST_l_red_PC$mean, summary_FW_ST_h_red_PC$mean, 
+           summary_FW_ST_lh_red_PC$mean),
+  SD = c(summary_FW_S_red_PC$sd, summary_FW_OS_red_PC$sd, summary_FW_WN_red_PC$sd, 
+         summary_FW_ST_red_PC$sd, summary_FW_ST_l_red_PC$sd, summary_FW_ST_h_red_PC$sd, 
+         summary_FW_ST_lh_red_PC$sd)
+)
+
+# Combine Mantel and summary results into one table
+combined_results_reduced_cats_PC <-merge(mantel_results, summary_results, by = "Group")
+
+
+```
+
+
+#FW - RED_PC - PC fig
+```{r echo=FALSE}
+FW_red_PC_figure<- bind_rows (FW_OS_red_PC_2,FW_WN_red_PC_2, FW_ST_red_PC_2, FW_ST.l_red_PC_2 , FW_ST.h_red_PC_2, FW_ST.lh_red_PC_2 )
+
+FW_fig_red_PC<-ggplot(FW_red_PC_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_red_PC<-FW_fig_red_PC + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_red_PC
+ggsave("output/fig/FW_fig_red_PC.png",
+FW_fig_red_PC,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+
+#FW - RED_PC - PC - Metaweb
+```{r}
+Metaweb_FW_red_PC<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", fifty== "1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_red_PC<-as.matrix(table(Metaweb_FW_red_PC$cat_whole_name,Metaweb_FW_red_PC$M_code_2)) # prepare the table
+FW_red_PC_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_red_PC, Elem3_red_PC,Morox3_red_PC,Niksek3_red_PC,Ohu13_red_PC,Ohu2_3_red_PC,Utai3_red_PC, Wamangu3_red_PC, Wanang3_red_PC, Yapsiei3_red_PC), partitioning="commondenom", partition.st=TRUE)
+
+FW_red_PC_results_Meta<-FW_red_PC_results_Meta %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_Meta<- FW_red_PC_results_Meta %>% filter(i == "Metaweb_FW2_red_PC") %>% add_column(type = "Metaweb")
+FW_Meta_others<- FW_red_PC_results_Meta %>% filter(i > "Metaweb_FW2_red_PC") %>% add_column(type = "Others")
+FW_Meta_red_PC <- bind_rows(FW_Meta, FW_Meta_others)
+
+KW_S_Meta_red_PC <- kruskal.test(S~type, data= FW_Meta_red_PC); KW_S_Meta_red_PC 
+KW_WN_Meta_red_PC <- kruskal.test(WN~type, data= FW_Meta_red_PC); KW_WN_Meta_red_PC
+KW_OS_Meta_red_PC <-kruskal.test(OS~type, data= FW_Meta_red_PC); KW_OS_Meta_red_PC
+KW_ST_Meta_red_PC <- kruskal.test(ST~type, data= FW_Meta_red_PC); KW_ST_Meta_red_PC
+```
+
+
+##6. FW - RED_CATS - CPL
+
+```{r include=FALSE}
+# dataset with caterpillars with abundance 50+
+#full_PC -> plant_CPL
+
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_red_PC <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0",fifty =="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r include=FALSE}
+#Preparing contingency table - All cats + plants
+Elem_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Elem3_plant_CPL<-as.matrix(table(Elem_plant_CPL$sample_code,Elem_plant_CPL$cat_whole_name)) # prepare the table
+
+Morox_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Morox3_plant_CPL<-as.matrix(table(Morox_plant_CPL$sample_code,Morox_plant_CPL$cat_whole_name)) # prepare the table
+
+Niksek_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Niksek3_plant_CPL<-as.matrix(table(Niksek_plant_CPL$sample_code,Niksek_plant_CPL$cat_whole_name)) # prepare the table
+
+Ohu1_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu13_plant_CPL<-as.matrix(table(Ohu1_plant_CPL$sample_code,Ohu1_plant_CPL$cat_whole_name)) # prepare the table
+
+Ohu2_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu2_3_plant_CPL<-as.matrix(table(Ohu2_plant_CPL$sample_code,Ohu2_plant_CPL$cat_whole_name)) # prepare the table
+
+Utai_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Utai3_plant_CPL<-as.matrix(table(Utai_plant_CPL$sample_code,Utai_plant_CPL$cat_whole_name)) # prepare the table
+
+Wamangu_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wamangu3_plant_CPL<-as.matrix(table(Wamangu_plant_CPL$sample_code,Wamangu_plant_CPL$cat_whole_name)) # prepare the table
+
+Wanang_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wanang3_plant_CPL<-as.matrix(table(Wanang_plant_CPL$sample_code,Wanang_plant_CPL$cat_whole_name)) # prepare the table
+
+Yapsiei_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Yapsiei3_plant_CPL<-as.matrix(table(Yapsiei_plant_CPL$sample_code,Yapsiei_plant_CPL$cat_whole_name)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_plant_CPL_results<-betalinkr_multi(webs2array(Elem3_plant_CPL,Morox3_plant_CPL,Niksek3_plant_CPL,Ohu13_plant_CPL,Ohu2_3_plant_CPL,Utai3_plant_CPL, Wamangu3_plant_CPL, Wanang3_plant_CPL, Yapsiei3_plant_CPL), partitioning="commondenom", partition.st=TRUE)
+FW_plant_CPL_results<-FW_plant_CPL_results %>% add_column(dataset = "whole_CAT_PAR")
+#write.xlsx(FW_plant_CPL_results, "C:/Users/Libra/ownCloud/000_/000_Papers/Beta/Feb_FW/FW_plant_CPL_results_2.xlsx")
+
+
+FW_ST_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST)
+FW_OS_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, OS)
+FW_WN_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, WN)
+FW_ST_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST)
+FW_ST.l_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.l)
+FW_ST.h_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.h)
+FW_ST.lh_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.lh)
+```
+
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$S
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$S
+FW_S_plant_CPL<-xm
+mantel(FW_S_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_plant_CPL <- as.matrix(FW_S_plant_CPL)
+FW_S_plant_CPL_2 <- melt(FW_S_plant_CPL)
+FW_S_plant_CPL_2 <- rename(FW_S_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_plant_CPL_2<- merge(FW_S_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_CATS - CPL OS - reduced caterpillars
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$OS
+FW_OS_plant_CPL<-xm
+mantel(FW_OS_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_plant_CPL <- as.matrix(FW_OS_plant_CPL)
+FW_OS_plant_CPL_2 <- melt(FW_OS_plant_CPL)
+FW_OS_plant_CPL_2 <- rename(FW_OS_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_plant_CPL_2<- merge(FW_OS_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - RED_CATS - CPL WN - reduced caterpillars
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$WN
+FW_WN_plant_CPL<-xm
+mantel(FW_WN_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_plant_CPL <- as.matrix(FW_WN_plant_CPL)
+FW_WN_plant_CPL_2 <- melt(FW_WN_plant_CPL)
+FW_WN_plant_CPL_2 <- rename(FW_WN_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_plant_CPL_2<- merge(FW_WN_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_CATS - CPL ST- reduced caterpillars
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST
+FW_ST_plant_CPL<-xm
+mantel(FW_ST_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_plant_CPL <- as.matrix(FW_ST_plant_CPL)
+FW_ST_plant_CPL_2 <- melt(FW_ST_plant_CPL)
+FW_ST_plant_CPL_2 <- rename(FW_ST_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_plant_CPL_2<- merge(FW_ST_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - RED_CATS - CPL ST.l- reduced caterpillars
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.l
+FW_ST.l_plant_CPL<-xm
+mantel(FW_ST.l_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_plant_CPL <- as.matrix(FW_ST.l_plant_CPL)
+FW_ST.l_plant_CPL_2 <- melt(FW_ST.l_plant_CPL)
+FW_ST.l_plant_CPL_2 <- rename(FW_ST.l_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_plant_CPL_2<- merge(FW_ST.l_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_CATS - CPL ST-h - reduced caterpillars
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.h
+FW_ST.h_plant_CPL<-xm
+mantel(FW_ST.h_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_plant_CPL <- as.matrix(FW_ST.h_plant_CPL)
+FW_ST.h_plant_CPL_2 <- melt(FW_ST.h_plant_CPL)
+FW_ST.h_plant_CPL_2 <- rename(FW_ST.h_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_plant_CPL_2<- merge(FW_ST.h_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - RED_CATS - CPL ST.lh - reduced caterpillars
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.lh
+FW_ST.lh_plant_CPL<-xm
+mantel(FW_ST.lh_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_plant_CPL <- as.matrix(FW_ST.lh_plant_CPL)
+FW_ST.lh_plant_CPL_2 <- melt(FW_ST.lh_plant_CPL)
+FW_ST.lh_plant_CPL_2 <- rename(FW_ST.lh_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_plant_CPL_2<- merge(FW_ST.lh_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_CATS - CPL - Mantel test
+```{r}
+
+# Perform Mantel tests
+mantel_FW_S_plant_CPL <- mantel(FW_S_plant_CPL, Distance, method = "spear")
+mantel_FW_OS_plant_CPL <- mantel(FW_OS_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_plant_CPL <- mantel(FW_ST_plant_CPL, Distance, method = "spear")
+mantel_FW_WN_plant_CPL <- mantel(FW_WN_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_l_plant_CPL <- mantel(FW_ST.l_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_h_plant_CPL <- mantel(FW_ST.h_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_lh_plant_CPL <- mantel(FW_ST.lh_plant_CPL, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_plant_CPL <- summarise(FW_S_plant_CPL_2, mean_S = mean(hodnota), sd_S = sd(hodnota))
+summary_FW_OS_plant_CPL <- summarise(FW_OS_plant_CPL_2, mean_OS = mean(hodnota), sd_OS = sd(hodnota))
+summary_FW_WN_plant_CPL <- summarise(FW_WN_plant_CPL_2, mean_WN = mean(hodnota), sd_WN = sd(hodnota))
+summary_FW_ST_plant_CPL <- summarise(FW_ST_plant_CPL_2, mean_ST = mean(hodnota), sd_ST = sd(hodnota))
+summary_FW_ST_l_plant_CPL <- summarise(FW_ST.l_plant_CPL_2, mean_ST_l = mean(hodnota), sd_ST_l = sd(hodnota))
+summary_FW_ST_h_plant_CPL <- summarise(FW_ST.h_plant_CPL_2, mean_ST_h = mean(hodnota), sd_ST_h = sd(hodnota))
+summary_FW_ST_lh_plant_CPL <- summarise(FW_ST.lh_plant_CPL_2, mean_ST_lh = mean(hodnota), sd_ST_lh = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_plant_CPL", "FW_OS_plant_CPL", "FW_ST_plant_CPL", "FW_WN_plant_CPL", 
+            "FW_ST.l_plant_CPL", "FW_ST.h_plant_CPL", "FW_ST.lh_plant_CPL"),
+  Statistic = c(mantel_FW_S_plant_CPL$statistic, mantel_FW_OS_plant_CPL$statistic, mantel_FW_ST_plant_CPL$statistic, 
+                mantel_FW_WN_plant_CPL$statistic, mantel_FW_ST_l_plant_CPL$statistic, mantel_FW_ST_h_plant_CPL$statistic, 
+                mantel_FW_ST_lh_plant_CPL$statistic),
+  Significance = c(mantel_FW_S_plant_CPL$signif, mantel_FW_OS_plant_CPL$signif, mantel_FW_ST_plant_CPL$signif, 
+                   mantel_FW_WN_plant_CPL$signif, mantel_FW_ST_l_plant_CPL$signif, mantel_FW_ST_h_plant_CPL$signif, 
+                   mantel_FW_ST_lh_plant_CPL$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_plant_CPL", "FW_OS_plant_CPL", "FW_WN_plant_CPL", "FW_ST_plant_CPL", 
+            "FW_ST.l_plant_CPL", "FW_ST.h_plant_CPL", "FW_ST.lh_plant_CPL"),
+  Mean = c(summary_FW_S_plant_CPL$mean_S, summary_FW_OS_plant_CPL$mean_OS, summary_FW_WN_plant_CPL$mean_WN, 
+           summary_FW_ST_plant_CPL$mean_ST, summary_FW_ST_l_plant_CPL$mean_ST_l, summary_FW_ST_h_plant_CPL$mean_ST_h, 
+           summary_FW_ST_lh_plant_CPL$mean_ST_lh),
+  SD = c(summary_FW_S_plant_CPL$sd_S, summary_FW_OS_plant_CPL$sd_OS, summary_FW_WN_plant_CPL$sd_WN, 
+         summary_FW_ST_plant_CPL$sd_ST, summary_FW_ST_l_plant_CPL$sd_ST_l, summary_FW_ST_h_plant_CPL$sd_ST_h, 
+         summary_FW_ST_lh_plant_CPL$sd_ST_lh)
+)
+
+# Combine Mantel test results and summaries
+combined_results_reduced_cats_CPL <- merge(mantel_results, summary_results, by = "Group")
+
+
+
+
+```
+
+
+#FW - RED_CATS - CPL fig
+```{r echo=FALSE}
+FW_plant_CPL_figure<- bind_rows (FW_OS_plant_CPL_2,FW_WN_plant_CPL_2, FW_ST_plant_CPL_2, FW_ST.l_plant_CPL_2 , FW_ST.h_plant_CPL_2, FW_ST.lh_plant_CPL_2 )
+
+FW_fig_plant_CPL<-ggplot(FW_plant_CPL_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_plant_CPL<-FW_fig_plant_CPL + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_plant_CPL
+ggsave("output/fig/FW_fig_plant_CPL.png",
+FW_fig_plant_CPL,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+
+
+#FW - RED_CATS - CPL - Metaweb
+```{r}
+Metaweb_FW_plant_CPL<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", fifty=="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_CPL<-as.matrix(table(Metaweb_FW_plant_CPL$sample_code,Metaweb_FW_plant_CPL$cat_whole_name)) # prepare the table
+FW_plant_CPL_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_CPL, Elem3_plant_CPL,Morox3_plant_CPL,Niksek3_plant_CPL,Ohu13_plant_CPL,Ohu2_3_plant_CPL,Utai3_plant_CPL, Wamangu3_plant_CPL, Wanang3_plant_CPL, Yapsiei3_plant_CPL), partitioning="commondenom", partition.st=TRUE)
+
+FW_plant_CPL_results_Meta<-FW_plant_CPL_results_Meta %>% add_column(dataset = "Full_CAT_PLANT")
+
+FW_Meta_CPL<- FW_plant_CPL_results_Meta %>% filter(i == "Metaweb_FW2_CPL") %>% add_column(type = "Metaweb")
+FW_Meta_others_CPL<- FW_plant_CPL_results_Meta %>% filter(i > "Metaweb_FW2_CPL") %>% add_column(type = "Others")
+FW_Meta_CPL_full <- bind_rows(FW_Meta_CPL, FW_Meta_others_CPL)
+
+KW_S_Meta_plant_CPL <- kruskal.test(S~type, data= FW_Meta_CPL_full); KW_S_Meta_plant_CPL 
+KW_WN_Meta_plant_CPL <- kruskal.test(WN~type, data= FW_Meta_CPL_full); KW_WN_Meta_plant_CPL
+KW_OS_Meta_plant_CPL <-kruskal.test(OS~type, data= FW_Meta_CPL_full); KW_OS_Meta_plant_CPL
+KW_ST_Meta_plant_CPL <- kruskal.test(ST~type, data= FW_Meta_CPL_full); KW_ST_Meta_plant_CPL
+```
+
+
+##7. FW - RED_PLANTS - PC
+
+
+```{r include=FALSE}
+# dataset with plants occuring on 5+ sites
+#full_PC -> plant_PC
+# only full dataset - with singletons
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_plant_PC <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", Five =="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r}
+#Preparing contingency table - All cats
+Elem_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Elem3_plant_PC<-as.matrix(table(Elem_plant_PC$cat_whole_name,Elem_plant_PC$M_code_2)) # prepare the table
+
+Morox_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Morox3_plant_PC<-as.matrix(table(Morox_plant_PC$cat_whole_name,Morox_plant_PC$M_code_2)) # prepare the table
+
+Niksek_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Niksek3_plant_PC<-as.matrix(table(Niksek_plant_PC$cat_whole_name,Niksek_plant_PC$M_code_2)) # prepare the table
+
+Ohu1_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu13_plant_PC<-as.matrix(table(Ohu1_plant_PC$cat_whole_name,Ohu1_plant_PC$M_code_2)) # prepare the table
+
+Ohu2_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu2_3_plant_PC<-as.matrix(table(Ohu2_plant_PC$cat_whole_name,Ohu2_plant_PC$M_code_2)) # prepare the table
+
+Utai_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Utai3_plant_PC<-as.matrix(table(Utai_plant_PC$cat_whole_name,Utai_plant_PC$M_code_2)) # prepare the table
+
+Wamangu_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wamangu3_plant_PC<-as.matrix(table(Wamangu_plant_PC$cat_whole_name,Wamangu_plant_PC$M_code_2)) # prepare the table
+
+Wanang_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wanang3_plant_PC<-as.matrix(table(Wanang_plant_PC$cat_whole_name,Wanang_plant_PC$M_code_2)) # prepare the table
+
+Yapsiei_plant_PC<-testik_plant_PC %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Yapsiei3_plant_PC<-as.matrix(table(Yapsiei_plant_PC$cat_whole_name,Yapsiei_plant_PC$M_code_2)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_plant_PC_results<-betalinkr_multi(webs2array(Elem3_plant_PC,Morox3_plant_PC,Niksek3_plant_PC,Ohu13_plant_PC,Ohu2_3_plant_PC,Utai3_plant_PC, Wamangu3_plant_PC, Wanang3_plant_PC, Yapsiei3_plant_PC), partitioning="commondenom", partition.st=TRUE)
+FW_plant_PC_results<-FW_plant_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_ST_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, ST)
+FW_OS_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, OS)
+FW_WN_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, WN)
+FW_ST_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, ST)
+FW_ST.l_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, ST.l)
+FW_ST.h_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, ST.h)
+FW_ST.lh_plant_PC<-pivot_to_numeric_matrix(FW_plant_PC_results, i, j, ST.lh)
+
+```
+
+#FW -  RED_PLANTS - PC S
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$S
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$S
+FW_S_plant_PC<-xm
+mantel(FW_S_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_plant_PC <- as.matrix(FW_S_plant_PC)
+FW_S_plant_PC_2 <- melt(FW_S_plant_PC)
+FW_S_plant_PC_2 <- rename(FW_S_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_plant_PC_2<- merge(FW_S_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_PLANTS -  PC OS
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$OS
+FW_OS_plant_PC<-xm
+mantel(FW_OS_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_plant_PC <- as.matrix(FW_OS_plant_PC)
+FW_OS_plant_PC_2 <- melt(FW_OS_plant_PC)
+FW_OS_plant_PC_2 <- rename(FW_OS_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_plant_PC_2<- merge(FW_OS_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - RED_PLANTS - PC WN - full dataset
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$WN
+FW_WN_plant_PC<-xm
+mantel(FW_WN_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_plant_PC <- as.matrix(FW_WN_plant_PC)
+FW_WN_plant_PC_2 <- melt(FW_WN_plant_PC)
+FW_WN_plant_PC_2 <- rename(FW_WN_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_plant_PC_2<- merge(FW_WN_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_PLANTS - PC ST-
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$ST
+FW_ST_plant_PC<-xm
+mantel(FW_ST_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_plant_PC <- as.matrix(FW_ST_plant_PC)
+FW_ST_plant_PC_2 <- melt(FW_ST_plant_PC)
+FW_ST_plant_PC_2 <- rename(FW_ST_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_plant_PC_2<- merge(FW_ST_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - RED_PLANTS - PC ST.l-
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$ST.l
+FW_ST.l_plant_PC<-xm
+mantel(FW_ST.l_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_plant_PC <- as.matrix(FW_ST.l_plant_PC)
+FW_ST.l_plant_PC_2 <- melt(FW_ST.l_plant_PC)
+FW_ST.l_plant_PC_2 <- rename(FW_ST.l_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_plant_PC_2<- merge(FW_ST.l_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_PLANTS - PC ST-h -
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$ST.h
+FW_ST.h_plant_PC<-xm
+mantel(FW_ST.h_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_plant_PC <- as.matrix(FW_ST.h_plant_PC)
+FW_ST.h_plant_PC_2 <- melt(FW_ST.h_plant_PC)
+FW_ST.h_plant_PC_2 <- rename(FW_ST.h_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_plant_PC_2<- merge(FW_ST.h_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - RED_PLANTS - PC ST.lh -
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_plant_PC_results$i,FW_plant_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_PC_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_plant_PC_results$ST.lh
+FW_ST.lh_plant_PC<-xm
+mantel(FW_ST.lh_plant_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_plant_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_plant_PC <- as.matrix(FW_ST.lh_plant_PC)
+FW_ST.lh_plant_PC_2 <- melt(FW_ST.lh_plant_PC)
+FW_ST.lh_plant_PC_2 <- rename(FW_ST.lh_plant_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_plant_PC_2<- merge(FW_ST.lh_plant_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_PLANTS - PC - Mantel test
+```{r}
+
+# Perform Mantel tests
+mantel_FW_S_plant_PC <- mantel(FW_S_plant_PC, Distance, method = "spear")
+mantel_FW_OS_plant_PC <- mantel(FW_OS_plant_PC, Distance, method = "spear")
+mantel_FW_ST_plant_PC <- mantel(FW_ST_plant_PC, Distance, method = "spear")
+mantel_FW_WN_plant_PC <- mantel(FW_WN_plant_PC, Distance, method = "spear")
+mantel_FW_ST_l_plant_PC <- mantel(FW_ST.l_plant_PC, Distance, method = "spear")
+mantel_FW_ST_h_plant_PC <- mantel(FW_ST.h_plant_PC, Distance, method = "spear")
+mantel_FW_ST_lh_plant_PC <- mantel(FW_ST.lh_plant_PC, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_plant_PC <- summarise(FW_S_plant_PC_2, mean_S = mean(hodnota), sd_S = sd(hodnota))
+summary_FW_OS_plant_PC <- summarise(FW_OS_plant_PC_2, mean_OS = mean(hodnota), sd_OS = sd(hodnota))
+summary_FW_WN_plant_PC <- summarise(FW_WN_plant_PC_2, mean_WN = mean(hodnota), sd_WN = sd(hodnota))
+summary_FW_ST_plant_PC <- summarise(FW_ST_plant_PC_2, mean_ST = mean(hodnota), sd_ST = sd(hodnota))
+summary_FW_ST_l_plant_PC <- summarise(FW_ST.l_plant_PC_2, mean_ST_l = mean(hodnota), sd_ST_l = sd(hodnota))
+summary_FW_ST_h_plant_PC <- summarise(FW_ST.h_plant_PC_2, mean_ST_h = mean(hodnota), sd_ST_h = sd(hodnota))
+summary_FW_ST_lh_plant_PC <- summarise(FW_ST.lh_plant_PC_2, mean_ST_lh = mean(hodnota), sd_ST_lh = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_plant_PC", "FW_OS_plant_PC", "FW_ST_plant_PC", "FW_WN_plant_PC", 
+            "FW_ST.l_plant_PC", "FW_ST.h_plant_PC", "FW_ST.lh_plant_PC"),
+  Statistic = c(mantel_FW_S_plant_PC$statistic, mantel_FW_OS_plant_PC$statistic, mantel_FW_ST_plant_PC$statistic, 
+                mantel_FW_WN_plant_PC$statistic, mantel_FW_ST_l_plant_PC$statistic, mantel_FW_ST_h_plant_PC$statistic, 
+                mantel_FW_ST_lh_plant_PC$statistic),
+  Significance = c(mantel_FW_S_plant_PC$signif, mantel_FW_OS_plant_PC$signif, mantel_FW_ST_plant_PC$signif, 
+                   mantel_FW_WN_plant_PC$signif, mantel_FW_ST_l_plant_PC$signif, mantel_FW_ST_h_plant_PC$signif, 
+                   mantel_FW_ST_lh_plant_PC$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_plant_PC", "FW_OS_plant_PC", "FW_WN_plant_PC", "FW_ST_plant_PC", 
+            "FW_ST.l_plant_PC", "FW_ST.h_plant_PC", "FW_ST.lh_plant_PC"),
+  Mean = c(summary_FW_S_plant_PC$mean_S, summary_FW_OS_plant_PC$mean_OS, summary_FW_WN_plant_PC$mean_WN, 
+           summary_FW_ST_plant_PC$mean_ST, summary_FW_ST_l_plant_PC$mean_ST_l, summary_FW_ST_h_plant_PC$mean_ST_h, 
+           summary_FW_ST_lh_plant_PC$mean_ST_lh),
+  SD = c(summary_FW_S_plant_PC$sd_S, summary_FW_OS_plant_PC$sd_OS, summary_FW_WN_plant_PC$sd_WN, 
+         summary_FW_ST_plant_PC$sd_ST, summary_FW_ST_l_plant_PC$sd_ST_l, summary_FW_ST_h_plant_PC$sd_ST_h, 
+         summary_FW_ST_lh_plant_PC$sd_ST_lh)
+)
+
+# Combine Mantel test results and summaries
+combined_results_red_plants_PC <- merge(mantel_results, summary_results, by = "Group")
+
+
+
+```
+
+
+#FW - RED_PLANTS - PC fig
+```{r echo=FALSE}
+FW_plant_PC_figure<- bind_rows (FW_OS_plant_PC_2,FW_WN_plant_PC_2, FW_ST_plant_PC_2, FW_ST.l_plant_PC_2 , FW_ST.h_plant_PC_2, FW_ST.lh_plant_PC_2 )
+
+FW_fig_plant_PC<-ggplot(FW_plant_PC_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_plant_PC<-FW_fig_plant_PC + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_plant_PC
+ggsave("output/fig/FW_fig_plant_PC.png",
+FW_fig_plant_PC,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+
+
+#FW - RED_PLANTS - PC - Metaweb
+```{r}
+Metaweb_FW_plant_PC<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", Five=="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_PC_plant<-as.matrix(table(Metaweb_FW_plant_PC$cat_whole_name,Metaweb_FW_plant_PC$M_code_2)) # prepare the table
+FW_plant_PC_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_PC_plant, Elem3_plant_PC,Morox3_plant_PC,Niksek3_plant_PC,Ohu13_plant_PC,Ohu2_3_plant_PC,Utai3_plant_PC, Wamangu3_plant_PC, Wanang3_plant_PC, Yapsiei3_plant_PC), partitioning="commondenom", partition.st=TRUE)
+
+FW_plant_PC_results_Meta<-FW_plant_PC_results_Meta %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_Meta<- FW_plant_PC_results_Meta %>% filter(i == "Metaweb_FW2_PC_plant") %>% add_column(type = "Metaweb")
+FW_Meta_others<- FW_plant_PC_results_Meta %>% filter(i > "Metaweb_FW2_PC_plant") %>% add_column(type = "Others")
+FW_Meta_PC_full <- bind_rows(FW_Meta, FW_Meta_others)
+
+KW_S_Meta_plant_PC <- kruskal.test(S~type, data= FW_Meta_PC_full); KW_S_Meta_plant_PC 
+KW_WN_Meta_plant_PC <- kruskal.test(WN~type, data= FW_Meta_PC_full); KW_WN_Meta_plant_PC
+KW_OS_Meta_plant_PC <-kruskal.test(OS~type, data= FW_Meta_PC_full); KW_OS_Meta_plant_PC
+KW_ST_Meta_plant_PC <- kruskal.test(ST~type, data= FW_Meta_PC_full); KW_ST_Meta_plant_PC
+```
+
+
+
+
+
+
+##8. FW - RED_PLANTS - CPL
+
+```{r}
+# ddataset with plants occuring on 5+ sites
+#full_PC -> plant_CPL
+# only - with singletons
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_red_PC <-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0",Five =="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r}
+#Preparing contingency table - All cats + plants
+Elem_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Elem3_plant_CPL<-as.matrix(table(Elem_plant_CPL$sample_code,Elem_plant_CPL$cat_whole_name)) # prepare the table
+
+Morox_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Morox3_plant_CPL<-as.matrix(table(Morox_plant_CPL$sample_code,Morox_plant_CPL$cat_whole_name)) # prepare the table
+
+Niksek_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Niksek3_plant_CPL<-as.matrix(table(Niksek_plant_CPL$sample_code,Niksek_plant_CPL$cat_whole_name)) # prepare the table
+
+Ohu1_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu13_plant_CPL<-as.matrix(table(Ohu1_plant_CPL$sample_code,Ohu1_plant_CPL$cat_whole_name)) # prepare the table
+
+Ohu2_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu2_3_plant_CPL<-as.matrix(table(Ohu2_plant_CPL$sample_code,Ohu2_plant_CPL$cat_whole_name)) # prepare the table
+
+Utai_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Utai3_plant_CPL<-as.matrix(table(Utai_plant_CPL$sample_code,Utai_plant_CPL$cat_whole_name)) # prepare the table
+
+Wamangu_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wamangu3_plant_CPL<-as.matrix(table(Wamangu_plant_CPL$sample_code,Wamangu_plant_CPL$cat_whole_name)) # prepare the table
+
+Wanang_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wanang3_plant_CPL<-as.matrix(table(Wanang_plant_CPL$sample_code,Wanang_plant_CPL$cat_whole_name)) # prepare the table
+
+Yapsiei_plant_CPL<-testik_red_PC %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Yapsiei3_plant_CPL<-as.matrix(table(Yapsiei_plant_CPL$sample_code,Yapsiei_plant_CPL$cat_whole_name)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_plant_CPL_results<-betalinkr_multi(webs2array(Elem3_plant_CPL,Morox3_plant_CPL,Niksek3_plant_CPL,Ohu13_plant_CPL,Ohu2_3_plant_CPL,Utai3_plant_CPL, Wamangu3_plant_CPL, Wanang3_plant_CPL, Yapsiei3_plant_CPL), partitioning="commondenom", partition.st=TRUE)
+FW_plant_CPL_results<-FW_plant_CPL_results %>% add_column(dataset = "whole_CAT_PAR")
+#write.xlsx(FW_plant_CPL_results, "C:/Users/Libra/ownCloud/000_/000_Papers/Beta/Feb_FW/FW_plant_CPL_results_2.xlsx")
+
+
+FW_ST_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST)
+FW_OS_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, OS)
+FW_WN_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, WN)
+FW_ST_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST)
+FW_ST.l_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.l)
+FW_ST.h_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.h)
+FW_ST.lh_plant_CPL<-pivot_to_numeric_matrix(FW_plant_CPL_results, i, j, ST.lh)
+```
+
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$S
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$S
+FW_S_plant_CPL<-xm
+mantel(FW_S_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_plant_CPL <- as.matrix(FW_S_plant_CPL)
+FW_S_plant_CPL_2 <- melt(FW_S_plant_CPL)
+FW_S_plant_CPL_2 <- rename(FW_S_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_plant_CPL_2<- merge(FW_S_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_PLANTS - CPL OS - reduced plants
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$OS
+FW_OS_plant_CPL<-xm
+mantel(FW_OS_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_plant_CPL <- as.matrix(FW_OS_plant_CPL)
+FW_OS_plant_CPL_2 <- melt(FW_OS_plant_CPL)
+FW_OS_plant_CPL_2 <- rename(FW_OS_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_plant_CPL_2<- merge(FW_OS_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - RED_plant - CPL WN - reduced plants
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$WN
+FW_WN_plant_CPL<-xm
+mantel(FW_WN_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_plant_CPL <- as.matrix(FW_WN_plant_CPL)
+FW_WN_plant_CPL_2 <- melt(FW_WN_plant_CPL)
+FW_WN_plant_CPL_2 <- rename(FW_WN_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_plant_CPL_2<- merge(FW_WN_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_plant - CPL ST- reduced plants
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST
+FW_ST_plant_CPL<-xm
+mantel(FW_ST_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_plant_CPL <- as.matrix(FW_ST_plant_CPL)
+FW_ST_plant_CPL_2 <- melt(FW_ST_plant_CPL)
+FW_ST_plant_CPL_2 <- rename(FW_ST_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_plant_CPL_2<- merge(FW_ST_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - RED_plant - CPL ST.l- reduced plants
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.l
+FW_ST.l_plant_CPL<-xm
+mantel(FW_ST.l_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_plant_CPL <- as.matrix(FW_ST.l_plant_CPL)
+FW_ST.l_plant_CPL_2 <- melt(FW_ST.l_plant_CPL)
+FW_ST.l_plant_CPL_2 <- rename(FW_ST.l_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_plant_CPL_2<- merge(FW_ST.l_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - RED_plant - CPL ST-h - reduced plants
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.h
+FW_ST.h_plant_CPL<-xm
+mantel(FW_ST.h_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_plant_CPL <- as.matrix(FW_ST.h_plant_CPL)
+FW_ST.h_plant_CPL_2 <- melt(FW_ST.h_plant_CPL)
+FW_ST.h_plant_CPL_2 <- rename(FW_ST.h_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_plant_CPL_2<- merge(FW_ST.h_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - RED_plant - CPL ST.lh - reduced plants
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_plant_CPL_results$i,FW_plant_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_plant_CPL_results$ST.lh
+FW_ST.lh_plant_CPL<-xm
+mantel(FW_ST.lh_plant_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_plant_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_plant_CPL <- as.matrix(FW_ST.lh_plant_CPL)
+FW_ST.lh_plant_CPL_2 <- melt(FW_ST.lh_plant_CPL)
+FW_ST.lh_plant_CPL_2 <- rename(FW_ST.lh_plant_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_plant_CPL_2<- merge(FW_ST.lh_plant_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - RED_plant - CPL - Mantel test
+```{r}
+
+
+# Perform Mantel tests
+mantel_FW_S_plant_CPL <- mantel(FW_S_plant_CPL, Distance, method = "spear")
+mantel_FW_OS_plant_CPL <- mantel(FW_OS_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_plant_CPL <- mantel(FW_ST_plant_CPL, Distance, method = "spear")
+mantel_FW_WN_plant_CPL <- mantel(FW_WN_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_l_plant_CPL <- mantel(FW_ST.l_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_h_plant_CPL <- mantel(FW_ST.h_plant_CPL, Distance, method = "spear")
+mantel_FW_ST_lh_plant_CPL <- mantel(FW_ST.lh_plant_CPL, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_plant_CPL <- summarise(FW_S_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_OS_plant_CPL <- summarise(FW_OS_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_WN_plant_CPL <- summarise(FW_WN_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_plant_CPL <- summarise(FW_ST_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_l_plant_CPL <- summarise(FW_ST.l_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_h_plant_CPL <- summarise(FW_ST.h_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_lh_plant_CPL <- summarise(FW_ST.lh_plant_CPL_2, mean = mean(hodnota), sd = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_plant_CPL", "FW_OS_plant_CPL", "FW_ST_plant_CPL", "FW_WN_plant_CPL", 
+            "FW_ST.l_plant_CPL", "FW_ST.h_plant_CPL", "FW_ST.lh_plant_CPL"),
+  Statistic = c(mantel_FW_S_plant_CPL$statistic, mantel_FW_OS_plant_CPL$statistic, mantel_FW_ST_plant_CPL$statistic, 
+                mantel_FW_WN_plant_CPL$statistic, mantel_FW_ST_l_plant_CPL$statistic, mantel_FW_ST_h_plant_CPL$statistic, 
+                mantel_FW_ST_lh_plant_CPL$statistic),
+  Significance = c(mantel_FW_S_plant_CPL$signif, mantel_FW_OS_plant_CPL$signif, mantel_FW_ST_plant_CPL$signif, 
+                   mantel_FW_WN_plant_CPL$signif, mantel_FW_ST_l_plant_CPL$signif, mantel_FW_ST_h_plant_CPL$signif, 
+                   mantel_FW_ST_lh_plant_CPL$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_plant_CPL", "FW_OS_plant_CPL", "FW_WN_plant_CPL", "FW_ST_plant_CPL", 
+            "FW_ST.l_plant_CPL", "FW_ST.h_plant_CPL", "FW_ST.lh_plant_CPL"),
+  Mean = c(summary_FW_S_plant_CPL$mean, summary_FW_OS_plant_CPL$mean, summary_FW_WN_plant_CPL$mean, 
+           summary_FW_ST_plant_CPL$mean, summary_FW_ST_l_plant_CPL$mean, summary_FW_ST_h_plant_CPL$mean, 
+           summary_FW_ST_lh_plant_CPL$mean),
+  SD = c(summary_FW_S_plant_CPL$sd, summary_FW_OS_plant_CPL$sd, summary_FW_WN_plant_CPL$sd, 
+         summary_FW_ST_plant_CPL$sd, summary_FW_ST_l_plant_CPL$sd, summary_FW_ST_h_plant_CPL$sd, 
+         summary_FW_ST_lh_plant_CPL$sd)
+)
+
+# Combine Mantel and summary results into one table
+combined_results_reduced_plants_CPlant <- merge(mantel_results, summary_results, by = "Group")
+
+
+
+```
+
+
+#FW - RED_CATS - CPL fig
+```{r echo=FALSE}
+FW_plant_CPL_figure<- bind_rows (FW_OS_plant_CPL_2,FW_WN_plant_CPL_2, FW_ST_plant_CPL_2, FW_ST.l_plant_CPL_2 , FW_ST.h_plant_CPL_2, FW_ST.lh_plant_CPL_2 )
+
+FW_fig_plant_CPL<-ggplot(FW_plant_CPL_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_plant_CPL<-FW_fig_plant_CPL + scale_color_manual(values=c("#757575","#FF9800","#009688", "#CDDC29", "#FF5252","#2F51B5"))
+
+FW_fig_plant_CPL
+ggsave("output/fig/FW_fig_plant_CPL.png",
+FW_fig_plant_CPL,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+# Summary of FW
+```{r}
+
+#Full dataset
+combined_results_FULL_PAR_CAT 
+combined_results_full_CPL 
+# caterpillars reduced
+combined_results_reduced_cats_PC 
+combined_results_reduced_cats_CPL 
+
+# plants reduced
+combined_results_red_plants_PC 
+combined_results_reduced_plants_CPlant
+
+
+
+
+
+# Perform merges for each dataset
+# Combine all results into one data frame
+all_combined_results <- rbind(
+  combined_results_FULL_PAR_CAT,
+  combined_results_full_CPL,
+  combined_results_reduced_cats_PC,
+  combined_results_reduced_cats_CPL,
+  combined_results_red_plants_PC,
+  combined_results_reduced_plants_CPlant
+)
+
+# Round the numeric columns to 3 decimal places
+data_rounded <- all_combined_results %>%
+  mutate(
+    Statistic = round(Statistic, 3),
+    Significance = round(Significance, 3),
+    Mean = round(Mean, 3),
+    SD = round(SD, 3)
+  )
+
+# Print the rounded data frame
+print(data_rounded)
+
+```
+
+#FW - RED_CATS - CPL - Metaweb
+```{r}
+Metaweb_FW_plant_CPL<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", fifty=="1") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_CPL<-as.matrix(table(Metaweb_FW_plant_CPL$sample_code,Metaweb_FW_plant_CPL$cat_whole_name)) # prepare the table
+FW_plant_CPL_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_CPL, Elem3_plant_CPL,Morox3_plant_CPL,Niksek3_plant_CPL,Ohu13_plant_CPL,Ohu2_3_plant_CPL,Utai3_plant_CPL, Wamangu3_plant_CPL, Wanang3_plant_CPL, Yapsiei3_plant_CPL), partitioning="commondenom", partition.st=TRUE)
+
+FW_plant_CPL_results_Meta<-FW_plant_CPL_results_Meta %>% add_column(dataset = "Full_CAT_PLANT")
+
+FW_Meta_CPL<- FW_plant_CPL_results_Meta %>% filter(i == "Metaweb_FW2_CPL") %>% add_column(type = "Metaweb")
+FW_Meta_others_CPL<- FW_plant_CPL_results_Meta %>% filter(i > "Metaweb_FW2_CPL") %>% add_column(type = "Others")
+FW_Meta_CPL_full <- bind_rows(FW_Meta_CPL, FW_Meta_others_CPL)
+
+KW_S_Meta_plant_CPL <- kruskal.test(S~type, data= FW_Meta_CPL_full); KW_S_Meta_plant_CPL 
+KW_WN_Meta_plant_CPL <- kruskal.test(WN~type, data= FW_Meta_CPL_full); KW_WN_Meta_plant_CPL
+KW_OS_Meta_plant_CPL <-kruskal.test(OS~type, data= FW_Meta_CPL_full); KW_OS_Meta_plant_CPL
+KW_ST_Meta_plant_CPL <- kruskal.test(ST~type, data= FW_Meta_CPL_full); KW_ST_Meta_plant_CPL
+```
+
+# Food web indices for Donald
+```{r}
+install.packages("ReporteRs")
+library(ReporteRs)
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+
+#Prepare for parasitoid caterpillar
+testik<-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code) 
+write.xlsx(testik,"~/ownCloud/000_/000_R_stat/ParaDiv_2023/output/testik.xlsx")
+test_2 <- frame2webs(testik, varnames = c("cat_whole_name", "M_code_2", "loc2"), type.out = 
+"list", emptylist = TRUE)
+
+#networklevel(test_2$Elem)
+
+results_par_cat <- lapply(test_2, function(web) {
+  networklevel(web, index = "ALLBUTDD")
+})
+
+results_par_cat <- as.data.frame(results_par_cat)
+results_par_cat <- t(results_par_cat)
+```
+
+
+
+
+```{r}
+calculate_host_plants <- function(data) {
+  # Initialize an empty list to store the results
+  locality_host_plants <- list()
+  
+  # Get unique localities
+  localities <- unique(data$loc2)
+  
+  # Loop through each locality
+  for (locality in localities) {
+    # Subset the data for the current locality
+    locality_data <- subset(data, loc2 == locality)
+    
+    # Count unique host plants for the current locality
+    num_host_plants <- length(unique(locality_data$sample_code))
+    
+    # Store the result
+    locality_host_plants[[locality]] <- num_host_plants
+  }
+  
+  # Return the result
+  return(locality_host_plants)
+}
+
+# Calculate number of host plants for each locality
+host_plants_per_locality <- calculate_host_plants(testik)
+
+# Print the results
+for (locality in names(host_plants_per_locality)) {
+  cat("Locality:", locality, "- Number of Host Plants:", host_plants_per_locality[[locality]], "\n")
+}
+```
+
+
+##3. FW - Singletons out - PC  - 
+
+```{r include=FALSE}
+#full_PC replaced by SINGL_PC
+
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_singl<-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", singlepara_1 == "0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r include=FALSE}
+#Preparing contingency table - All cats
+Elem_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Elem3_SINGL_PC<-as.matrix(table(Elem_SINGL_PC$cat_whole_name,Elem_SINGL_PC$M_code_2)) # prepare the table
+
+Morox_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Morox3_SINGL_PC<-as.matrix(table(Morox_SINGL_PC$cat_whole_name,Morox_SINGL_PC$M_code_2)) # prepare the table
+
+Niksek_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Niksek3_SINGL_PC<-as.matrix(table(Niksek_SINGL_PC$cat_whole_name,Niksek_SINGL_PC$M_code_2)) # prepare the table
+
+Ohu1_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu13_SINGL_PC<-as.matrix(table(Ohu1_SINGL_PC$cat_whole_name,Ohu1_SINGL_PC$M_code_2)) # prepare the table
+
+Ohu2_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Ohu2_3_SINGL_PC<-as.matrix(table(Ohu2_SINGL_PC$cat_whole_name,Ohu2_SINGL_PC$M_code_2)) # prepare the table
+
+Utai_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Utai3_SINGL_PC<-as.matrix(table(Utai_SINGL_PC$cat_whole_name,Utai_SINGL_PC$M_code_2)) # prepare the table
+
+Wamangu_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wamangu3_SINGL_PC<-as.matrix(table(Wamangu_SINGL_PC$cat_whole_name,Wamangu_SINGL_PC$M_code_2)) # prepare the table
+
+Wanang_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Wanang3_SINGL_PC<-as.matrix(table(Wanang_SINGL_PC$cat_whole_name,Wanang_SINGL_PC$M_code_2)) # prepare the table
+
+Yapsiei_SINGL_PC<-testik_singl %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(cat_whole_name, M_code_2)
+Yapsiei3_SINGL_PC<-as.matrix(table(Yapsiei_SINGL_PC$cat_whole_name,Yapsiei_SINGL_PC$M_code_2)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_SINGL_PC_results<-betalinkr_multi(webs2array(Elem3_SINGL_PC,Morox3_SINGL_PC,Niksek3_SINGL_PC,Ohu13_SINGL_PC,Ohu2_3_SINGL_PC,Utai3_SINGL_PC, Wamangu3_SINGL_PC, Wanang3_SINGL_PC, Yapsiei3_SINGL_PC), partitioning="commondenom", partition.st=TRUE)
+FW_SINGL_PC_results<-FW_SINGL_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_ST_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, ST)
+FW_OS_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, OS)
+FW_WN_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, WN)
+FW_ST_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, ST)
+FW_ST.l_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, ST.l)
+FW_ST.h_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, ST.h)
+FW_ST.lh_SINGL_PC<-pivot_to_numeric_matrix(FW_SINGL_PC_results, i, j, ST.lh)
+
+```
+
+#FW - SINGL - PC S - Singletons out
+```{r include=FALSE}
+# S
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$S
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$S
+FW_S_SINGL_PC<-xm
+mantel(FW_S_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_S_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_S_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_S_SINGL_PC <- as.matrix(FW_S_SINGL_PC)
+FW_S_SINGL_PC_2 <- melt(FW_S_SINGL_PC)
+FW_S_SINGL_PC_2 <- rename(FW_S_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "S")
+FW_S_SINGL_PC_2<- merge(FW_S_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - SINGL - PC OS - Singletons out
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$OS
+FW_OS_SINGL_PC<-xm
+mantel(FW_OS_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_SINGL_PC <- as.matrix(FW_OS_SINGL_PC)
+FW_OS_SINGL_PC_2 <- melt(FW_OS_SINGL_PC)
+FW_OS_SINGL_PC_2 <- rename(FW_OS_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_SINGL_PC_2<- merge(FW_OS_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - SINGL - PC WN - Singletons out
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$WN
+FW_WN_SINGL_PC<-xm
+mantel(FW_WN_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_SINGL_PC <- as.matrix(FW_WN_SINGL_PC)
+FW_WN_SINGL_PC_2 <- melt(FW_WN_SINGL_PC)
+FW_WN_SINGL_PC_2 <- rename(FW_WN_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_SINGL_PC_2<- merge(FW_WN_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - SINGL - PC ST- Singletons out
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST
+FW_ST_SINGL_PC<-xm
+mantel(FW_ST_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_SINGL_PC <- as.matrix(FW_ST_SINGL_PC)
+FW_ST_SINGL_PC_2 <- melt(FW_ST_SINGL_PC)
+FW_ST_SINGL_PC_2 <- rename(FW_ST_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_SINGL_PC_2<- merge(FW_ST_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - SINGL - PC ST.l- Singletons out
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.l
+FW_ST.l_SINGL_PC<-xm
+mantel(FW_ST.l_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_SINGL_PC <- as.matrix(FW_ST.l_SINGL_PC)
+FW_ST.l_SINGL_PC_2 <- melt(FW_ST.l_SINGL_PC)
+FW_ST.l_SINGL_PC_2 <- rename(FW_ST.l_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_SINGL_PC_2<- merge(FW_ST.l_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - SINGL - PC ST-h - Singletons out
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.h
+FW_ST.h_SINGL_PC<-xm
+mantel(FW_ST.h_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_SINGL_PC <- as.matrix(FW_ST.h_SINGL_PC)
+FW_ST.h_SINGL_PC_2 <- melt(FW_ST.h_SINGL_PC)
+FW_ST.h_SINGL_PC_2 <- rename(FW_ST.h_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_SINGL_PC_2<- merge(FW_ST.h_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - SINGL - PC ST.lh - Singletons out
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_SINGL_PC_results$i,FW_SINGL_PC_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_PC_results$ST.lh
+FW_ST.lh_SINGL_PC<-xm
+mantel(FW_ST.lh_SINGL_PC, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_SINGL_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_SINGL_PC <- as.matrix(FW_ST.lh_SINGL_PC)
+FW_ST.lh_SINGL_PC_2 <- melt(FW_ST.lh_SINGL_PC)
+FW_ST.lh_SINGL_PC_2 <- rename(FW_ST.lh_SINGL_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_SINGL_PC_2<- merge(FW_ST.lh_SINGL_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - SINGL - PC - Mantel test
+```{r}
+# Perform Mantel tests
+mantel_FW_S_SINGL_PC <- mantel(FW_S_SINGL_PC, Distance, method = "spear")
+mantel_FW_OS_SINGL_PC <- mantel(FW_OS_SINGL_PC, Distance, method = "spear")
+mantel_FW_ST_SINGL_PC <- mantel(FW_ST_SINGL_PC, Distance, method = "spear")
+mantel_FW_WN_SINGL_PC <- mantel(FW_WN_SINGL_PC, Distance, method = "spear")
+mantel_FW_ST_l_SINGL_PC <- mantel(FW_ST.l_SINGL_PC, Distance, method = "spear")
+mantel_FW_ST_h_SINGL_PC <- mantel(FW_ST.h_SINGL_PC, Distance, method = "spear")
+mantel_FW_ST_lh_SINGL_PC <- mantel(FW_ST.lh_SINGL_PC, Distance, method = "spear")
+
+# Summarize datasets
+summary_FW_S_SINGL_PC <- summarise(FW_S_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_OS_SINGL_PC <- summarise(FW_OS_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_WN_SINGL_PC <- summarise(FW_WN_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_SINGL_PC <- summarise(FW_ST_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_l_SINGL_PC <- summarise(FW_ST.l_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_h_SINGL_PC <- summarise(FW_ST.h_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+summary_FW_ST_lh_SINGL_PC <- summarise(FW_ST.lh_SINGL_PC_2, mean = mean(hodnota), sd = sd(hodnota))
+
+# Combine Mantel test results
+mantel_results <- data.frame(
+  Group = c("FW_S_SINGL_PC", "FW_OS_SINGL_PC", "FW_ST_SINGL_PC", "FW_WN_SINGL_PC", 
+            "FW_ST.l_SINGL_PC", "FW_ST.h_SINGL_PC", "FW_ST.lh_SINGL_PC"),
+  Statistic = c(mantel_FW_S_SINGL_PC$statistic, mantel_FW_OS_SINGL_PC$statistic, mantel_FW_ST_SINGL_PC$statistic, 
+                mantel_FW_WN_SINGL_PC$statistic, mantel_FW_ST_l_SINGL_PC$statistic, mantel_FW_ST_h_SINGL_PC$statistic, 
+                mantel_FW_ST_lh_SINGL_PC$statistic),
+  Significance = c(mantel_FW_S_SINGL_PC$signif, mantel_FW_OS_SINGL_PC$signif, mantel_FW_ST_SINGL_PC$signif, 
+                   mantel_FW_WN_SINGL_PC$signif, mantel_FW_ST_l_SINGL_PC$signif, mantel_FW_ST_h_SINGL_PC$signif, 
+                   mantel_FW_ST_lh_SINGL_PC$signif)
+)
+
+# Combine summaries
+summary_results <- data.frame(
+  Group = c("FW_S_SINGL_PC", "FW_OS_SINGL_PC", "FW_WN_SINGL_PC", "FW_ST_SINGL_PC", 
+            "FW_ST.l_SINGL_PC", "FW_ST.h_SINGL_PC", "FW_ST.lh_SINGL_PC"),
+  Mean = c(summary_FW_S_SINGL_PC$mean, summary_FW_OS_SINGL_PC$mean, summary_FW_WN_SINGL_PC$mean, 
+           summary_FW_ST_SINGL_PC$mean, summary_FW_ST_l_SINGL_PC$mean, summary_FW_ST_h_SINGL_PC$mean, 
+           summary_FW_ST_lh_SINGL_PC$mean),
+  SD = c(summary_FW_S_SINGL_PC$sd, summary_FW_OS_SINGL_PC$sd, summary_FW_WN_SINGL_PC$sd, 
+         summary_FW_ST_SINGL_PC$sd, summary_FW_ST_l_SINGL_PC$sd, summary_FW_ST_h_SINGL_PC$sd, 
+         summary_FW_ST_lh_SINGL_PC$sd)
+)
+
+# Combine Mantel and summary results into one table
+combined_results <- list(Mantel_Results = mantel_results, Summary_Results = summary_results)
+
+
+# Original
+mantel(FW_S_SINGL_PC, Distance , method="spear")
+mantel(FW_OS_SINGL_PC, Distance , method="spear")
+mantel(FW_ST_SINGL_PC, Distance , method="spear")
+mantel(FW_WN_SINGL_PC, Distance , method="spear")
+mantel(FW_ST.l_SINGL_PC, Distance , method="spear")
+mantel(FW_ST.h_SINGL_PC, Distance , method="spear")
+mantel(FW_ST.lh_SINGL_PC, Distance , method="spear")
+
+
+summarise(FW_S_SINGL_PC_2,mean_S = mean(hodnota),sd_S = sd(hodnota))
+summarise(FW_OS_SINGL_PC_2,mean_OS = mean(hodnota),sd_OS = sd(hodnota))
+summarise(FW_WN_SINGL_PC_2,mean_WN = mean(hodnota),sd_WN = sd(hodnota))
+summarise(FW_ST_SINGL_PC_2,mean_ST = mean(hodnota),sd_ST = sd(hodnota))
+summarise(FW_ST.l_SINGL_PC_2, mean_ST.l = mean(hodnota),sd_ST.l = sd(hodnota))
+summarise(FW_ST.h_SINGL_PC_2,mean_ST.h = mean(hodnota),sd_ST.h = sd(hodnota))
+summarise(FW_ST.lh_SINGL_PC_2,mean_ST.lh = mean(hodnota),sd_ST.lh = sd(hodnota))
+
+```
+
+
+#FW - SINGL - PC fig
+```{r echo=FALSE}
+FW_SINGL_PC_figure<- bind_rows (FW_OS_SINGL_PC_2,FW_WN_SINGL_PC_2, FW_ST_SINGL_PC_2, FW_ST.l_SINGL_PC_2 , FW_ST.h_SINGL_PC_2, FW_ST.lh_SINGL_PC_2 )
+
+FW_fig_SINGL_PC<-ggplot(FW_SINGL_PC_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_SINGL_PC<-FW_fig_SINGL_PC + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_SINGL_PC
+ggsave("output/fig/FW_fig_SINGL_PC.png",
+FW_fig_SINGL_PC,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+
+
+#FW - SINGL - PC - Metaweb
+```{r}
+Metaweb_FW_SINGL_PC<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0",singlepara_1== "0" ) %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW_SINGL_PC<-as.matrix(table(Metaweb_FW_SINGL_PC$cat_whole_name,Metaweb_FW_SINGL_PC$M_code_2)) # prepare the table
+FW_SINGL_PC_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW_SINGL_PC, Elem3_SINGL_PC,Morox3_SINGL_PC,Niksek3_SINGL_PC,Ohu13_SINGL_PC,Ohu2_3_SINGL_PC,Utai3_SINGL_PC, Wamangu3_SINGL_PC, Wanang3_SINGL_PC, Yapsiei3_SINGL_PC), partitioning="commondenom", partition.st=TRUE)
+
+FW_SINGL_PC_results_Meta<-FW_SINGL_PC_results_Meta %>% add_column(dataset = "whole_CAT_PAR")
+
+FW_Meta<- FW_SINGL_PC_results_Meta %>% filter(i == "Metaweb_FW_SINGL_PC") %>% add_column(type = "Metaweb")
+FW_Meta_others<- FW_SINGL_PC_results_Meta %>% filter(i > "Metaweb_FW2") %>% add_column(type = "Others")
+FW_Meta_PC_full <- bind_rows(FW_Meta, FW_Meta_others)
+
+KW_S_Meta_SINGL_PC <- kruskal.test(S~type, data= FW_Meta_PC_full); KW_S_Meta_SINGL_PC 
+KW_WN_Meta_SINGL_PC <- kruskal.test(WN~type, data= FW_Meta_PC_full); KW_WN_Meta_SINGL_PC
+KW_OS_Meta_SINGL_PC <-kruskal.test(OS~type, data= FW_Meta_PC_full); KW_OS_Meta_SINGL_PC
+KW_ST_Meta_SINGL_PC <- kruskal.test(ST~type, data= FW_Meta_PC_full); KW_ST_Meta_SINGL_PC
+```
+
+
+##4. FW - Singletons out - CPL 
+```{r}
+#SINGL_CPL replaced by SINGL
+
+# Main dataset - reduced
+main_table <- read.csv("~/ownCloud/000_/000_R_stat/Beta_diversity_of_parasitoids/data/input/Master_2023.csv", sep=";")
+testik_singl_CPL<-
+  main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0", singlecat=="0") %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code)
+
+Distance <- 
+  read.csv2(
+    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+```
+
+```{r}
+#Preparing contingency table
+Elem_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Elem") %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Elem3_SINGL_CPL<-as.matrix(table(Elem_SINGL_CPL$sample_code,Elem_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Morox_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Morox" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Morox3_SINGL_CPL<-as.matrix(table(Morox_SINGL_CPL$sample_code,Morox_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Niksek_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Niksek" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Niksek3_SINGL_CPL<-as.matrix(table(Niksek_SINGL_CPL$sample_code,Niksek_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Ohu1_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Ohu1" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu13_SINGL_CPL<-as.matrix(table(Ohu1_SINGL_CPL$sample_code,Ohu1_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Ohu2_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Ohu2" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Ohu2_3_SINGL_CPL<-as.matrix(table(Ohu2_SINGL_CPL$sample_code,Ohu2_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Utai_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Utai" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Utai3_SINGL_CPL<-as.matrix(table(Utai_SINGL_CPL$sample_code,Utai_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Wamangu_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Wamangu" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wamangu3_SINGL_CPL<-as.matrix(table(Wamangu_SINGL_CPL$sample_code,Wamangu_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Wanang_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Wanang" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Wanang3_SINGL_CPL<-as.matrix(table(Wanang_SINGL_CPL$sample_code,Wanang_SINGL_CPL$cat_whole_name)) # prepare the table
+
+Yapsiei_SINGL_CPL<-testik_singl_CPL %>%
+  filter(loc2 =="Yapsiei" ) %>% #all data needed 
+  select(sample_code, cat_whole_name)
+Yapsiei3_SINGL_CPL<-as.matrix(table(Yapsiei_SINGL_CPL$sample_code,Yapsiei_SINGL_CPL$cat_whole_name)) # prepare the table
+```
+
+
+#Analyses of interactions
+```{r include=FALSE}
+FW_SINGL_CPL_results<-betalinkr_multi(webs2array(Elem3_SINGL_CPL,Morox3_SINGL_CPL,Niksek3_SINGL_CPL,Ohu13_SINGL_CPL,Ohu2_3_SINGL_CPL,Utai3_SINGL_CPL, Wamangu3_SINGL_CPL, Wanang3_SINGL_CPL, Yapsiei3_SINGL_CPL), partitioning="commondenom", partition.st=TRUE)
+FW_SINGL_CPL_results<-FW_SINGL_CPL_results %>% add_column(dataset = "whole_CAT_PAR")
+#write.xlsx(FW_SINGL_CPL_results, "C:/Users/Libra/ownCloud/000_/000_Papers/Beta/Feb_FW/FW_SINGL_CPL_results_2.xlsx")
+
+
+FW_ST_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, ST)
+FW_OS_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, OS)
+FW_WN_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, WN)
+FW_ST_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, ST)
+FW_ST.l_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, ST.l)
+FW_ST.h_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, ST.h)
+FW_ST.lh_SINGL_CPL<-pivot_to_numeric_matrix(FW_SINGL_CPL_results, i, j, ST.lh)
+
+```
+#FW - SINGLE - CPL OS - Singletons out
+```{r include=FALSE}
+# OS
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$OS
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$OS
+FW_OS_SINGL_CPL<-xm
+mantel(FW_OS_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_OS_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_OS_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_OS_SINGL_CPL <- as.matrix(FW_OS_SINGL_CPL)
+FW_OS_SINGL_CPL_2 <- melt(FW_OS_SINGL_CPL)
+FW_OS_SINGL_CPL_2 <- rename(FW_OS_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "OS")
+FW_OS_SINGL_CPL_2<- merge(FW_OS_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+#FW - SINGLE - CPL WN - Singletons out
+```{r include=FALSE}
+# WN
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$WN
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$WN
+FW_WN_SINGL_CPL<-xm
+mantel(FW_WN_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_WN_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_WN_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_WN_SINGL_CPL <- as.matrix(FW_WN_SINGL_CPL)
+FW_WN_SINGL_CPL_2 <- melt(FW_WN_SINGL_CPL)
+FW_WN_SINGL_CPL_2 <- rename(FW_WN_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "WN")
+FW_WN_SINGL_CPL_2<- merge(FW_WN_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - SINGLE - CPL ST- Singletons out
+```{r include=FALSE}
+# ST
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST
+FW_ST_SINGL_CPL<-xm
+mantel(FW_ST_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST_SINGL_CPL <- as.matrix(FW_ST_SINGL_CPL)
+FW_ST_SINGL_CPL_2 <- melt(FW_ST_SINGL_CPL)
+FW_ST_SINGL_CPL_2 <- rename(FW_ST_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST")
+FW_ST_SINGL_CPL_2<- merge(FW_ST_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+```
+
+#FW - SINGLE - CPL ST.l- Singletons out
+```{r include=FALSE}
+#ST.l
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.l
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.l
+FW_ST.l_SINGL_CPL<-xm
+mantel(FW_ST.l_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.l_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.l_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.l_SINGL_CPL <- as.matrix(FW_ST.l_SINGL_CPL)
+FW_ST.l_SINGL_CPL_2 <- melt(FW_ST.l_SINGL_CPL)
+FW_ST.l_SINGL_CPL_2 <- rename(FW_ST.l_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.l")
+FW_ST.l_SINGL_CPL_2<- merge(FW_ST.l_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+#FW - SINGLE - CPL ST-h - Singletons out
+```{r include=FALSE}
+
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.h
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.h
+FW_ST.h_SINGL_CPL<-xm
+mantel(FW_ST.h_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.h_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.h_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.h_SINGL_CPL <- as.matrix(FW_ST.h_SINGL_CPL)
+FW_ST.h_SINGL_CPL_2 <- melt(FW_ST.h_SINGL_CPL)
+FW_ST.h_SINGL_CPL_2 <- rename(FW_ST.h_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.h")
+FW_ST.h_SINGL_CPL_2<- merge(FW_ST.h_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+
+
+```
+
+#FW - SINGLE - CPL ST.lh - Singletons out
+```{r include=FALSE}
+#ST.lh
+
+xmnames<-unique(c(FW_SINGL_CPL_results$i,FW_SINGL_CPL_results$j))
+xm <- matrix( rep(0,81),nrow=9,ncol=9)
+colnames(xm) <- xmnames; rownames(xm) <- xmnames
+xm[lower.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.lh
+xm[upper.tri(xm,diag=F)] <-FW_SINGL_CPL_results$ST.lh
+FW_ST.lh_SINGL_CPL<-xm
+mantel(FW_ST.lh_SINGL_CPL, Distance , method="spear")
+
+#priprava na grafiku
+
+rownames(FW_ST.lh_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(FW_ST.lh_SINGL_CPL) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+FW_ST.lh_SINGL_CPL <- as.matrix(FW_ST.lh_SINGL_CPL)
+FW_ST.lh_SINGL_CPL_2 <- melt(FW_ST.lh_SINGL_CPL)
+FW_ST.lh_SINGL_CPL_2 <- rename(FW_ST.lh_SINGL_CPL_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+  add_column(guild = "ST.lh")
+FW_ST.lh_SINGL_CPL_2<- merge(FW_ST.lh_SINGL_CPL_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
+  filter (hodnota > 0)
+```
+
+
+
+#FW - SINGLE - CPL - Mantel test
+```{r}
+mantel(FW_OS_SINGL_CPL, Distance , method="spear")
+mantel(FW_ST_SINGL_CPL, Distance , method="spear")
+mantel(FW_WN_SINGL_CPL, Distance , method="spear")
+mantel(FW_ST.l_SINGL_CPL, Distance , method="spear")
+mantel(FW_ST.h_SINGL_CPL, Distance , method="spear")
+mantel(FW_ST.lh_SINGL_CPL, Distance , method="spear")
+
+
+summarise(FW_OS_SINGL_CPL_2,mean_OS = mean(hodnota),sd_OS = sd(hodnota))
+summarise(FW_WN_SINGL_CPL_2,mean_WN = mean(hodnota),sd_WN = sd(hodnota))
+summarise(FW_ST_SINGL_CPL_2,mean_ST = mean(hodnota),sd_ST = sd(hodnota))
+summarise(FW_ST.l_SINGL_CPL_2, mean_ST.l = mean(hodnota),sd_ST.l = sd(hodnota))
+summarise(FW_ST.h_SINGL_CPL_2,mean_ST.h = mean(hodnota),sd_ST.h = sd(hodnota))
+summarise(FW_ST.lh_SINGL_CPL_2,mean_ST.lh = mean(hodnota),sd_ST.lh = sd(hodnota))
+
+```
+
+
+#FW - SINGLE - CPL fig
+```{r echo=FALSE}
+FW_SINGL_CPL_figure<- bind_rows (FW_OS_SINGL_CPL_2,FW_WN_SINGL_CPL_2, FW_ST_SINGL_CPL_2, FW_ST.l_SINGL_CPL_2 , FW_ST.h_SINGL_CPL_2, FW_ST.lh_SINGL_CPL_2 )
+
+FW_fig_SINGL_CPL<-ggplot(FW_SINGL_CPL_figure, aes(x=distance, y=hodnota,color = guild ))  +
+  geom_point() + 
+  stat_smooth(method=lm, se=FALSE)+  
+  labs(x= "Distance [km]", y= "β-diversity") +
+  theme_bw(base_size = 18) + theme(legend.position = "bottom") + ylim(0, 1)
+FW_fig_SINGL_CPL<-FW_fig_SINGL_CPL + scale_color_manual(values=c("#757575","#FF9800", "#009688", "#CDDC29", "#FF5252", "#2F51B5"))
+
+FW_fig_SINGL_CPL
+ggsave("output/fig/FW_fig_SINGL_CPL.png",
+FW_fig_SINGL_CPL,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+```
+
+
+#FW - SINGLE - CPL - Metaweb
+```{r}
+Metaweb_FW_SINGL_CPL<- main_table %>%
+  dplyr::filter(Par_remove == "0", Remove_cats == "0",singlecat=="0" ) %>%
+  dplyr::select(loc2, M_code_2, cat_whole_name, sample_code, sample_code)
+
+
+Metaweb_FW2_SINGL_CPL<-as.matrix(table(Metaweb_FW_SINGL_CPL$sample_code,Metaweb_FW_SINGL_CPL$cat_whole_name)) # prepare the table
+FW_SINGL_CPL_results_Meta<-betalinkr_multi(webs2array(Metaweb_FW2_SINGL_CPL, Elem3_SINGL_CPL,Morox3_SINGL_CPL,Niksek3_SINGL_CPL,Ohu13_SINGL_CPL,Ohu2_3_SINGL_CPL,Utai3_SINGL_CPL, Wamangu3_SINGL_CPL, Wanang3_SINGL_CPL, Yapsiei3_SINGL_CPL), partitioning="commondenom", partition.st=TRUE)
+
+FW_SINGL_CPL_results_Meta<-FW_SINGL_CPL_results_Meta %>% add_column(dataset = "Full_CAT_PLANT")
+
+FW_Meta_CPL<- FW_SINGL_CPL_results_Meta %>% filter(i == "Metaweb_FW2_SINGL_CPL") %>% add_column(type = "Metaweb")
+FW_Meta_others_CPL<- FW_SINGL_CPL_results_Meta %>% filter(i > "Metaweb_FW2_SINGL_CPL") %>% add_column(type = "Others")
+FW_Meta_CPL_full <- bind_rows(FW_Meta_CPL, FW_Meta_others_CPL)
+
+KW_S_Meta_SINGL_CPL <- kruskal.test(S~type, data= FW_Meta_CPL_full); KW_S_Meta_SINGL_CPL 
+KW_WN_Meta_SINGL_CPL <- kruskal.test(WN~type, data= FW_Meta_CPL_full); KW_WN_Meta_SINGL_CPL
+KW_OS_Meta_SINGL_CPL <-kruskal.test(OS~type, data= FW_Meta_CPL_full); KW_OS_Meta_SINGL_CPL
+KW_ST_Meta_SINGL_CPL <- kruskal.test(ST~type, data= FW_Meta_CPL_full); KW_ST_Meta_SINGL_CPL
+```

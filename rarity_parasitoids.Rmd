@@ -1,0 +1,965 @@
+
+# All plants
+```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+library(tibble)
+
+```
+
+
+```{r}
+MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+
+Distance <- read.csv2("~/ownCloud/000_/000_R_stat/Cascading_diversity/DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)   #melt a matrix
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  filter(guild == "PAR") %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+```
+# Bray-Curtis - ALL
+```{r}
+#Bray-Curtis index for parasitoids
+BC_par_res <- vegdist(para_pivot2, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel <- mantel(BC_par_res, Distance , method="spear"); BC_res_par_mantel
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids <- reshape::melt(BC_par_res)
+Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par <- Bray_C_figure_par %>%
+  add_column(guild = "All")
+par_fig_table_BC <-merge(Bray_C_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC$dataset <-"All plants"
+# 
+BC_par_inter <- lm(hodnota ~ distance, data = par_fig_table_BC) # 0.679025     0.000375
+anova(BC_par_inter)
+BC_par_inter$coefficients
+
+
+# coefficients
+BC_lm_par <- lm(hodnota~distance, data = par_fig_table_BC)
+BC_lm_par
+
+par_BC_mean <- summarise(par_fig_table_BC,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean
+
+
+mantel_result_Par_BC <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Parasitoids",
+  mean = round(par_BC_mean$mean_BC,3),
+  sd = round(par_BC_mean$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel$statistic,3),
+  p.value = round(BC_res_par_mantel$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC )
+
+```
+
+# Bray-Curtis - RARE
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_rare<-  MASTER  %>%
+  filter(guild == "PAR",rarity =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_rare <- as.matrix(table(para_pivot_rare$locality, para_pivot_rare$PAR_sp))  # dataframe ready for indices
+para_pivot2_rare[is.na(para_pivot2_rare)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_rare <- para_pivot2_rare
+para_pivot_P_A_rare [para_pivot_P_A_rare > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+#Bray-Curtis index for parasitoids
+BC_par_res_rare <- vegdist(para_pivot2_rare, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel_rare <- mantel(BC_par_res_rare, Distance , method="spear"); BC_res_par_mantel_rare
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids_rare <- melt(BC_par_res_rare)
+Bray_C_figure_par_rare <- dplyr::rename (Bray_C_parasitoids_rare, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par_rare <- Bray_C_figure_par_rare %>%
+  add_column(guild = "Rare")
+par_fig_table_BC_rare <-merge(Bray_C_figure_par_rare, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC_rare$dataset <- "All plants"
+# 
+BC_par_inter_rare <- lm(hodnota ~ distance, data = par_fig_table_BC_rare) 
+anova(BC_par_inter_rare)
+BC_par_inter_rare$coefficients
+
+
+# coefficients
+BC_lm_par_rare <- lm(hodnota~distance, data = par_fig_table_BC_rare)
+BC_lm_par_rare
+
+par_BC_mean_rare <- summarise(par_fig_table_BC_rare,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean_rare
+
+
+mantel_result_Par_BC_rare <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Rare",
+  mean = round(par_BC_mean_rare$mean_BC,3),
+  sd = round(par_BC_mean_rare$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel_rare$statistic,3),
+  p.value = round(BC_res_par_mantel_rare$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC_rare)
+```
+
+# Bray-Curtis - Common
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_common<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common <- as.matrix(table(para_pivot_common$locality, para_pivot_common$PAR_sp))  # dataframe ready for indices
+para_pivot2_common[is.na(para_pivot2_common)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common <- para_pivot2_common
+para_pivot_P_A_common [para_pivot_P_A_common > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+#Bray-Curtis index for parasitoids
+BC_par_res_common <- vegdist(para_pivot2_common, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel_common <- mantel(BC_par_res_common, Distance , method="spear"); BC_res_par_mantel_common
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids_common <- reshape::melt(BC_par_res_common)
+Bray_C_figure_par_common <- dplyr::rename (Bray_C_parasitoids_common, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par_common <- Bray_C_figure_par_common %>%
+  add_column(guild = "Common")
+par_fig_table_BC_common <-merge(Bray_C_figure_par_common, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC_common$dataset <-"All plants"
+# 
+BC_par_inter_common <- lm(hodnota ~ distance, data = par_fig_table_BC_common) 
+anova(BC_par_inter_common)
+BC_par_inter_common$coefficients
+
+
+# coefficients
+BC_lm_par_common <- lm(hodnota~distance, data = par_fig_table_BC_common)
+BC_lm_par_common
+
+par_BC_mean_common <- summarise(par_fig_table_BC_common,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean_common
+
+
+mantel_result_Par_BC_common <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Common",
+  mean = round(par_BC_mean_common$mean_BC,3),
+  sd = round(par_BC_mean_common$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel_common$statistic,3),
+  p.value = round(BC_res_par_mantel_common$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC_common)
+```
+
+# Chao-Sorensen - ALL
+
+```{r}
+# Chao-Sorensen index for parasitoids
+CS_par_res<- dis.chao(para_pivot2, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel <- mantel(CS_par_res, Distance , method="spear"); CS_par_res_mantel
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids <- reshape::melt(CS_par_res)
+Chao_Sor_figure_par <- dplyr::rename (Chao_Sor_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par <- Chao_Sor_figure_par %>%
+  add_column(guild = "All")
+par_fig_table_CS <-merge(Chao_Sor_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS$Dataset <-"All plants"
+
+
+par_CS_mean <- summarise(par_fig_table_CS,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean 
+
+CS_lm_par <- lm(hodnota~distance, data = par_fig_table_CS)
+CS_lm_par
+
+```
+# Chao-Sorensen - RARE
+
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_rare<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_rare <- as.matrix(table(para_pivot_rare$locality, para_pivot_rare$PAR_sp))  # dataframe ready for indices
+para_pivot2_rare[is.na(para_pivot2_rare)] <- 0 # Replacing NA values with 0
+# Chao-Sorensen index for parasitoids
+CS_par_res_rare<- dis.chao(para_pivot2_rare, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel_rare <- mantel(CS_par_res_rare, Distance , method="spear"); CS_par_res_mantel
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids_rare <- reshape::melt(CS_par_res_rare)
+Chao_Sor_figure_par_rare <- dplyr::rename (Chao_Sor_parasitoids_rare, Locality_A = Var1, Locality_B = Var2, hodnota = value)
+Chao_Sor_figure_par_rare <- Chao_Sor_figure_par_rare %>%
+  add_column(guild = "Rare")
+par_fig_table_CS_rare <-merge(Chao_Sor_figure_par_rare, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS_rare$Dataset <-"All plants"
+
+
+par_CS_mean_rare <- summarise(par_fig_table_CS_rare,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean_rare 
+
+CS_lm_par_rare <- lm(hodnota~distance, data = par_fig_table_CS_rare)
+CS_lm_par_rare
+
+```
+
+# Chao-Sorensen - Common
+
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_common<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common <- as.matrix(table(para_pivot_common$locality, para_pivot_common$PAR_sp))  # dataframe ready for indices
+para_pivot2_common[is.na(para_pivot2_common)] <- 0 # Replacing NA values with 0
+# Chao-Sorensen index for parasitoids
+CS_par_res_common<- dis.chao(para_pivot2_common, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel_common <- mantel(CS_par_res_common, Distance , method="spear"); CS_par_res_mantel
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids_common <- reshape::melt(CS_par_res_common)
+Chao_Sor_figure_par_common <- dplyr::rename (Chao_Sor_parasitoids_common, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par_common <- Chao_Sor_figure_par_common %>%
+  add_column(guild = "Common")
+par_fig_table_CS_common <-merge(Chao_Sor_figure_par_common, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS_common$Dataset <-"All plants"
+
+par_CS_mean_common <- summarise(par_fig_table_CS_common,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean_common 
+
+CS_lm_par_common <- lm(hodnota~distance, data = par_fig_table_CS_common)
+CS_lm_par_common
+
+```
+# Sorensen - ALL
+```{r}
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  filter(`guild` == "PAR") %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par<-beta.pair(para_pivot_P_A) #calculate Sorensen dissimilarity
+sorensen_par_others<-beta.pair(para_pivot_P_A)
+sorensen_par<-(as.matrix(sorensen_par$beta.sor)) #pick sorensen index
+sor_mantel_par <- mantel(sorensen_par, Distance, method="spear"); sor_mantel_par #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids <- reshape::melt(sorensen_par)
+Sorensen_figure <- dplyr::rename (Sorensen_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure <- Sorensen_figure %>%
+  add_column(guild = "All")
+par_fig_table_sor <-merge(Sorensen_figure, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor$dataset <-"All plants"
+
+par_sor_mean <- summarise(par_fig_table_sor,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean
+
+SOR_lm_par <- lm(hodnota~distance, data = par_fig_table_sor)
+SOR_lm_par
+
+```
+
+# Sorensen - RARE
+```{r}
+# data for parasitoids
+para_pivot_rare<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_rare <- as.matrix(table(para_pivot_rare$locality, para_pivot_rare$PAR_sp))  # dataframe ready for indices
+para_pivot2_rare[is.na(para_pivot2_rare)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_rare <- para_pivot2_rare
+para_pivot_P_A_rare [para_pivot_P_A_rare > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par_rare <-beta.pair(para_pivot_P_A_rare ) #calculate Sorensen dissimilarity
+sorensen_par_others_rare <-beta.pair(para_pivot_P_A_rare )
+sorensen_par_rare <-(as.matrix(sorensen_par_rare$beta.sor)) #pick sorensen index
+sor_mantel_par_rare <- mantel(sorensen_par_rare, Distance, method="spear"); sor_mantel_par_rare #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids_rare  <- reshape::melt(sorensen_par_rare )
+Sorensen_figure_rare  <- dplyr::rename (Sorensen_parasitoids_rare , Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_rare  <- Sorensen_figure_rare  %>%
+  add_column(guild = "Rare")
+par_fig_table_sor_rare  <-merge(Sorensen_figure_rare , distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor_rare$dataset <-"All plants"
+
+par_sor_mean_rare  <- summarise(par_fig_table_sor_rare ,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean_rare 
+
+SOR_lm_par_rare  <- lm(hodnota~distance, data = par_fig_table_sor_rare )
+SOR_lm_par_rare 
+
+```
+
+# Sorensen - Common
+```{r}
+# data for parasitoids
+para_pivot_common<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common <- as.matrix(table(para_pivot_common$locality, para_pivot_common$PAR_sp))  # dataframe ready for indices
+para_pivot2_common[is.na(para_pivot2_common)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common <- para_pivot2_common
+para_pivot_P_A_common [para_pivot_P_A_common > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par_common <-beta.pair(para_pivot_P_A_common ) #calculate Sorensen dissimilarity
+sorensen_par_others_common <-beta.pair(para_pivot_P_A_common )
+sorensen_par_common <-(as.matrix(sorensen_par_common$beta.sor)) #pick sorensen index
+sor_mantel_par_common <- mantel(sorensen_par_common, Distance, method="spear"); sor_mantel_par_common #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids_common  <- reshape::melt(sorensen_par_common )
+Sorensen_figure_common  <- dplyr::rename (Sorensen_parasitoids_common , Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_common  <- Sorensen_figure_common  %>%
+  add_column(guild = "Common")
+par_fig_table_sor_common  <-merge(Sorensen_figure_common , distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor_common$dataset <-"All plants"
+
+par_sor_mean_common  <- summarise(par_fig_table_sor_common ,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean_common 
+
+SOR_lm_par_common  <- lm(hodnota~distance, data = par_fig_table_sor_common )
+SOR_lm_par_common 
+```
+
+
+##### Common plants only
+```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+
+MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+
+Distance <- read.csv2("~/ownCloud/000_/000_R_stat/Cascading_diversity/DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- reshape::melt(Distance_fig)   #reshape::melt a matrix
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # dplyr::rename columns
+
+# data for parasitoids
+para_pivot_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR", common_plants_only =="Yes") %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_plants <- as.matrix(table(para_pivot_common_plants$locality, para_pivot_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_plants[is.na(para_pivot2_common_plants)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common_plants <- para_pivot2_common_plants
+para_pivot_P_A_common_plants[para_pivot_P_A_common_plants > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+```
+# Common - Bray-Curtis - ALL
+```{r}
+#Bray-Curtis index for parasitoids
+BC_par_res_common_plants <- vegdist(para_pivot2_common_plants, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel_common_plants <- mantel(BC_par_res_common_plants, Distance , method="spear"); BC_res_par_mantel
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids_common_plants <- reshape::melt(BC_par_res_common_plants)
+Bray_C_figure_par_common_plants <- dplyr::rename (Bray_C_parasitoids_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par_common_plants <- Bray_C_figure_par_common_plants %>%
+  add_column(guild = "All")
+par_fig_table_BC_common_plants <-merge(Bray_C_figure_par_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC_common_plants$dataset <- "Common plants"
+# 
+BC_par_inter_common_plants <- lm(hodnota ~ distance, data = par_fig_table_BC_common_plants)
+anova(BC_par_inter_common_plants)
+BC_par_inter_common_plants$coefficients
+
+
+# coefficients
+BC_lm_par_common_plants <- lm(hodnota~distance, data = par_fig_table_BC_common_plants)
+BC_lm_par_common_plants
+
+par_BC_mean_common_plants <- summarise(par_fig_table_BC_common_plants,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean_common_plants
+
+
+mantel_result_Par_BC_common_plants <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Common",
+  mean = round(par_BC_mean_common_plants$mean_BC,3),
+  sd = round(par_BC_mean_common_plants$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel_common_plants$statistic,3),
+  p.value = round(BC_res_par_mantel_common_plants$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC_common_plants )
+
+```
+
+# Bray-Curtis - RARE
+```{r}
+# Pick DATA
+# data for parasitoids
+# data for parasitoids
+para_pivot_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR", common_plants_only =="Yes") %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_plants_rare <- as.matrix(table(para_pivot_common_plants$locality, para_pivot_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_plants_rare [is.na(para_pivot2_common_plants_rare )] <- 0 # Replacing NA values with 0
+para_pivot2_common_plants_rare  <- para_pivot2_common_plants_rare 
+
+#Bray-Curtis index for parasitoids
+BC_par_res_rare_common_plants <- vegdist(para_pivot2_common_plants_rare, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel_rare_common_plants <- mantel(BC_par_res_rare, Distance , method="spear"); BC_res_par_mantel_rare_common_plants
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids_rare_common_plants <- reshape::melt(BC_par_res_rare_common_plants)
+Bray_C_figure_par_rare_common_plants <- dplyr::rename (Bray_C_parasitoids_rare_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par_rare_common_plants<- Bray_C_figure_par_rare_common_plants %>%
+  add_column(guild = "Rare")
+par_fig_table_BC_rare_common_plants <-merge(Bray_C_figure_par_rare_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC_rare_common_plants$dataset <- "Common plants"
+# 
+BC_par_inter_rare_common_plants <- lm(hodnota ~ distance, data = par_fig_table_BC_rare_common_plants) 
+anova(BC_par_inter_rare_common_plants)
+BC_par_inter_rare_common_plants$coefficients
+
+
+# coefficients
+BC_lm_par_rare_common_plants <- lm(hodnota~distance, data = par_fig_table_BC_rare_common_plants)
+BC_lm_par_rare_common_plants
+
+par_BC_mean_rare_common_plants <- summarise(par_fig_table_BC_rare_common_plants,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean_rare_common_plants
+
+
+mantel_result_Par_BC_rare_common_plants <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Rare",
+  mean = round(par_BC_mean_rare_common_plants$mean_BC,3),
+  sd = round(par_BC_mean_rare_common_plants$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel_rare_common_plants$statistic,3),
+  p.value = round(BC_res_par_mantel_rare_common_plants$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC_rare_common_plants)
+```
+
+# Bray-Curtis - Common
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_common_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_common_plants <- as.matrix(table(para_pivot_common_common_plants$locality, para_pivot_common_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_common_plants[is.na(para_pivot2_common_common_plants)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common_common_plants <- para_pivot2_common_common_plants
+para_pivot_P_A_common_common_plants[para_pivot_P_A_common_common_plants > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+#Bray-Curtis index for parasitoids
+BC_par_res_common_common_plants <- vegdist(para_pivot2_common_common_plants, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel_common_common_plants <- mantel(BC_par_res_common_common_plants, Distance , method="spear"); BC_res_par_mantel_common_common_plants
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids_common_common_plants <- reshape::melt(BC_par_res_common_common_plants)
+Bray_C_figure_par_common_common_plants <- dplyr::rename (Bray_C_parasitoids_common_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_par_common_common_plants <- Bray_C_figure_par_common_common_plants %>%
+  add_column(guild = "Common")
+par_fig_table_BC_common_common_plants <-merge(Bray_C_figure_par_common_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_BC_common_common_plants$dataset <-"Common plants"
+# 
+BC_par_inter_common_common_plants <- lm(hodnota ~ distance, data = par_fig_table_BC_common_common_plants) 
+anova(BC_par_inter_common_common_plants)
+BC_par_inter_common_common_plants$coefficients
+
+
+# coefficients
+BC_lm_par_common_common_plants <- lm(hodnota~distance, data = par_fig_table_BC_common_common_plants)
+BC_lm_par_common_common_plants
+
+par_BC_mean_common_common_plants <- summarise(par_fig_table_BC_common_common_plants,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean_common_common_plants
+
+
+mantel_result_Par_BC_common_common_plants <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Common",
+  mean = round(par_BC_mean_common_common_plants$mean_BC,3),
+  sd = round(par_BC_mean_common_common_plants$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel_common_common_plants$statistic,3),
+  p.value = round(BC_res_par_mantel_common_common_plants$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC_common_common_plants)
+```
+
+# Chao-Sorensen - ALL
+
+```{r}
+# Chao-Sorensen index for parasitoids
+CS_par_res_common_plants<- dis.chao(para_pivot2_common_plants, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel_common_plants <- mantel(CS_par_res_common_plants, Distance , method="spear"); CS_par_res_mantel_common_plants
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids_common_plants <- reshape::melt(CS_par_res_common_plants)
+Chao_Sor_figure_par_common_plants <- dplyr::rename (Chao_Sor_parasitoids_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par_common_plants <- Chao_Sor_figure_par_common_plants %>%
+  add_column(guild = "All")
+par_fig_table_CS_common_plants <-merge(Chao_Sor_figure_par_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS_common_plants$dataset <- "Common plants"
+
+par_CS_mean_common_plants <- summarise(par_fig_table_CS_common_plants,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean_common_plants 
+
+CS_lm_par_common_plants <- lm(hodnota~distance, data = par_fig_table_CS_common_plants)
+CS_lm_par_common_plants
+
+```
+# Chao-Sorensen - RARE
+
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_rare_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_rare_common_plants <- as.matrix(table(para_pivot_rare_common_plants$locality, para_pivot_rare_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_rare_common_plants[is.na(para_pivot2_rare_common_plants)] <- 0 # Replacing NA values with 0
+# Chao-Sorensen index for parasitoids
+CS_par_res_rare_common_plants<- dis.chao(para_pivot2_rare_common_plants, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel_rare_common_plants <- mantel(CS_par_res_rare_common_plants, Distance , method="spear"); CS_par_res_mantel_common_plants
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids_rare_common_plants <- reshape::melt(CS_par_res_rare_common_plants)
+Chao_Sor_figure_par_rare_common_plants <- dplyr::rename (Chao_Sor_parasitoids_rare_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par_rare_common_plants <- Chao_Sor_figure_par_rare_common_plants%>%
+  add_column(guild = "Rare")
+par_fig_table_CS_rare_common_plants <-merge(Chao_Sor_figure_par_rare_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS_rare_common_plants$dataset <- "Common plants"
+
+par_CS_mean_rare_common_plants <- summarise(par_fig_table_CS_rare_common_plants,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean_rare_common_plants 
+
+CS_lm_par_rare_common_plants <- lm(hodnota~distance, data = par_fig_table_CS_rare_common_plants)
+CS_lm_par_rare_common_plants
+
+```
+
+# Chao-Sorensen - Common
+
+```{r}
+# Pick DATA
+# data for parasitoids
+para_pivot_common_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_common_plants <- as.matrix(table(para_pivot_common_common_plants$locality, para_pivot_common_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_common_plants[is.na(para_pivot2_common_common_plants)] <- 0 # Replacing NA values with 0
+# Chao-Sorensen index for parasitoids
+CS_par_res_common_common_plants<- dis.chao(para_pivot2_common_common_plants, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel_common_common_plants <- mantel(CS_par_res_common_common_plants, Distance , method="spear"); CS_par_res_mantel
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids_common_common_plants <- reshape::melt(CS_par_res_common_common_plants)
+Chao_Sor_figure_par_common_common_plants <- dplyr::rename (Chao_Sor_parasitoids_common_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par_common_common_plants <- Chao_Sor_figure_par_common_common_plants %>%
+  add_column(guild = "Common")
+par_fig_table_CS_common_common_plants <-merge(Chao_Sor_figure_par_common_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_CS_common_common_plants$dataset <- "Common plants"
+
+par_CS_mean_common_common_plants <- summarise(par_fig_table_CS_common_common_plants,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean_common_common_plants 
+
+CS_lm_par_common_common_plants <- lm(hodnota~distance, data = par_fig_table_CS_common_common_plants)
+CS_lm_par_common_common_plants
+
+```
+# Sorensen - ALL
+```{r}
+# data for parasitoids
+para_pivot_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR", common_plants_only =="Yes") %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_plants <- as.matrix(table(para_pivot_common_plants$locality, para_pivot_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_plants[is.na(para_pivot2_common_plants)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common_plants <- para_pivot2_common_plants
+para_pivot_P_A_common_plants [para_pivot_P_A_common_plants > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par_common_plants<-beta.pair(para_pivot_P_A_common_plants) #calculate Sorensen dissimilarity
+sorensen_par_others_common_plants<-beta.pair(para_pivot_P_A_common_plants)
+sorensen_par_common_plants<-(as.matrix(sorensen_par_common_plants$beta.sor)) #pick sorensen index
+sor_mantel_par_common_plants <- mantel(sorensen_par_common_plants, Distance, method="spear"); sor_mantel_par_common_plants #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids_common_plants <- reshape::melt(sorensen_par_common_plants)
+Sorensen_figure_common_plants <- dplyr::rename (Sorensen_parasitoids_common_plants, Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_common_plants <- Sorensen_figure_common_plants %>%
+  add_column(guild = "All")
+par_fig_table_sor_common_plants <-merge(Sorensen_figure_common_plants, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor_common_plants$dataset <-"Common plants"
+
+par_sor_mean_common_plants <- summarise(par_fig_table_sor_common_plants,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean_common_plants
+
+SOR_lm_par_common_plants <- lm(hodnota~distance, data = par_fig_table_sor_common_plants)
+SOR_lm_par_common_plants
+
+```
+
+# Sorensen - RARE
+```{r}
+# data for parasitoids
+para_pivot_rare_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="1",common_plants_only =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_rare_common_plants <- as.matrix(table(para_pivot_rare_common_plants$locality, para_pivot_rare_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_rare_common_plants[is.na(para_pivot2_rare_common_plants)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_rare_common_plants <- para_pivot2_rare_common_plants
+para_pivot_P_A_rare_common_plants [para_pivot_P_A_rare_common_plants > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par_rare_common_plants <-beta.pair(para_pivot_P_A_rare_common_plants ) #calculate Sorensen dissimilarity
+sorensen_par_others_rare_common_plants <-beta.pair(para_pivot_P_A_rare_common_plants )
+sorensen_par_rare_common_plants <-(as.matrix(sorensen_par_rare_common_plants$beta.sor)) #pick sorensen index
+sor_mantel_par_rare_common_plants <- mantel(sorensen_par_rare_common_plants, Distance, method="spear"); sor_mantel_par_rare_common_plants #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids_rare_common_plants  <- reshape::melt(sorensen_par_rare_common_plants )
+Sorensen_figure_rare_common_plants  <- dplyr::rename (Sorensen_parasitoids_rare_common_plants , Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_rare_common_plants  <- Sorensen_figure_rare_common_plants  %>%
+  add_column(guild = "Rare")
+par_fig_table_sor_rare_common_plants  <-merge(Sorensen_figure_rare_common_plants , distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor_rare_common_plants$dataset <-"Common plants"
+
+par_sor_mean_rare_common_plants  <- summarise(par_fig_table_sor_rare_common_plants ,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean_rare_common_plants 
+
+SOR_lm_par_rare_common_plants  <- lm(hodnota~distance, data = par_fig_table_sor_rare_common_plants )
+SOR_lm_par_rare_common_plants 
+
+```
+
+# Sorensen - Common
+```{r}
+# data for parasitoids
+para_pivot_common_plants<-  MASTER  %>%
+  filter(`guild` == "PAR",rarity =="0",common_plants_only =="1" ) %>% # pick only parasitoids (PAR) 
+  select(locality, PAR_sp)
+
+para_pivot2_common_common_plants <- as.matrix(table(para_pivot_common_common_plants$locality, para_pivot_common_common_plants$PAR_sp))  # dataframe ready for indices
+para_pivot2_common_common_plants[is.na(para_pivot2_common_common_plants)] <- 0 # Replacing NA values with 0
+para_pivot_P_A_common_common_plants <- para_pivot2_common_common_plants
+para_pivot_P_A_common_common_plants [para_pivot_P_A_common_common_plants > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+sorensen_par_common_common_plants <-beta.pair(para_pivot_P_A_common_common_plants ) #calculate Sorensen dissimilarity
+sorensen_par_others_common_common_plants <-beta.pair(para_pivot_P_A_common_common_plants )
+sorensen_par_common_common_plants <-(as.matrix(sorensen_par_common_common_plants$beta.sor)) #pick sorensen index
+sor_mantel_par_common_common_plants <- mantel(sorensen_par_common_common_plants, Distance, method="spear"); sor_mantel_par_common_common_plants #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids_common_common_plants  <- reshape::melt(sorensen_par_common_common_plants )
+Sorensen_figure_common_common_plants  <- dplyr::rename (Sorensen_parasitoids_common_common_plants , Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_common_common_plants  <- Sorensen_figure_common_common_plants  %>%
+  add_column(guild = "Common")
+par_fig_table_sor_common_common_plants  <-merge(Sorensen_figure_common_common_plants , distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+par_fig_table_sor_common_common_plants$dataset <-"Common plants"
+
+par_sor_mean_common_common_plants  <- summarise(par_fig_table_sor_common_common_plants ,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_sor_mean_common_common_plants 
+
+SOR_lm_par_common_common_plants  <- lm(hodnota~distance, data = par_fig_table_sor_common_common_plants )
+SOR_lm_par_common_common_plants 
+```
+
+# Figures
+```{r}
+
+# All plants
+all_plants_BC <- rbind(
+par_fig_table_BC,
+par_fig_table_BC_rare,
+par_fig_table_BC_common)
+
+all_plants_CS <- rbind(
+par_fig_table_CS,
+par_fig_table_CS_rare,
+par_fig_table_CS_common)
+
+
+all_plants_Sor <- rbind(
+par_fig_table_sor,
+par_fig_table_sor_rare,
+par_fig_table_sor_common)
+
+
+# Common plants
+
+
+common_plants_BC <- rbind(
+par_fig_table_BC_common_plants,
+par_fig_table_BC_rare_common_plants,
+par_fig_table_BC_common_common_plants)
+
+common_plants_CS <- rbind(
+par_fig_table_CS_common_plants,
+par_fig_table_CS_rare_common_plants,
+par_fig_table_CS_common_common_plants)
+
+common_plants_Sor <- rbind(
+par_fig_table_sor_common_plants,
+par_fig_table_sor_rare_common_plants,
+par_fig_table_sor_common_common_plants)
+
+
+BC_FIG_Sy <-ggplot(all_plants_BC, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Bray-Curtis",
+        x = "",
+        y = "β diversity",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; BC_FIG_Sy
+
+CS_FIG_Sy <-ggplot(all_plants_CS, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Chao-Sorensen",
+        x = "Distance",
+        y = "",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; CS_FIG_Sy
+
+Sor_FIG_Sy <-ggplot(all_plants_Sor, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+ scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+   ggtitle("Common plants") +
+  theme_minimal() +
+  labs(title = "Sorensen",
+        x = "",
+        y = "All plants",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; Sor_FIG_Sy
+
+
+
+
+BC_FIG_Sy2 <-ggplot(common_plants_BC, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+ scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "",
+        x = "",
+        y = "",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; BC_FIG_Sy2
+
+CS_FIG_Sy2 <-ggplot(common_plants_CS, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "",
+        x = "Distance",
+        y = "",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; CS_FIG_Sy2
+
+Sor_FIG_Sy2 <-ggplot(common_plants_Sor, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+ scale_color_manual(values = c("All" = "brown", 
+                                "Common" = "darkgreen", 
+                                "Rare" = "yellow")) +
+  scale_shape_manual(values = c("All" = 17,  # Triangle
+                                "Common" = 16,  # Full Circle
+                                "Rare" = 16)) +  # Empty Circle
+  scale_linetype_manual(values = c("All" = "solid", 
+                                   "Common" = "solid", 
+                                   "Rare" = "solid")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "",
+        x = "",
+        y = "Common plants",
+        color = "Dataset",   # Change legend title for color
+        shape = "Dataset",   # Change legend title for shape
+        linetype = "Dataset")  +
+  theme_classic(base_size = 20)  ; Sor_FIG_Sy2
+
+Figure_SX_Rarity <- ggarrange(Sor_FIG_Sy, CS_FIG_Sy, BC_FIG_Sy, Sor_FIG_Sy2, CS_FIG_Sy2, BC_FIG_Sy2, common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3) ;Figure_SX_Rarity 
+
+```
+
+
+

@@ -1,0 +1,75 @@
+
+
+Figure 1
+```{r}
+
+```
+
+Figure 2
+
+```{r}
+
+
+```
+
+Figure 3
+
+```{r}
+#Parasitoid-caterpillar
+FW_full_PC_figure<- bind_rows (FW_OS_full_PC_2,FW_WN_full_PC_2, FW_ST_full_PC_2, FW_ST.l_full_PC_2 , FW_ST.h_full_PC_2, FW_ST.lh_full_PC_2)
+
+
+Fig_3_A <- ggplot(FW_full_PC_figure, aes(distance, hodnota, color = guild, linetype = guild)) +
+  geom_point(aes(shape = guild, color=guild)) +
+  scale_shape_manual(values=c(16,16,1,1,1, 16)) +
+  geom_smooth(se = FALSE, method = lm) +
+  scale_linetype_manual( values=c( "solid","solid", "dotted", "dotted","dotted","solid")) +
+  scale_color_manual(values=c("#FC4E07", "#E7B800","#757575","#00AFBB" , "#52854C", "#2F51B5")) +
+  labs(x= "Distance [km]", y= "β-diversity", title = "Parasitoid-Caterpillar", tag = "A") +
+  theme_classic(base_size = 18) + theme(text = element_text(family = "Arial"), legend.position = "bottom") + ylim(0, 1)
+
+Fig_3_A
+ggsave("output/fig/Fig_3_A.png",
+Fig_3_A,
+height = 12,
+width = 16,
+units = "cm")   # save the plot as .png
+
+#Caterpillar-Plant
+
+FW_full_CPL_figure<- bind_rows (FW_OS_full_CPL_2,FW_WN_full_CPL_2, FW_S_full_CPL_2, FW_ST_full_CPL_2, FW_ST.l_full_CPL_2 , FW_ST.h_full_CPL_2, FW_ST.lh_full_CPL_2 )
+
+Fig_3_B <- ggplot(FW_full_CPL_figure, aes(distance, hodnota, color = guild, linetype = guild)) +
+  geom_point(aes(shape = guild, color=guild)) +
+  scale_shape_manual(values=c(16,16,1,1,1, 16)) +
+  geom_smooth(se = FALSE, method = lm) +
+  scale_linetype_manual( values=c( "solid","solid", "dotted", "dotted","dotted","solid")) +
+  scale_color_manual(values=c("#FC4E07", "#E7B800","#757575","#00AFBB" , "#52854C", "#2F51B5")) +
+  labs(x= "Distance [km]", y= "β-diversity", title = "Caterpillar-Plant", tag = "B") +
+  theme_classic(base_size = 18) + theme(text = element_text(family = "Arial"), legend.position = "bottom") + ylim(0, 1)
+
+Fig_3_B
+ggsave("output/fig/Fig_3_B.png",
+Fig_3_B,
+height = 12,
+width = 16,
+units = "cm")
+
+
+
+fig_3_1 <-ggarrange(Fig_3_A, Fig_3_B, common.legend = TRUE, legend = "bottom", nrow = 1)
+
+fig_3_1 
+ggsave("output/fig/fig_3_1.tiff",
+fig_3_1,
+height = 12,
+width = 25,
+units = "cm")   # save the plot as .png
+fig_3_1 
+ggsave("output/fig/fig_3_1.png",
+fig_3_1,
+height = 12,
+width = 25,
+units = "cm") 
+```
+
