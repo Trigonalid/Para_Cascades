@@ -55,10 +55,14 @@ library(betapart)
 library(skimr)
 
 
-MASTER <- read.csv("~/ownCloud/000_/000_R_stat/Cascading_diversity/DATA/MASTER.csv", sep=";") %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
-Distance <- read.csv2("~/ownCloud/000_/000_R_stat/Cascading_diversity/DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+MASTER <- readr::read_delim(here::here("DATA/MASTER.csv"), delim = ";") %>% tibble::as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
+
+
+Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+
+
 # Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+Distance_fig <- read.csv2("DATA/Distance.csv")
 distance_2 <- melt(Distance_fig)   #melt a matrix
 distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
