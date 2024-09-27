@@ -420,10 +420,10 @@ par_fig_table_BCra <-merge(Bray_C_figure_parra, distance_plot, by=c("Locality_A"
 bray_common_rare <- rbind(par_fig_table_BCra,par_fig_table_BCc)
 
 
-ggplot(bray_common_rare, aes(x = distance, y = hodnota, 
+
+ggplot(bray_common_rare, aes(y = hodnota, 
                  color = guild, shape = guild, linetype = guild)) +
-  geom_point(size = 3) +  # Adjust size as needed
-  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  geom_boxplot() +  # Adjust size as needed
   coord_cartesian(ylim = c(0, 1)) +
   theme_minimal() +
     theme_classic(base_size = 20)
