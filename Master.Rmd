@@ -55,8 +55,8 @@ library(betapart)
 library(skimr)
 
 
-MASTER <- readr::read_delim(here::here("DATA/MASTER.csv"), delim = ";") %>% tibble::as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
-
+# MASTER <- readr::read_delim(here::here("DATA/MASTER.csv"), delim = ";") %>% tibble::as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
+MASTER <- read.delim(here::here("DATA/MASTER.csv"))
 
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
 
@@ -360,6 +360,91 @@ BC_mean <- summarise(BC_melt,
                      sd_BC = sd(value))
 #BC_mean
 ```
+
+Common and rare parasitoids
+```{r}
+common_par <- MASTER %>%
+  filter(plus == "plus") %>%
+  select (locality, PAR_sp)
+
+rare_par <- MASTER %>%
+  filter(plus == "0") %>%
+  select (locality, PAR_sp)
+
+para_pivot2c <- as.matrix(table(common_par$locality, common_par$PAR_sp))  # dataframe ready for indices
+para_pivot2c[is.na(para_pivot2c)] <- 0 # Replacing NA values with 0
+para_pivot_P_Ac <- para_pivot2c
+para_pivot_P_Ac [para_pivot_P_Ac > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+#Bray-Curtis index for parasitoids
+BC_par_resc <- vegdist(para_pivot2c, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantelc <- mantel(BC_par_resc, Distance , method="spear"); BC_res_par_mantel
+
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoidsc <- melt(BC_par_resc)
+Bray_C_figure_parc <- Bray_C_parasitoidsc %>%
+  add_column(guild = "Rare")
+Bray_C_figure_parc <- Bray_C_figure_parc %>%
+  dplyr::rename(Locality_A = X1, Locality_B = X2, hodnota=value)
+
+par_fig_table_BCc <-merge(Bray_C_figure_parc, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+
+
+
+
+para_pivot2ra <- as.matrix(table(rare_par$locality, rare_par$PAR_sp))  # dataframe ready for indices
+para_pivot2ra[is.na(para_pivot2ra)] <- 0 # Replacing NA values with 0
+para_pivot_P_Ara <- para_pivot2ra
+para_pivot_P_Ara [para_pivot_P_Ara > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+#Bray-Curtis index for parasitoids
+BC_par_resra <- vegdist(para_pivot2ra, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantelra <- mantel(BC_par_resra, Distance , method="spear"); BC_res_par_mantel
+
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoidsra <- melt(BC_par_resra)
+Bray_C_figure_parra <- Bray_C_parasitoidsra %>%
+  add_column(guild = "rare")
+Bray_C_figure_parra <- Bray_C_figure_parra %>%
+  dplyr::rename(Locality_A = X1, Locality_B = X2, hodnota=value)
+
+par_fig_table_BCra <-merge(Bray_C_figure_parra, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+bray_common_rare <- rbind(par_fig_table_BCra,par_fig_table_BCc)
+
+
+ggplot(bray_common_rare, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+    theme_classic(base_size = 20)
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Chao-Sorensen index
 ```{r echo=FALSE}

@@ -8,6 +8,7 @@ library(reshape)
 library(betapart)
 library(skimr)
 library(tibble)
+library(readxl)
 
 ```
 
@@ -16,6 +17,7 @@ library(tibble)
 MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
 
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+Distance_fig <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
 # Prepare the distance matrix for a figure
 Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
 distance_2 <- melt(Distance_fig)   #melt a matrix
