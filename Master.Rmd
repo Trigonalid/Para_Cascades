@@ -40,10 +40,6 @@ library(datarium)
 library(ggpmisc)
 ```
 
-testicko
-```{r}
-agag 
-```
 
 #Diversity indices
 ```{r}
@@ -93,7 +89,6 @@ cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Soren
 ```{r}
 skim(MASTER)
 
-
 family_species <- MASTER %>%
    filter(Par_remove == "0") %>%
    select(PAR_sp, family_par, locality)
@@ -142,7 +137,7 @@ BC_res_par_mantel <- mantel(BC_par_res, Distance , method="spear"); BC_res_par_m
 
 ####preparation for a figure - Bray-Curtis
 Bray_C_parasitoids <- melt(BC_par_res)
-Bray_C_figure_par <- rename (Bray_C_parasitoids, Locality_A = Var1, Locality_B = Var2, hodnota = value)
+Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value) # rename columns
 Bray_C_figure_par <- Bray_C_figure_par %>%
   add_column(guild = "Parasitoids")
 par_fig_table_BC <-merge(Bray_C_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
@@ -184,12 +179,21 @@ BC_cat_res_mantel <- mantel(BC_cat_res, Distance , method="spear"); BC_cat_res_m
 
 ####preparation for a figure
 Bray_C_Caterpillars <- melt(BC_cat_res)
-Bray_C_figure_cat <- rename (Bray_C_Caterpillars, Locality_A = Var1, Locality_B = Var2, hodnota = value)
+Bray_C_figure_cat <- dplyr::rename (Bray_C_Caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
 Bray_C_figure_cat <- Bray_C_figure_cat %>%
   add_column(guild = "Caterpillars")
 
 Cat_fig_table_BC <-merge(Bray_C_figure_cat, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
   filter (hodnota > 0)
+
+
+cat_bc_mean <- summarise(Cat_fig_table_BC,
+                     mean = mean(hodnota),
+                     sd = sd(hodnota)) 
+cat_bc_mean
+
+BC_lm_cat <- lm(hodnota~distance, data = Cat_fig_table_BC)
+BC_lm_cat # 0.5019007    0.0003242
 
 
 mantel_result_cat_BC <- data.frame(
@@ -205,13 +209,6 @@ mantel_result_cat_BC <- data.frame(
 print(mantel_result_cat_BC )
 
 
-cat_bc_mean <- summarise(Cat_fig_table_BC,
-                     mean = mean(hodnota),
-                     sd = sd(hodnota)) 
-cat_bc_mean
-
-BC_lm_cat <- lm(hodnota~distance, data = Cat_fig_table_BC)
-BC_lm_cat # 0.5019007    0.0003242
 ```
 #BC- Subsampling of caterpillars
 
@@ -236,14 +233,6 @@ mantel_result_cat_BC <- data.frame(
   stringsAsFactors = FALSE
 )
 print(mantel_result_cat_BC )
-
-
-
-
-
-
-
-
 
 
 

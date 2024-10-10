@@ -16,9 +16,6 @@ data_master <-
   ) %>%
   tibble::as_tibble()
 
-
-
-
 #----------------------------------------------------------#
 # 2. Data wrangling -----
 #----------------------------------------------------------#
@@ -26,7 +23,7 @@ data_master <-
 data_work <-
   data_master %>%
    dplyr::select(
-    locality,
+   dplyr::locality,
     plant,
     CAT_sp,
     PAR_sp
@@ -34,78 +31,51 @@ data_work <-
 
 
 
-
-
-# Load the dataset
-
 # Count the number of unique localities for each caterpillar species
-locality_count <- data_work %>%
-  group_by(CAT_sp) %>%
-  summarize(num_localities = n_distinct(locality)) %>%
-  arrange(desc(num_localities))
 
-# View the result
-print(locality_count)
-
-locality_counts <- data %>%
-  group_by(CAT_sp) %>%
+locality_counts <- data_work %>%
+  dplyr::group_by(CAT_sp) %>%
   # Total localities where the caterpillar is found
-  summarize(
-    total_localities = n_distinct(locality),
+  dplyr::summarize(
+    total_localities = dplyr::n_distinct(locality),
     # Localities where the caterpillar is parasitized (PAR_sp is not NA or empty)
-    parasitized_localities = n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
-    # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
-    non_parasitized_localities = n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""]),
+    cat_parasitised = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
     # Localities where the caterpillar is detected but not parasitized
-    detected_non_parasitized_localities = n_distinct(locality) - n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""])
-  ) %>%
-  arrange(desc(total_localities))
-
-# View the result
-print(locality_counts)
+    detected_no_par_localities = dplyr::n_distinct(locality) - dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
+    cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""])
+  ) 
 
 
-
-
-
-interaction_counts_PAR <- data %>%
-  group_by(CAT_sp, PAR_sp) %>%
-  # Total localities where the caterpillar-parasitoid interaction is detected
-  summarize(
-    total_localities = n_distinct(locality),
+interaction_counts_PAR <- data_work %>%
+  dplyr::group_by(CAT_sp, PAR_sp) %>%
+  dplyr::summarize(
+    # Total localities where the caterpillar-parasitoid interaction is detected
+    total_localities = dplyr::n_distinct(locality),
     # Localities where the interaction is parasitized (PAR_sp is not NA or empty)
-    parasitized_localities = n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    parasitized_localities = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
     # Localities where the interaction is not parasitized (PAR_sp is NA or empty)
-    non_parasitized_localities = n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""])
-  ) %>%
-  arrange(desc(total_localities))
+    non_parasitized_localities = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""])
+  ) 
 
 # View the result
 print(interaction_counts_PAR)
 
 
-# Number of caterpillar species for each locality
+# Number of caterpillar species for each locality + total
 caterpillar_counts <- data_work %>%
-  group_by(locality) %>%
-  summarize(num_caterpillars = n_distinct(CAT_sp)) %>%
-  arrange(desc(num_caterpillars))
-
-# View the result
-print(caterpillar_counts)
+  dplyr::group_by(locality) %>%
+  dplyr::summarize(num_caterpillars = n_distinct(CAT_sp)) 
 
 total_caterpillars <- data_work %>%
-  summarize(total_unique_caterpillars = n_distinct(CAT_sp))
+  dplyr::summarize(total_unique_caterpillars = n_distinct(CAT_sp))
 
-# View the result
-print(total_caterpillars)
-
+# Number of caterpillars for each locality + total
 caterpillar_abundance <- data_work %>%
-  group_by(locality) %>%
-  summarize(abundance = n()) %>%
-  arrange(locality, desc(abundance))
+  dplyr::group_by(locality) %>%
+  dplyr::summarize(abundance = n())
 
-# View the result
-print(caterpillar_abundance)
+
 
 
 
