@@ -421,3 +421,14 @@ data_compare_par_present %>%
     num_parasitoids_subsampled = n()
   )
 ```
+
+Adding information about the number where caterpillar is present, but not parasitised
+
+```{r Loc_not parasitised}
+
+ # Localities where the caterpillar is detected but not parasitized
+    detected_no_par_localities = dplyr::n_distinct(locality) - dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+
+
+```
+

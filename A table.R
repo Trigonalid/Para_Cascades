@@ -23,7 +23,7 @@ data_master <-
 data_work <-
   data_master %>%
    dplyr::select(
-   dplyr::locality,
+   locality,
     plant,
     CAT_sp,
     PAR_sp
