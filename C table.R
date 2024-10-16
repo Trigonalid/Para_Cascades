@@ -36,10 +36,6 @@ data_work <-
   )
 
 
-
-
-
-
 interaction_summary <- data_work %>%
   dplyr::group_by(CAT_sp) %>%
   # Total localities where the caterpillar is found
@@ -52,8 +48,6 @@ interaction_summary <- data_work %>%
     # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
     cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""])
   ) 
-
-
 
 
 
