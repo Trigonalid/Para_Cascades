@@ -42,7 +42,7 @@ data_work <-
 interaction_summary <-
   data_work %>%
   dplyr::filter(!is.na(PAR_sp)) %>% # Filter out rows where parasitoid is missing
-  dplyr::group_by(CAT_sp, PAR_sp) %>%
+  dplyr::group_by(CAT_sp,PAR_sp) %>%
   dplyr::summarise(
     num_localities = dplyr::n_distinct(locality, na.rm = TRUE), # Number of distinct localities where interaction was observed
     total_interactions = n() # Total number of times interaction occurred

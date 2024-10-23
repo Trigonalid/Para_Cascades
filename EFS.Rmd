@@ -48,7 +48,7 @@ data_work <-
 
 
 interaction_summary <- data_work %>%
-  dplyr::group_by(CAT_sp,PAR_sp) %>%
+  dplyr::group_by(CAT_sp) %>%
   # Total localities where the caterpillar is found
   dplyr::summarize(
     total_localities = dplyr::n_distinct(locality),
@@ -294,6 +294,13 @@ ggplot2::ggsave(
 
 
 ```{r CATS with PAR only}
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(writexl)
+library(ggplot2)
+
 #----------------------------------------------------------#
 # 1. Load data -----
 #----------------------------------------------------------#
@@ -410,6 +417,7 @@ merged_data_B <-
     data_locality_summary_B,
     by = "locality"
   )
+
 
 # Step 1: Function to subsample data and compute interactions
 subsample_data_B <- function(data_community, data_locality_summary_B, replace = TRUE) {
@@ -540,7 +548,15 @@ p1_B <-
     breaks = seq(1, 9, 1)
   ) +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  # Renaming the x-axis categories
+  scale_x_discrete(labels = c("localities_orig" = "Localities (Original)",
+                              "localities_sub" = "Localities (Subsampled)",
+                              "parasitised_orig" = "Parasitized (Original)",
+                              "parasitised_sub" = "Parasitized (Subsampled)",
+                              "enemy_free_orig" = "Enemy-Free (Original)",
+                              "enemy_free_sub" = "Enemy-Free (Subsampled)")) +
+  labs(x = "Group", y = "Mean Number of Localities")
 
 ggplot2::ggsave(
   plot = p1_B,
