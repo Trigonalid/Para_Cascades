@@ -53,10 +53,10 @@ interaction_summary <- data_work %>%
 # Caterpillar species without parasitoids in metaweb
 tab_EFS_orig <- interaction_summary %>%
   dplyr:: filter(cat_parasitised>0)
-
+ # write_xlsx(tab_EFS_orig, "tab_EFS_orig.xlsx")
 
 # Prepare tables only with caterpillars, which have parasitoid
-interaction_summary_B <- data_work %>%
+interaction_summary_A <- data_work %>%
   dplyr::group_by(CAT_sp,PAR_sp) %>%
   # Total localities where the caterpillar is found
   dplyr::summarize(
@@ -76,7 +76,7 @@ interaction_summary_B <- data_work %>%
 # Function to create a table of caterpillar species with and without parasitoids
 create_caterpillar_parasitoid_table <- function(data) {
   # Create a summary table
-  table <- interaction_summary_B %>%
+  table <- interaction_summary_A %>%
     group_by(CAT_sp) %>%
     summarize(has_parasitoid = ifelse(any(!is.na(PAR_sp) & PAR_sp != ""), "Yes", "No")) %>%
     arrange(desc(has_parasitoid)) # Sort by whether or not they have a parasitoid
@@ -92,8 +92,39 @@ data_work_B <- data_work %>%
 
 
 
+interaction_summary_B <- data_work_B %>%
+  dplyr::group_by(CAT_sp,PAR_sp) %>%
+  # Total localities where the caterpillar is found
+  dplyr::summarize(
+    total_localities = dplyr::n_distinct(locality),
+    # Localities where the caterpillar is parasitized (PAR_sp is not NA or empty)
+    cat_parasitised = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    # Localities where the caterpillar is detected but not parasitized
+    detected_no_par_localities = dplyr::n_distinct(locality) - dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
+    cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""]),
+    # poměr počet lokalit bez parazitoidů/celkovým počtem lokalit
+    EFS_ratio = detected_no_par_localities/total_localities
+  ) 
+
+Original_data_cat <- data_work_B %>%
+  dplyr::group_by(CAT_sp) %>%
+  # Total localities where the caterpillar is found
+ dplyr::summarize(
+     total_localities = dplyr::n_distinct(locality),
+     # Localities where the caterpillar is parasitized (PAR_sp is not NA or empty)
+     cat_parasitised = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+     # Localities where the caterpillar is detected but not parasitized
+     detected_no_par_localities = dplyr::n_distinct(locality) - dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+     # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
+     cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""]),
+     # poměr počet lokalit bez parazitoidů/celkovým počtem lokalit
+     EFS_ratio = detected_no_par_localities/total_localities
+   ) 
+
+
 # Summary of data
-data_locality_summary_B <-
+data_locality_summary <-
   data_work_B %>%
   dplyr::group_by(locality) %>%
   dplyr::summarise(
@@ -121,17 +152,19 @@ data_locality_summary_B <-
 
 # Merge the data
 
-merged_data_B <-
+merged_data <-
   data_work_B %>%
   dplyr::left_join(
-    data_locality_summary_B,
+    data_locality_summary,
     by = "locality"
   )
 
 # Step 1: Function to subsample data and compute interactions
-subsample_data_B <- function(data_community, data_locality_summary_B, replace = TRUE) {
-  subsampled_data_B <-
-    data_locality_summary_B %>%
+
+
+subsample_data <- function(data_community, data_locality, replace = TRUE) {
+  subsampled_data <-
+    data_locality %>%
     dplyr::select(locality, abundance_caterpillars) %>%
     dplyr::mutate(
       data_subsampled = purrr::map(
@@ -146,30 +179,37 @@ subsample_data_B <- function(data_community, data_locality_summary_B, replace = 
     ) %>%
     tidyr::unnest(data_subsampled)
 
-  return(subsampled_data_B)
+  return(subsampled_data)
 }
 
-group_subsample_data_B <- function(data_source) {
+
+
+
+group_subsample_data <- function(data_source) {
   # Summarize subsampled interactions (including caterpillars without parasitoids)
-  subsampled_interaction_summary_B <-
+  subsampled_interaction_summary <-
     data_source %>%
-    dplyr::group_by(CAT_sp, PAR_sp) %>%
+    dplyr::group_by(CAT_sp) %>%
     dplyr::summarise(
       .groups = "drop",
         # Number of distinct localities
       total_localities = dplyr::n_distinct(locality, na.rm = TRUE), 
       # Localities where the caterpillar is parasitized (PAR_sp is not NA or empty)
       cat_parasitised = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
-      # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
-      cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""]),
       # Localities where the caterpillar is detected but not parasitized
-      detected_no_par_localities = total_localities - cat_parasitised, # First calculate detected_no_par_localities
+      no_para = total_localities - cat_parasitised, # First calculate detected_no_par_localities
       # Ratio of localities without parasitoids to total localities
-      EFS_ratio = detected_no_par_localities / total_localities # Now use detected_no_par_localities
+      sub_EFS_ratio = no_para / total_localities # Now use detected_no_par_localities
     )
 
-  return(subsampled_interaction_summary_B)
+  return(subsampled_interaction_summary)
 }
+
+
+
+
+
+
 
 # Step 2: Repeat subsampling 99 times and store results
 set.seed(1234)
@@ -177,14 +217,14 @@ list_subsampled_B <-
   purrr::map(
     .progress = TRUE,
     .x = 1:10,
-    .f = ~ subsample_data_B(data_work_B, data_locality_summary_B)
+    .f = ~ subsample_data(data_work_B, data_locality_summary)
   )
 
 subsampled_results_B <-
   purrr::map(
     .progress = TRUE,
     .x = list_subsampled_B,
-    .f = ~ group_subsample_data_B(.x)
+    .f = ~ group_subsample_data(.x)
   ) %>%
   dplyr::bind_rows(.id = "iteration")
 
@@ -196,13 +236,75 @@ mean_subsampled_interactions_B <-
     .groups = "drop",
     mean_total_sub_localities = mean(total_localities, na.rm = TRUE), # Mean number of localities
     mean_sub_cat_parasitised = mean(cat_parasitised, na.rm = TRUE),
-    mean_sub_without_origin = mean (cat_available_without_par, na.rm = TRUE),
-    mean_sub_EFS = mean(EFS_ratio, na.rm= TRUE),
-    mean_sub_detected_no_par_localitites = mean(detected_no_par_localities, na.rm= TRUE)
+    mean_sub_EFS = mean(sub_EFS_ratio, na.rm= TRUE),
+    mean_sub_detected_no_par_localitites = mean(no_para, na.rm= TRUE)
   )
 
 
+# Step 5: Add the mean interactions to the original table
+final_merged_summary <-
+  Original_data_cat %>%
+  dplyr::full_join(
+    mean_subsampled_interactions_B,
+    by = c("CAT_sp")
+  )
+# View the final result
+#print(final_merged_summary)
 
+writexl::write_xlsx(
+  final_merged_summary,
+  here::here("output", "final_merged_summary_replace_TRUE.xlsx")
+)
+
+
+# Step 6: Summarize data for each caterpillar species (regardless of parasitoid)
+summary_caterpillar <-
+  final_merged_summary %>%
+  dplyr::group_by(CAT_sp) %>%
+  dplyr::summarise(
+    .groups = "drop",
+    localitites_orig = mean(total_localities, na.rm = TRUE),
+    parasitised_orig = mean (cat_parasitised, na.rm = TRUE),
+    EFS_orig = mean (detected_no_par_localities, na.rm = TRUE),
+    localities_sub = mean(mean_total_sub_localities, na.rm = TRUE),
+    parasitised_sub = mean(mean_sub_cat_parasitised, na.rm = TRUE),
+    EFS_sub = mean(mean_sub_EFS, na.rm = TRUE)
+  )
+
+# Reshape the data into long format for easier plotting
+summary_long <-
+  summary_caterpillar %>%
+  tidyr::pivot_longer(
+    cols = c(localitites_orig, parasitised_orig, enemy_free_orig,localities_sub,parasitised_sub,enemy_free_sub),
+    names_to = "group",
+    values_to = "mean_localities"
+  )
+
+# Create the boxplot with y-axis limits set to 0-8
+summary_long$group <- factor(summary_long$group, levels = c("localitites_orig","localities_sub", "parasitised_orig","parasitised_sub", "enemy_free_orig","enemy_free_sub"))
+p1 <-
+  ggplot(summary_long, aes(x = group, y = mean_localities, fill = group)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2, fill = "white") +
+  geom_jitter() +
+  scale_fill_manual(values = c( "#E69F00",  "#009E73","#D55E00","#56B4E9", "#999999", "#CC79A7" )) + # Colorblind-friendly colors
+  labs(
+    x = "Group",
+    y = "Mean Number of Localities",
+    title = "Enemy free space for caterpillars"
+  ) +
+  coord_cartesian(ylim = c(0, 9)) + # Set y-axis limits
+  scale_y_continuous(
+    breaks = seq(1, 9, 1)
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+ggplot2::ggsave(
+  plot = p1,
+  filename = here::here("output", "mean_localities_boxplot_replace_TRUE.png"),
+  bg = "white"
+)
 
 
 ```
