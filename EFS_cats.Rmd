@@ -6,6 +6,7 @@ library(tidyverse)
 library(dplyr)
 library(writexl)
 library(ggplot2)
+library(ggpubr)
 
 #----------------------------------------------------------#
 # 1. Load data -----
@@ -36,6 +37,21 @@ data_work <-
 # 2. Table with ENEMY FREE SPACE from original data for each caterpillar species -----
 #----------------------------------------------------------#
 interaction_summary <- data_work %>%
+  dplyr::group_by(CAT_sp, PAR_sp) %>%
+  # Total localities where the caterpillar is found
+  dplyr::summarize(
+    total_localities = dplyr::n_distinct(locality),
+    # Localities where the caterpillar is parasitized (PAR_sp is not NA or empty)
+    cat_parasitised = dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    # Localities where the caterpillar is detected but not parasitized
+    detected_no_par_localities = dplyr::n_distinct(locality) - dplyr::n_distinct(locality[!is.na(PAR_sp) & PAR_sp != ""]),
+    # Localities where the caterpillar is not parasitized (PAR_sp is NA or empty)
+    cat_available_without_par = dplyr::n_distinct(locality[is.na(PAR_sp) | PAR_sp == ""]),
+    # poměr počet lokalit bez parazitoidů/celkovým počtem lokalit
+    EFS_ratio = detected_no_par_localities/total_localities
+  ) 
+
+interaction_summary_C <- data_work %>%
   dplyr::group_by(CAT_sp) %>%
   # Total localities where the caterpillar is found
   dplyr::summarize(
@@ -50,9 +66,12 @@ interaction_summary <- data_work %>%
     EFS_ratio = detected_no_par_localities/total_localities
   ) 
 
+
+
 # Caterpillar species without parasitoids in metaweb
 tab_EFS_orig <- interaction_summary %>%
-  dplyr:: filter(cat_parasitised>0)
+  dplyr:: filter(cat_parasitised>0) %>% 
+  select(CAT_sp, PAR_sp, total_localities)
  # write_xlsx(tab_EFS_orig, "tab_EFS_orig.xlsx")
 
 # Prepare tables only with caterpillars, which have parasitoid
@@ -91,7 +110,6 @@ data_work_B <- data_work %>%
   filter(CAT_sp %in% caterpillar_parasitoid_table$CAT_sp[caterpillar_parasitoid_table$has_parasitoid == "Yes"])
 
 
-
 interaction_summary_B <- data_work_B %>%
   dplyr::group_by(CAT_sp,PAR_sp) %>%
   # Total localities where the caterpillar is found
@@ -121,6 +139,99 @@ Original_data_cat <- data_work_B %>%
      # poměr počet lokalit bez parazitoidů/celkovým počtem lokalit
      EFS_ratio = detected_no_par_localities/total_localities
    ) 
+
+# table with information about EFS for each caterpillar species
+tab_CAT <- Original_data_cat %>% 
+  select(CAT_sp, total_localities,detected_no_par_localities, EFS_ratio)
+
+# table with information about EFS for each caterpillar AND parasitoid species
+tab_PAR <- interaction_summary_B %>% 
+  select(CAT_sp, PAR_sp, total_localities) %>% 
+  rename("loc_par" = "total_localities")
+
+# table with information about EFS for each caterpillar AND parasitoid species, caterpillars without parasitoids are removed from this table
+tab_merged <-tab_CAT %>% 
+  dplyr::left_join(
+    tab_PAR,
+    by = "CAT_sp"
+  ) %>% 
+  dplyr:: mutate(EFS_par = (total_localities - loc_par) / total_localities) %>% 
+  dplyr:: filter(!is.na(PAR_sp))
+
+  
+# table with means from tab_merged
+
+tab_mean_EFS <- tab_merged %>%
+  dplyr::group_by(CAT_sp) %>% 
+  dplyr:: summarise(
+    EFS_cat_mean = mean(EFS_ratio, na.rm = TRUE),
+    EFS_par_mean = mean(EFS_par, na.rm = TRUE))
+
+summary_long_EFS <-
+  tab_mean_EFS %>%
+  tidyr::pivot_longer(
+    cols = c(EFS_cat_mean, EFS_par_mean),
+    names_to = "group",
+    values_to = "mean_localities"
+  )
+
+A_EFS <- summary_long_EFS %>% 
+  dplyr:: filter(group== "EFS_cat_mean")
+B_EFS <- summary_long_EFS %>% 
+  dplyr:: filter(group== "EFS_par_mean")
+
+
+EFS_A <-
+  ggplot(A_EFS, aes(x = group, y = mean_localities, fill = group)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2, fill = "white") +
+  geom_jitter() +
+  scale_fill_manual(values = c( "#E69F00")) +
+  scale_x_discrete(labels = c("Caterpillar sp.")) + # Colorblind-friendly colors
+  labs(
+    x = "",
+    y = "Mean Number of localities without parasitoids",
+    title = ""
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",axis.text.x = element_text(color = "black"))
+
+EFS_B <-
+  ggplot(B_EFS, aes(x = group, y = mean_localities, fill = group)) +
+  geom_violin() +
+  geom_boxplot(width = 0.2, fill = "white") +
+  geom_jitter() +
+  scale_fill_manual(values = c( "#009E73")) +
+  scale_x_discrete(labels = c("Caterpillar + Parasitoid sp.")) +
+  labs(
+    x = "",
+    y = "Mean Number of localities without parasitoids",
+    title = ""
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none",axis.text.x = element_text(color = "black"))
+
+combined_plot <- ggarrange(ggarrange(EFS_A, EFS_B, ncol = 2, labels = c("A", "B"))) 
+EFS_combined_plot <- annotate_figure(combined_plot, top = text_grob("Enemy free space for caterpillars", 
+              , face = "bold", size = 16))
+
+ggplot2::ggsave(
+  plot = EFS_combined_plot,
+  filename = here::here("output", "EFS_means.png"),
+  bg = "white"
+)
+
+ 
+
+
+EFS_mean <- Original_data_cat %>%
+dplyr::summarise(
+    prumer = mean(EFS_ratio, na.rm = TRUE)); EFS_mean
+
+EFS_median <- Original_data_cat %>%
+dplyr::summarise(
+    median = median(EFS_ratio, na.rm = TRUE));EFS_median
+
 
 
 # Summary of data

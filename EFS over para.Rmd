@@ -50,6 +50,8 @@ interaction_summary <- data_work %>%
     EFS_ratio = detected_no_par_localities/total_localities
   ) 
 
+
+
 # Caterpillar species without parasitoids in metaweb
 tab_EFS_orig <- interaction_summary %>%
   dplyr:: filter(cat_parasitised>0)
@@ -121,6 +123,11 @@ Original_data_cat <- data_work_B %>%
      # poměr počet lokalit bez parazitoidů/celkovým počtem lokalit
      EFS_ratio = detected_no_par_localities/total_localities
    ) 
+
+EFS_mean <- interaction_summary_B %>%
+dplyr::summarise(
+    prumer = mean(EFS_ratio, na.rm = TRUE))
+
 
 
 # Summary of data
@@ -211,7 +218,7 @@ set.seed(1234)
 list_subsampled_B <-
   purrr::map(
     .progress = TRUE,
-    .x = 1:999,
+    .x = 1:8,
     .f = ~ subsample_data(data_work_B, data_locality_summary)
   )
 
