@@ -1,0 +1,175 @@
+
+
+#Diversity indices
+```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+
+
+# Full data
+MASTER <- read.delim(here::here("DATA/MASTER.csv")) 
+
+# Removing useless columns + Removing data of OHU2
+
+
+MASTER <- MASTER %>% 
+  dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
+  dplyr:: filter(locality != "Ohu2")
+
+
+
+
+
+
+
+Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("DATA/Distance.csv")
+
+distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
+distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  select(locality, PAR_sp)
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+# Make a dataframe for caterpillars
+cat_pivot <-  MASTER %>% 
+   select(locality, CAT_sp)
+
+cat_pivot2 <- as.matrix(table(cat_pivot$locality, cat_pivot$CAT_sp))  # dataframe ready for indices
+cat_pivot2[is.na(cat_pivot2)] <- 0 # Replacing NA values with 0
+cat_pivot_P_A <- cat_pivot2
+cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Sorensen index only
+```
+
+# Information about abundance etc.
+```{r}
+skim(MASTER)
+
+family_species <- MASTER %>%
+   select(PAR_sp, locality)
+
+# Count the number of unique species in each locality
+species_locality_count <- family_species %>%
+   group_by(locality) %>%
+   summarise(
+      species_count = n_distinct(PAR_sp),  # Count unique species
+      abundance = n()  # Count total occurrences (abundance)
+   )
+
+# View the result
+species_locality_count
+
+
+family_species_cat <- MASTER %>%
+   select(CAT_sp, locality)
+
+# Count the number of unique species in each locality
+species_locality_count_cat <- family_species_cat %>%
+   group_by(locality) %>%
+   summarise(
+      species_count = n_distinct(CAT_sp),  # Count unique species
+      abundance = n()  # Count total occurrences (abundance)
+   )
+# View the result
+species_locality_count_cat
+```
+
+Bray-Curtis
+```{r Bray-Curtis}
+#Bray-Curtis index for parasitoids
+BC_par_res <- vegan::vegdist(para_pivot2, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel <- mantel(BC_par_res, Distance , method="spear"); BC_res_par_mantel
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids <- reshape:: melt(BC_par_res)
+Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value) # rename columns
+Bray_C_figure_par <- Bray_C_figure_par %>%
+  add_column(guild = "Parasitoids")
+par_fig_table_BC <-merge(Bray_C_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+# 
+BC_par_inter <- lm(hodnota ~ distance, data = par_fig_table_BC) # 0.679025     0.000375
+anova(BC_par_inter)
+BC_par_inter$coefficients
+
+
+# coefficients
+BC_lm_par <- lm(hodnota~distance, data = par_fig_table_BC)
+BC_lm_par
+
+par_BC_mean <- summarise(par_fig_table_BC,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean
+
+
+mantel_result_Par_BC <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Parasitoids",
+  mean = round(par_BC_mean$mean_BC,3),
+  sd = round(par_BC_mean$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel$statistic,3),
+  p.value = round(BC_res_par_mantel$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC )
+
+
+# Bray-Curtis index for caterpillars
+
+BC_cat_res<- vegdist(cat_pivot2, method="bray", binary=FALSE, diag=TRUE) %>%  as.matrix()
+BC_cat_res_mantel <- mantel(BC_cat_res, Distance , method="spear"); BC_cat_res_mantel
+
+####preparation for a figure
+Bray_C_Caterpillars <- melt(BC_cat_res)
+Bray_C_figure_cat <- dplyr::rename (Bray_C_Caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_cat <- Bray_C_figure_cat %>%
+  add_column(guild = "Caterpillars")
+
+Cat_fig_table_BC <-merge(Bray_C_figure_cat, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+
+cat_bc_mean <- summarise(Cat_fig_table_BC,
+                     mean = mean(hodnota),
+                     sd = sd(hodnota)) 
+cat_bc_mean
+
+BC_lm_cat <- lm(hodnota~distance, data = Cat_fig_table_BC)
+BC_lm_cat # 0.5019007    0.0003242
+
+
+mantel_result_cat_BC <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Caterpillars",
+  mean = round(cat_bc_mean$mean,3),
+  sd = round(cat_bc_mean$sd,3),
+  test = "Mantel",
+  statistic = round (BC_cat_res_mantel$statistic,3),
+  p.value = round(BC_cat_res_mantel$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_BC )
+
+
+
+```
+
