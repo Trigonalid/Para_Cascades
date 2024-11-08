@@ -1,0 +1,320 @@
+
+```{r}
+library(ggplot2)
+library(ggpubr)
+```
+
+Theme set-up
+```{r}
+My_theme = theme_classic +
+  theme(
+  axis.title.x = element_text(size = 16),
+  axis.text.x = element_text(size = 14),
+  axis.title.y = element_text(size = 16),
+  axis.text.y = element_text(size = 14)
+)
+```
+
+Figure 1
+```{r Figure 1}
+
+indexy <-
+  readr::read_delim(
+    here::here(
+      "DATA/index_all_fig.csv"
+    ),
+    delim = ";"
+  ) %>%
+  tibble::as_tibble()
+
+
+
+index_CS <- indexy %>% 
+  dplyr::filter(Index == "Chao-Sorensen")
+index_BC <- indexy %>% 
+  dplyr::filter(Index == "Bray-Curtis")
+index_SOR <- indexy %>% 
+  dplyr::filter(Index == "Sorensen")
+
+### set up colours 
+# Bray-Curtis
+BC_FIG_1 <- ggplot(index_BC, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars - subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars - subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars - subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Bray-Curtis",
+       x = "",
+       y = "",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild") +
+  theme_classic(base_size = 16) +
+  theme(text = element_text(family = "Arial"))  # Set font to Arial
+
+BC_FIG_1
+
+
+CS_FIG_1 <-ggplot(index_CS, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars - subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars - subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars - subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Chao-Sorensen",
+         x = "km",
+       y = "",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild") +
+  theme_classic(base_size = 16)+
+  theme(text = element_text(family = "Arial"))   ;CS_FIG_1  
+
+
+SOR_FIG_1 <-ggplot(index_SOR, aes(x = distance, y = hodnota, 
+                 color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars - subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars - subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars - subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Sorensen",
+       x = "",
+       y = "β diversity",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild") +  # Change legend title for linetype
+  theme_classic(base_size = 16) +
+  theme(text = element_text(family = "Arial"))  ; SOR_FIG_1
+
+
+Fig_1_final <-ggarrange(SOR_FIG_1 , CS_FIG_1 , BC_FIG_1, common.legend = TRUE, legend = "bottom", nrow = 1)
+
+Fig_1_final
+ggsave("output/fig/Fig_1.tiff",
+Fig_1_final,
+ width = 8.7,      # Single column width in inches
+       height = 6,       # Adjust as needed
+       dpi = 600)   # save the plot as .tiff
+
+```
+
+
+```{r Figure 2}
+# WN
+# Ensure "CAT-PLANT Subsampled" is added as a level
+levels(graf_WN$dataset_type) <- c(levels(graf_WN$dataset_type), "CAT-PLANT Subsampled")
+
+# Replace "Subsampled" with "Petr"
+graf_WN$dataset_type[graf_WN$dataset_type == "Subsampled"] <- "CAT-PLANT Subsampled"
+
+#compare_means(value ~ dataset_type,  data = graf_WN)
+
+
+
+Fig_WN <- ggplot(graf_WN, aes(x = dataset_type, y = value, color = dataset_type, shape = dataset_type, alpha = dataset_type)) +
+  geom_boxplot(colour = "black", width=0.5) +
+  geom_jitter(size = 2, position=position_jitter(0.2)) +
+  labs(
+    title = "WN-General dissimilarity",
+    x = "",
+    y = "Dissimilarity",
+    color = "",      # Change legend title for color
+    shape = "",      # Change legend title for shape
+    alpha = ""       # Change legend title for alpha
+  )  + 
+   scale_alpha_manual(
+    values = c("PAR-CAT" = 0.7, "CAT-PLANT" = 0.7, "CAT-PLANT Subsampled" = 0.5),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_color_manual(
+    values = c("PAR-CAT" = "#1b9e77", "CAT-PLANT" = "#d95f02", "CAT-PLANT Subsampled" = "#ffb681"),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_shape_manual(
+    values = c("PAR-CAT" = 17, "CAT-PLANT" = 16, "CAT-PLANT Subsampled" = 16),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  )+
+  coord_cartesian(ylim = c(0, 1.15)) +
+  scale_y_continuous(breaks = seq(0, 1.15, by = 0.25)) + 
+  theme_classic(base_size = 20) +
+  theme (axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) +
+   geom_signif(
+    comparisons = list(c("PAR-CAT", "CAT-PLANT"), c ( "PAR-CAT", "CAT-PLANT Subsampled"), c("CAT-PLANT", "CAT-PLANT Subsampled")),
+    map_signif_level = TRUE,
+    textsize = 6,
+    margin_top = 0.1,
+    step_increase = 0.15,
+    tip_length = 0.01,
+    color = "black")
+Fig_WN# Add pairwise comparisons p-value  ; Fig_WN
+
+
+# ST
+# Ensure "CAT-PLANT Subsampled" is added as a level
+levels(graf_ST$dataset_type) <- c(levels(graf_ST$dataset_type), "CAT-PLANT Subsampled")
+
+# Replace "Subsampled" with "Petr"
+graf_ST$dataset_type[graf_ST$dataset_type == "Subsampled"] <- "CAT-PLANT Subsampled"
+
+#compare_means(value ~ dataset_type,  data = graf_ST)
+
+
+
+Fig_ST <- ggplot(graf_ST, aes(x = dataset_type, y = value, color = dataset_type, shape = dataset_type, alpha = dataset_type)) +
+  geom_boxplot(colour = "black", width=0.5) +
+  geom_jitter(size = 2, position=position_jitter(0.2)) +
+  labs(
+    title = "ST-Species Turnover",
+    x = "",
+    y = "",
+    color = "",      # Change legend title for color
+    shape = "",      # Change legend title for shape
+    alpha = ""       # Change legend title for alpha
+  )  + 
+  scale_alpha_manual(
+    values = c("PAR-CAT" = 0.7, "CAT-PLANT" = 0.7, "CAT-PLANT Subsampled" = 0.5),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_color_manual(
+    values = c("PAR-CAT" = "#1b9e77", "CAT-PLANT" = "#d95f02", "CAT-PLANT Subsampled" = "#ffb681"),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_shape_manual(
+    values = c("PAR-CAT" = 17, "CAT-PLANT" = 16, "CAT-PLANT Subsampled" = 16),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  coord_cartesian(ylim = c(0, 1.15)) +
+  scale_y_continuous(breaks = seq(0, 1.15, by = 0.25)) + 
+  theme_classic(base_size = 20) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  ) +
+  geom_signif(
+    comparisons = list(c("PAR-CAT", "CAT-PLANT"), c("PAR-CAT", "CAT-PLANT Subsampled"), c("CAT-PLANT", "CAT-PLANT Subsampled")),
+    map_signif_level = TRUE,
+    textsize = 6,
+    margin_top = 0.1,
+    step_increase = 0.15,
+    tip_length = 0.01,
+    color = "black"
+  )
+
+Fig_ST
+# Add pairwise comparisons p-value  ; Fig_ST
+
+
+# OS
+# Ensure "CAT-PLANT Subsampled" is added as a level
+levels(graf_OS$dataset_type) <- c(levels(graf_OS$dataset_type), "CAT-PLANT Subsampled")
+
+# Replace "Subsampled" with "Petr"
+graf_OS$dataset_type[graf_OS$dataset_type == "Subsampled"] <- "CAT-PLANT Subsampled"
+
+#compare_means(value ~ dataset_type,  data = graf_OS)
+
+
+
+Fig_OS <- ggplot(graf_OS, aes(x = dataset_type, y = value, color = dataset_type, shape = dataset_type, alpha = dataset_type)) +
+  geom_boxplot(colour = "black", width=0.5) +
+  geom_jitter(size = 2, position=position_jitter(0.2)) +
+  labs(
+    title = "OS-Rewiring",
+    x = "",
+    y = "",
+    color = "",      # Change legend title for color
+    shape = "",      # Change legend title for shape
+    alpha = ""       # Change legend title for alpha
+  )  + 
+  scale_alpha_manual(
+    values = c("PAR-CAT" = 0.7, "CAT-PLANT" = 0.7, "CAT-PLANT Subsampled" = 0.5),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_color_manual(
+    values = c("PAR-CAT" = "#1b9e77", "CAT-PLANT" = "#d95f02", "CAT-PLANT Subsampled" = "#ffb681"),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  scale_shape_manual(
+    values = c("PAR-CAT" = 17, "CAT-PLANT" = 16, "CAT-PLANT Subsampled" = 16),
+    labels = c("PAR-CAT" = "Parasitoid-Caterpillar", 
+               "CAT-PLANT" = "Caterpillar-Plant", 
+               "CAT-PLANT Subsampled" = "Caterpillar-Plant Subsampled")
+  ) +
+  coord_cartesian(ylim = c(0, 1.15)) +
+  scale_y_continuous(breaks = seq(0, 1.15, by = 0.25)) + 
+  theme_classic(base_size = 20) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank()
+  ) +
+  geom_signif(
+    comparisons = list(c("PAR-CAT", "CAT-PLANT"), c("PAR-CAT", "CAT-PLANT Subsampled"), c("CAT-PLANT", "CAT-PLANT Subsampled")),
+    map_signif_level = TRUE,
+    textsize = 6,
+    margin_top = 0.1,
+    step_increase = 0.25,
+    tip_length = 0.01,
+    color = "black"
+  )
+
+# Add pairwise comparisons p-value  ; Fig_OS
+
+
+Fig_2_final <-ggarrange(Fig_WN, Fig_OS, Fig_ST, common.legend = TRUE, legend = "bottom", nrow = 1)
+
+Fig_2_final
+ggsave("output/fig/Fig_2_final.tiff",
+Fig_2_final,
+height = 17,
+width = 28,
+units = "cm")   # save the plot as .tiff
+
+
+
+
+```
+

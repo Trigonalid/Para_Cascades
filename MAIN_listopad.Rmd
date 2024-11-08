@@ -11,29 +11,24 @@ library(skimr)
 
 
 # Full data
-MASTER <- read.delim(here::here("DATA/MASTER.csv")) 
+MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
 
 # Removing useless columns + Removing data of OHU2
-
-
-MASTER <- MASTER %>% 
-  dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
-  dplyr:: filter(locality != "Ohu2")
-
+#MASTER_8 <- MASTER %>% 
+ # dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
+  # dplyr:: filter(locality != "Ohu2")
 
 
 
-
-
-
+# Loading distance matrix
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
-Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+#Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
 
 # Prepare the distance matrix for a figure
 Distance_fig <- read.csv2("DATA/Distance.csv")
 
 distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
-distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+#distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
 
 distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
@@ -93,7 +88,7 @@ Bray-Curtis
 ```{r Bray-Curtis}
 #Bray-Curtis index for parasitoids
 BC_par_res <- vegan::vegdist(para_pivot2, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
-BC_res_par_mantel <- mantel(BC_par_res, Distance , method="spear"); BC_res_par_mantel
+BC_res_par_mantel <- vegan::mantel(BC_par_res, Distance , method="spear"); BC_res_par_mantel
 
 
 ####preparation for a figure - Bray-Curtis
@@ -169,7 +164,117 @@ mantel_result_cat_BC <- data.frame(
 )
 print(mantel_result_cat_BC )
 
+```
 
+```{r BC-subsampling}
+MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
+data_testing <-MASTER %>% 
+  dplyr::select(locality, CAT_sp, PLANT_sp, PAR_sp, guild)
+  
+  
+  # subsampling the dataset
+  #filter(Remove_cats =="0") %>%
+  #select(loc2, cat_whole_name, M_code_2, guild, pl_identification)
+#data_testing$locality = data_testing$loc2 # make duplicate column
+#data_testing <-rename (data_testing , LOC2 = loc2, Cat_species = cat_whole_name, Plant_species = pl_identification, Par_species = M_code_2) # rename columns
+
+
+
+
+
+
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  data_testing %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  data_testing %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+
+
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+set.seed(1234)
+n_rand <- 1000
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+  
+  cat_randomly_resampled <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x){
+        
+        N_para <-
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1, .default = 0)  # Add default value
+        
+        if (N_para == 0) {
+          return(data.frame())  # Skip if no parasitoids
+        }
+        
+        res <-
+          data_testing %>% 
+          filter(locality == x) %>% 
+          sample_n(size = N_para, replace = TRUE)  # Use replace if N_para > samples available
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+  
+  # Check if data is not empty
+  if (nrow(cat_randomly_resampled) == 0) {
+    next
+  }
+  
+  # Define the data frame for vegdist
+  df <- cat_randomly_resampled
+  
+  # Calculate Bray-Curtis distance matrix
+  BC_res <- vegdist(as.matrix(df[, -1]), method = "bray", binary = FALSE, diag = TRUE) %>% 
+    as.matrix()
+  
+  res_list[[i]] <- BC_res
+}
+
+
+
+
+#  calculate a mean
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+BC_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+
+
+# calculate a mean of the results
+BC_melt<-melt(BC_res_mean)
+BC_mean <- summarise(BC_melt,
+                     mean_BC = mean(value),
+                     sd_BC = sd(value))
+#BC_mean
 
 ```
 
