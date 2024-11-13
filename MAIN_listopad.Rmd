@@ -56,11 +56,11 @@ cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Soren
 skim(MASTER)
 
 family_species <- MASTER %>%
-   select(PAR_sp, locality)
+   select(PAR_sp, locality, PLANT_sp)
 
 # Count the number of unique species in each locality
 species_locality_count <- family_species %>%
-   group_by(locality) %>%
+   group_by(locality, PLANT_sp) %>%
    summarise(
       species_count = n_distinct(PAR_sp),  # Count unique species
       abundance = n()  # Count total occurrences (abundance)
@@ -82,6 +82,11 @@ species_locality_count_cat <- family_species_cat %>%
    )
 # View the result
 species_locality_count_cat
+
+
+
+
+
 ```
 
 Bray-Curtis

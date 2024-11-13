@@ -1,0 +1,65 @@
+---
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+Table S1 – Results of diversity indices used for beta-diversity comparison (Figure 1). Full dataset represents complete data parasitoid and caterpillar communities. Subsampled dataset of caterpillars represents subsampled caterpillars to the number of parasitoid individuals observed per site to probe the consequences of lower sample size in parasitoid communities.
+
+```{r Table S1}
+
+
+
+
+
+```
+
+
+Table S2. Food-web interaction dissimilarity and relationship with distance for parasitoid-caterpillar. and caterpillar-plant networks. Results represent a complete dataset. a dataset with common plants only. occupying more than four sites. and a dataset with only common caterpillar hosts (more than 50 individuals per caterpillar species) for suppressing the effect of rare species. WN - The overall dissimilarity between two sites; OS - the dissimilarity explained by "rewiring" among shared species; ST - the dissimilarity explained by the difference in species community composition (species turnover); ST.L – low interaction is missing. ST.H – high interaction is missing; ST.LH – whole interaction is missing (according to Novotny 2009).
+```{r Table S2}
+
+
+
+
+```
+
+Table S3   Summary of caterpillars and reared parasitoids for each host plant and locality.
+```{r Table S3, echo=FALSE}
+
+library(dplyr)
+library(writexl)
+
+MASTER <- read.delim(here::here("DATA/MASTER.csv"))
+
+full_summary <- MASTER %>%
+   select(PAR_sp, locality, PLANT_sp, CAT_sp)
+
+
+
+# Assuming your dataset is called `data_work`
+# Step 1: Replace missing PAR_sp values with NA if not already
+full_summary$PAR_sp <- ifelse(full_summary$PAR_sp == "", NA, full_summary$PAR_sp)
+
+# Step 2: Create the summary table
+summary_table <- full_summary %>%
+  group_by(locality, PLANT_sp) %>%
+  summarise(
+    `Caterpillar species` = n_distinct(CAT_sp),
+    `Parasitoid species` = n_distinct(PAR_sp, na.rm = TRUE),
+    `Caterpillar abundance` = n(),
+    `Parasitoid abundance` = sum(!is.na(PAR_sp))
+  ) %>%
+  ungroup()
+
+# View the summary table
+print(summary_table)
+
+
+#write_xlsx(summary_table, "summary_table.xlsx")
+```
+
+Table S4 Summary of data and analysis from Ohu site sampled twice for revealing the community difference within one site. 
+```{r Table S4}
+
+```
