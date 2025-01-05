@@ -1,0 +1,194 @@
+
+```{r include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+library(vegan)
+library(iNEXT)
+library(bipartiteD3)
+library(bipartite)
+library(betapart)
+library(usedist)
+library(readxl)
+library(writexl)
+library(openxlsx)
+```
+
+
+
+PARASITOIDS-CATERPILLARS
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+library(vegan)
+
+library(betapart)
+library(here)
+
+
+# Load the data
+main_table <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+
+# Select relevant columns
+main_table <- main_table %>%
+  select(locality, PAR_sp, CAT_sp, PLANT_sp)
+
+# Prepare the distance matrix for a figure (optional, for visualization)
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)
+distance_plot <- rename(distance_2, Locality_A = X, Locality_B = variable, distance = value)
+
+# Prepare contingency tables for each locality (Ohu1 and Ohu2)
+Ohu1_full_PC <- main_table %>%
+  filter(locality == "Ohu1") %>%
+  select(CAT_sp, PAR_sp)
+Ohu13_full_PC <- as.matrix(table(Ohu1_full_PC$PAR_sp, Ohu1_full_PC$CAT_sp))
+
+Ohu2_full_PC <- main_table %>%
+  filter(locality == "Ohu2") %>%
+  select(CAT_sp, PAR_sp)
+Ohu2_3_full_PC <- as.matrix(table(Ohu2_full_PC$PAR_sp, Ohu2_full_PC$CAT_sp))
+
+# Get the size of the smaller locality
+size_Ohu1 <- nrow(Ohu13_full_PC)
+size_Ohu2 <- nrow(Ohu2_3_full_PC)
+
+# Identify the smaller and larger locality
+small_locality_size <- min(size_Ohu1, size_Ohu2)
+larger_locality <- ifelse(size_Ohu1 > size_Ohu2, "Ohu1", "Ohu2")
+
+# Function to resample and calculate dissimilarity
+resample_and_calculate_dissimilarity <- function() {
+  # Resample the larger locality
+  if (larger_locality == "Ohu1") {
+    sampled_data <- Ohu13_full_PC[sample(1:size_Ohu1, small_locality_size), ]
+    combined_data_Ohu1 <- sampled_data
+    combined_data_Ohu2 <- Ohu2_3_full_PC
+  } else {
+    sampled_data <- Ohu2_3_full_PC[sample(1:size_Ohu2, small_locality_size), ]
+    combined_data_Ohu1 <- Ohu13_full_PC
+    combined_data_Ohu2 <- sampled_data
+  }
+  
+  # Create a list of matrices (one for each locality)
+  webs <- webs2array(list(combined_data_Ohu1, combined_data_Ohu2))
+  
+  # Calculate food-web interaction dissimilarity
+  FW_results <- betalinkr_multi(webs, partitioning = "commondenom", partition.st = TRUE)
+  
+  # Return the dissimilarity results (e.g., from the betaSOR, betaSIM, etc.)
+  return(FW_results)
+}
+
+# Perform resampling and calculate dissimilarity 10 times
+set.seed(9999) # For reproducibility
+dissimilarity_results <- replicate(999, resample_and_calculate_dissimilarity(), simplify = FALSE)
+
+# Extract and compute the dissimilarity metrics (betaSOR, betaSIM, etc.)
+betaS_values_PC <- sapply(dissimilarity_results, function(res) res$S)
+betaOS_values_PC <- sapply(dissimilarity_results, function(res) res$OS)
+betaWN_values_PC <- sapply(dissimilarity_results, function(res) res$WN)
+
+# Compute mean and standard deviation of dissimilarity metrics
+mean_betaS_PC <- mean(betaS_values_PC)
+sd_betaS_PC <- sd(betaS_values_PC)
+
+mean_betaOS_PC <- mean(betaOS_values_PC)
+sd_betaOS_PC <- sd(betaOS_values_PC)
+
+mean_betaWN_PC <- mean(betaWN_values_PC)
+sd_betaWN_PC <- sd(betaWN_values_PC)
+
+```
+
+
+
+CAT-PLANT
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+library(vegan)
+
+library(betapart)
+library(here)
+
+
+# Load the data
+main_table <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+
+# Select relevant columns
+main_table <- main_table %>%
+  select(locality, PAR_sp, CAT_sp, PLANT_sp)
+
+# Prepare the distance matrix for a figure (optional, for visualization)
+Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
+distance_2 <- melt(Distance_fig)
+distance_plot <- rename(distance_2, Locality_A = X, Locality_B = variable, distance = value)
+
+# Prepare contingency tables for each locality (Ohu1 and Ohu2)
+Ohu1_full_CPL <- main_table %>%
+  filter(locality == "Ohu1") %>%
+  select(PLANT_sp, CAT_sp)
+Ohu13_full_CPL <- as.matrix(table(Ohu1_full_CPL$CAT_sp, Ohu1_full_CPL$PLANT_sp))
+
+Ohu2_full_CPL <- main_table %>%
+  filter(locality == "Ohu2") %>%
+  select(PLANT_sp, CAT_sp)
+Ohu2_3_full_CPL <- as.matrix(table(Ohu2_full_CPL$CAT_sp, Ohu2_full_CPL$PLANT_sp))
+
+# Get the size of the smaller locality
+size_Ohu1 <- nrow(Ohu13_full_CPL)
+size_Ohu2 <- nrow(Ohu2_3_full_CPL)
+
+# Identify the smaller and larger locality
+small_locality_size <- min(size_Ohu1, size_Ohu2)
+larger_locality <- ifelse(size_Ohu1 > size_Ohu2, "Ohu1", "Ohu2")
+
+# Function to resample and calculate dissimilarity
+resample_and_calculate_dissimilarity <- function() {
+  # Resample the larger locality
+  if (larger_locality == "Ohu1") {
+    sampled_data <- Ohu13_full_CPL[sample(1:size_Ohu1, small_locality_size), ]
+    combined_data_Ohu1 <- sampled_data
+    combined_data_Ohu2 <- Ohu2_3_full_CPL
+  } else {
+    sampled_data <- Ohu2_3_full_CPL[sample(1:size_Ohu2, small_locality_size), ]
+    combined_data_Ohu1 <- Ohu13_full_CPL
+    combined_data_Ohu2 <- sampled_data
+  }
+  
+  # Create a list of matrices (one for each locality)
+  webs <- webs2array(list(combined_data_Ohu1, combined_data_Ohu2))
+  
+  # Calculate food-web interaction dissimilarity
+  FW_results <- betalinkr_multi(webs, partitioning = "commondenom", partition.st = TRUE)
+  
+  # Return the dissimilarity results (e.g., from the betaSOR, betaSIM, etc.)
+  return(FW_results)
+}
+
+# Perform resampling and calculate dissimilarity 10 times
+set.seed(9999) # For reproducibility
+dissimilarity_results <- replicate(999, resample_and_calculate_dissimilarity(), simplify = FALSE)
+
+# Extract and compute the dissimilarity metrics (betaSOR, betaSIM, etc.)
+betaS_values_CPL <- sapply(dissimilarity_results, function(res) res$S)
+betaOS_values_CPL <- sapply(dissimilarity_results, function(res) res$OS)
+betaWN_values_CPL <- sapply(dissimilarity_results, function(res) res$WN)
+
+# Compute mean and standard deviation of dissimilarity metrics
+mean_betaS_CPL <- mean(betaS_values)
+sd_betaS_CPL <- sd(betaS_values)
+
+mean_betaOS_CPL <- mean(betaOS_values)
+sd_betaOS_CPL <- sd(betaOS_values)
+
+mean_betaWN_CPL <- mean(betaWN_values)
+sd_betaWN_CPL <- sd(betaWN_values)
+
+
+```
+

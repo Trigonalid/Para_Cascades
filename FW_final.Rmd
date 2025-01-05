@@ -81,7 +81,7 @@ Yapsiei3_full_PC<-as.matrix(table(Yapsiei_full_PC$CAT_sp,Yapsiei_full_PC$PAR_sp)
 #Analyses of interactions
 
 FW_full_PC_results<-betalinkr_multi(webs2array(Elem3_full_PC,Morox3_full_PC,Niksek3_full_PC,Ohu13_full_PC,Ohu2_3_full_PC,Utai3_full_PC, Wamangu3_full_PC, Wanang3_full_PC, Yapsiei3_full_PC), partitioning="commondenom", partition.st=TRUE)
-FW_full_PC_results<-FW_full_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+bFW_full_PC_results<-FW_full_PC_results %>% add_column(dataset = "whole_CAT_PAR")
 
 FW_ST_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST)
 FW_OS_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, OS)

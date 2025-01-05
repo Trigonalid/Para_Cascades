@@ -65,3 +65,4 @@ mean_bray_curtis <- mean(bray_curtis_values)
 
 # Print the mean Bray-Curtis dissimilarity
 cat("The mean Bray-Curtis dissimilarity is:", mean_bray_curtis, "\n")
+

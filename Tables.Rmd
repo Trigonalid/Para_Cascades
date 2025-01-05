@@ -1,9 +1,7 @@
 ---
 output:
   word_document: default
-  html_document: default
-  pdf_document: default
----
+ ---
 
 Table S1 – Results of diversity indices used for beta-diversity comparison (Figure 1). Full dataset represents complete data parasitoid and caterpillar communities. Subsampled dataset of caterpillars represents subsampled caterpillars to the number of parasitoid individuals observed per site to probe the consequences of lower sample size in parasitoid communities.
 
@@ -57,6 +55,93 @@ print(summary_table)
 
 
 #write_xlsx(summary_table, "summary_table.xlsx")
+
+
+
+
+  
+
+# Step 1: Summarize the number of unique parasitoid species (PAR_sp) per locality for each caterpillar species (CAT_sp)
+summary_data <- data_work_B %>%
+  group_by(locality, CAT_sp) %>%
+  summarise(
+    par_count = n_distinct(PAR_sp, na.rm = TRUE),  # Count unique parasitoid species, ignoring NA
+    .groups = 'drop'
+  )
+
+# Step 2: Create a summary table counting the number of localities for each category
+result_no_parasitoids <- summary_data %>%
+  mutate(
+    category = case_when(
+      par_count == 0 ~ "No PAR_sp",       # No parasitoid species
+      par_count == 1 ~ "One PAR_sp",      # One parasitoid species
+      par_count > 1  ~ "Multiple PAR_sp"  # More than one parasitoid species
+    )
+  ) %>%
+  # Count the number of localities per category
+  group_by(CAT_sp, category) %>%
+  summarise(n_localities = n(), .groups = 'drop')
+
+# View the result
+print(result_no_parasitoids)
+
+mean_of_caterpillars <- result_no_parasitoids %>%
+  dplyr::group_by(category) %>% 
+  dplyr:: summarise(
+    localities_mean = mean(n_localities, na.rm = TRUE))
+
+print(mean_of_caterpillars)
+
+# Number of localities for each caterpillar
+
+cat_localities <- data_work_B %>%
+  group_by(CAT_sp) %>%
+  summarise(
+    loc_count = n_distinct(locality, na.rm = TRUE),  # Count unique parasitoid species, ignoring NA
+    .groups = 'drop'
+  )
+
+cat_loc_par <-cat_localities %>% 
+  dplyr::left_join(
+    result_no_parasitoids,
+    by = "CAT_sp"
+  ) %>% 
+  dplyr:: mutate(CAT_ratio = (n_localities/loc_count))  %>%
+  as_tibble()
+
+
+print(cat_loc_par)
+############
+nic <- cat_loc_par %>% 
+  filter(category =="No PAR_sp")
+
+
+summary_long_EFS <-
+  tab_mean_EFS %>%
+  tidyr::pivot_longer(
+    cols = c(EFS_cat_mean, EFS_par_mean),
+    names_to = "group",
+    values_to = "mean_localities"
+  )
+
+nic_EFS <- summary_long_EFS %>% 
+  filter (group == "EFS_cat_mean") %>% 
+  filter(mean_localities >0)
+
+
+
+
+
+
+mean_of_caterpillars <- cat_loc_par %>%
+  dplyr::group_by(category) %>% 
+  dplyr:: summarise(
+    localities_mean = mean(n_localities, na.rm = TRUE),
+    CAT_ratio_mean = mean(CAT_ratio))
+
+print(mean_of_caterpillars)
+
+write.csv(cat_loc_par, "cat_loc_par_2.csv", row.names = FALSE)
 ```
 
 Table S4 Summary of data and analysis from Ohu site sampled twice for revealing the community difference within one site. 

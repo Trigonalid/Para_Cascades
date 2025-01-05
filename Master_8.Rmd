@@ -1,0 +1,952 @@
+
+
+#Diversity indices
+```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+library(tibble)
+
+# Full data
+MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
+
+# Removing useless columns + Removing data of OHU2
+MASTER_8 <- MASTER %>% 
+  dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild, Par_remove) %>% 
+   dplyr:: filter(locality != "Ohu2")
+
+
+
+# Loading distance matrix
+Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2("DATA/Distance.csv")
+
+distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
+distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER_8  %>%
+      select(locality, PAR_sp, Par_remove)
+para_pivot <- para_pivot %>% 
+  filter(Par_remove == "0")
+
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+# Make a dataframe for caterpillars
+cat_pivot <-  MASTER_8 %>% 
+   select(locality, CAT_sp)
+
+cat_pivot2 <- as.matrix(table(cat_pivot$locality, cat_pivot$CAT_sp))  # dataframe ready for indices
+cat_pivot2[is.na(cat_pivot2)] <- 0 # Replacing NA values with 0
+cat_pivot_P_A <- cat_pivot2
+cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Sorensen index only
+```
+
+
+```{r}
+skim(MASTER_8)
+
+family_species <- MASTER_8 %>%
+   select(PAR_sp, locality, PLANT_sp)
+
+# Count the number of unique species in each locality
+species_locality_count <- family_species %>%
+   group_by(locality, PLANT_sp) %>%
+   summarise(
+      species_count = n_distinct(PAR_sp),  # Count unique species
+      abundance = n()  # Count total occurrences (abundance)
+   )
+
+# View the result
+species_locality_count
+
+
+family_species_cat <- MASTER_8 %>%
+   select(CAT_sp, locality)
+
+# Count the number of unique species in each locality
+species_locality_count_cat <- family_species_cat %>%
+   group_by(locality) %>%
+   summarise(
+      species_count = n_distinct(CAT_sp),  # Count unique species
+      abundance = n()  # Count total occurrences (abundance)
+   )
+# View the result
+species_locality_count_cat
+```
+
+# Bray-Curtis
+```{r Bray-Curtis, echo=FALSE}
+#Bray-Curtis index for parasitoids
+BC_par_res <- vegan::vegdist(para_pivot2, method="bray", binary=FALSE, diag=TRUE) %>% as.matrix()
+BC_res_par_mantel <- vegan::mantel(BC_par_res, Distance , method="spear"); BC_res_par_mantel
+
+
+####preparation for a figure - Bray-Curtis
+Bray_C_parasitoids <- reshape::melt(BC_par_res)
+Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value) # rename columns
+Bray_C_figure_par <- Bray_C_figure_par %>%
+  add_column(guild = "Parasitoids")
+par_fig_table_BC <-merge(Bray_C_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+# 
+BC_par_inter <- lm(hodnota ~ distance, data = par_fig_table_BC) # 0.679025     0.000375
+anova(BC_par_inter)
+BC_par_inter$coefficients
+
+
+# coefficients
+BC_lm_par <- lm(hodnota~distance, data = par_fig_table_BC)
+BC_lm_par
+
+par_BC_mean <- summarise(par_fig_table_BC,
+                     mean_BC = mean(hodnota),
+                     sd_BC= sd(hodnota)) 
+par_BC_mean
+
+
+mantel_result_Par_BC <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Parasitoids",
+  mean = round(par_BC_mean$mean_BC,3),
+  sd = round(par_BC_mean$sd_BC,3),
+  test = "Mantel",
+  statistic = round (BC_res_par_mantel$statistic,3),
+  p.value = round(BC_res_par_mantel$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_Par_BC )
+
+
+# Bray-Curtis index for caterpillars
+
+BC_cat_res<- vegdist(cat_pivot2, method="bray", binary=FALSE, diag=TRUE) %>%  as.matrix()
+BC_cat_res_mantel <- mantel(BC_cat_res, Distance , method="spear"); BC_cat_res_mantel
+
+####preparation for a figure
+Bray_C_Caterpillars <- melt(BC_cat_res)
+Bray_C_figure_cat <- dplyr::rename (Bray_C_Caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
+Bray_C_figure_cat <- Bray_C_figure_cat %>%
+  add_column(guild = "Caterpillars")
+
+Cat_fig_table_BC <-merge(Bray_C_figure_cat, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+
+cat_bc_mean <- summarise(Cat_fig_table_BC,
+                     mean = mean(hodnota),
+                     sd = sd(hodnota)) 
+cat_bc_mean
+
+BC_lm_cat <- lm(hodnota~distance, data = Cat_fig_table_BC)
+BC_lm_cat # 0.5019007    0.0003242
+
+
+mantel_result_cat_BC <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Caterpillars",
+  mean = round(cat_bc_mean$mean,3),
+  sd = round(cat_bc_mean$sd,3),
+  test = "Mantel",
+  statistic = round (BC_cat_res_mantel$statistic,3),
+  p.value = round(BC_cat_res_mantel$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_BC )
+
+```
+
+#Chao-Sorensen index
+```{r echo=FALSE}
+# Chao-Sorensen index for parasitoids
+CS_par_res<- CommEcol:: dis.chao(para_pivot2, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_par_res_mantel <- mantel(CS_par_res, Distance , method="spear"); CS_par_res_mantel
+
+####preparation for a figure - Chao-Sorensen - Parasitoids
+Chao_Sor_parasitoids <- melt(CS_par_res)
+Chao_Sor_figure_par <- dplyr::rename (Chao_Sor_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_par <- Chao_Sor_figure_par %>%
+  add_column(guild = "Parasitoids")
+par_fig_table_CS <-merge(Chao_Sor_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+par_CS_mean <- summarise(par_fig_table_CS,
+                     mean_CS = mean(hodnota),
+                     sd_CS= sd(hodnota)) 
+par_CS_mean 
+
+CS_lm_par <- lm(hodnota~distance, data = par_fig_table_CS)
+CS_lm_par
+
+
+mantel_result_par_CS <- data.frame(
+  index ="Chao-Sorensen",
+  Community = "Parasitoids",
+  mean = round(par_CS_mean$mean,3),
+  sd = round(par_CS_mean$sd,3),
+  test = "Mantel",
+  statistic = round (CS_par_res_mantel$statistic,3),
+  p.value = round(CS_par_res_mantel$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_par_CS)
+
+
+
+# Chao-Sorensen index for caterpillars
+CS_cat_res<- CommEcol::dis.chao(cat_pivot2, index="sorensen", version="rare", freq=NULL) %>%  as.matrix()
+CS_cat_res_mantel <- mantel(CS_cat_res, Distance , method="spear"); CS_cat_res_mantel
+
+####preparation for a figure
+Chao_Sor_Caterpillars <- melt(CS_cat_res)
+Chao_Sor_figure_cat <- dplyr::rename (Chao_Sor_Caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
+Chao_Sor_figure_cat <- Chao_Sor_figure_cat %>%
+  add_column(guild = "Caterpillars")
+Cat_fig_table_CS <-merge(Chao_Sor_figure_cat, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+
+cat_CS_mean <- summarise(Cat_fig_table_CS,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+cat_CS_mean
+
+mantel_result_cat_CS <- data.frame(
+  index ="Chao-Sorensen",
+  Community = "Caterpillars",
+  mean = round(cat_CS_mean$mean,3),
+  sd = round(cat_CS_mean$sd,3),
+  test = "Mantel",
+  statistic = round (CS_cat_res_mantel$statistic,3),
+  p.value = round(CS_cat_res_mantel$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_CS)
+
+CS_lm_cat <- lm(hodnota~distance, data = Cat_fig_table_CS)
+CS_lm_cat
+```
+
+#
+# Sorensen
+```{r Sorensen, echo=FALSE}
+#Sorensen index 
+
+# Sorensen index for parasitoids
+sorensen_par<-beta.pair(para_pivot_P_A)#calculate Sorensen dissimilarity
+sorensen_par_others<-beta.pair(para_pivot_P_A)
+sorensen_par<-(as.matrix(sorensen_par$beta.sor)) #pick sorensen index
+sor_mantel_par <- mantel(sorensen_par, Distance, method="spear"); sor_mantel_par #Mantel test for parasitoids
+
+####preparation for a figure - Sorensen - Parasitoids
+Sorensen_parasitoids <- melt(sorensen_par)
+Sorensen_figure <- dplyr:: rename (Sorensen_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure <- Sorensen_figure %>%
+  add_column(guild = "Parasitoids")
+par_fig_table_sor <-merge(Sorensen_figure, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+par_SOR_mean <- summarise(par_fig_table_sor,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+par_SOR_mean
+
+SOR_lm_par <- lm(hodnota~distance, data = par_fig_table_sor)
+SOR_lm_par
+
+mantel_result_par_SOR <- data.frame(
+  index ="Sorensen",
+  Community = "Parasitoids",
+  mean = round(par_SOR_mean$mean,3),
+  sd = round(par_SOR_mean$sd,3),
+  test = "Mantel",
+  statistic = round (sor_mantel_par $statistic,3),
+  p.value = round(sor_mantel_par$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_par_SOR)
+
+
+
+
+
+# Sorensen index for caterpillars
+sorensen_cat<-beta.pair(cat_pivot_P_A)      #calculate Sorensen dissimilarity
+sorensen_cat_others<-beta.pair(cat_pivot_P_A)
+sorensen_cat<-(as.matrix(sorensen_cat$beta.sor)) #pick sorensen index
+sor_mantel_cat <- mantel(sorensen_cat, Distance, method="spear"); sor_mantel_cat #Mantel test for caterpillars
+
+####preparation for a figure
+Sorensen_caterpillars <- melt(sorensen_cat)
+Sorensen_figure <- dplyr:: rename (Sorensen_caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure <- Sorensen_figure %>%
+  add_column(guild = "Caterpillars")
+cat_fig_table_sor <-merge(Sorensen_figure, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+cat_SOR_mean <- summarise(cat_fig_table_sor,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+cat_SOR_mean
+
+
+SOR_lm_cat <- lm(hodnota~distance, data = cat_fig_table_sor)
+SOR_lm_cat
+
+mantel_result_cat_SOR <- data.frame(
+  index ="Sorensen",
+  Community = "Caterpillars",
+  mean = round(cat_SOR_mean$mean,3),
+  sd = round(cat_SOR_mean$sd,3),
+  test = "Mantel",
+  statistic = round (sor_mantel_cat$statistic,3),
+  p.value = round(sor_mantel_cat$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_SOR)
+
+```
+
+
+
+#SOR - Subsampling of caterpillars
+```{r echo=FALSE}
+library(tidyr)
+library(purrr)
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  MASTER_8 %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  MASTER_8 %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+
+set.seed(1234)
+
+n_rand <-  1000
+
+# pre-alocate space
+
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+  
+  #print(i)
+  
+  cat_randomly_resampled  <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x){
+        
+        N_para <-
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1)
+        
+        res <-
+          MASTER_8 %>% 
+          filter(locality == x) %>% 
+          sample_n(., size = N_para)
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+  
+  
+  #----------------------------------------------------------#
+  # 2.3 Saving results and count mean for the data -----
+  #----------------------------------------------------------#
+  
+  df <- 
+    cat_randomly_resampled %>% 
+    dplyr::select(locality, CAT_sp) %>%
+    group_by(locality, CAT_sp) %>% 
+    summarise(
+      .groups = "keep",
+      N = n()) %>% 
+    ungroup() %>% 
+    pivot_wider(names_from = CAT_sp, values_from = N) %>% 
+    replace(is.na(.), 0) %>% 
+    column_to_rownames(var = "locality")
+  
+  df_pres <- df
+  
+  df_pres[df_pres>1]<-1
+  
+  #----------------------------------------------------------#
+  # 2.4 Sorensen comparison-----
+  #----------------------------------------------------------#
+ 
+  
+sorensen_dis <- beta.pair(df_pres)   
+Sor_res <- (as.matrix(sorensen_dis$beta.sor))
+   
+    
+  
+  
+  res_list[[i]] <-Sor_res
+  
+}
+
+#  calculate a mean
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+Sor_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+rownames(Sor_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(Sor_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+# calculate a mean of the results
+Sor_mean_sub<-melt(Sor_res_mean)
+Sor_mean_sub<- summarise(Sor_mean_sub,
+                     mean_Sor = mean(value),
+                     sd_Sor = sd(value))
+Sor_mean_sub
+
+
+
+#----------------------------------------------------------#
+# 2.5 Mantel test-----
+#----------------------------------------------------------#
+library(vegan)
+
+res_mantel_sor_sub <-
+  mantel(Sor_res_mean, Distance , method="spear")
+
+
+Sorensen_para_sub<- melt(Sor_res_mean)
+Sorensen_figure_sub <- dplyr::rename (Sorensen_para_sub, Locality_A = X1, Locality_B = X2, hodnota = value)
+Sorensen_figure_sub  <- Sorensen_figure_sub  %>%
+  add_column(guild = "Caterpillars_subsampled")
+Sorensen_fig_subsampled <-merge(Sorensen_figure_sub, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (hodnota > 0)
+
+
+SOR_lm_hous <- lm(hodnota~distance, data = Sorensen_fig_subsampled)
+SOR_lm_hous
+
+cat_SOR_sub_mean_8 <- summarise(Sorensen_fig_subsampled,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+cat_SOR_sub_mean_8
+
+mantel_result_cat_SOR_sub_8 <- data.frame(
+  index ="Sorensen",
+  Community = "Caterpillars_subsampled",
+  mean = round(cat_SOR_sub_mean_8$mean,3),
+  sd = round(cat_SOR_sub_mean_8$sd,3),
+  test = "Mantel",
+  statistic = round (res_mantel_CS_sub_8$statistic,3),
+  p.value = round(res_mantel_CS_sub_8$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_SOR_sub_8)
+
+```
+
+
+
+# BC - Subsampling of caterpillars
+```{r BC-subsampling}
+data_testing <-MASTER_8 <- MASTER %>% 
+  dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
+   dplyr:: filter(locality != "Ohu2")
+
+  
+  # subsampling the dataset
+  #filter(Remove_cats =="0") %>%
+  #select(loc2, cat_whole_name, M_code_2, guild, pl_identification)
+#data_testing$locality = data_testing$loc2 # make duplicate column
+#data_testing <-rename (data_testing , LOC2 = loc2, Cat_species = cat_whole_name, Plant_species = pl_identification, Par_species = M_code_2) # rename columns
+
+
+
+
+
+
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  data_testing %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  data_testing %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+
+
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+set.seed(1234)
+n_rand <- 1000
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+  
+  cat_randomly_resampled <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x) {
+        
+        N_para <- 
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1, .default = 0)  # Add default value
+        
+        if (N_para == 0) {
+          return(data.frame())  # Skip if no parasitoids
+        }
+        
+        res <- 
+          data_testing %>% 
+          filter(locality == x) %>% 
+          sample_n(size = N_para, replace = TRUE)  # Use replace if N_para > samples available
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+  
+  # Check if data is not empty
+  if (nrow(cat_randomly_resampled) == 0) {
+    next
+  }
+  
+  # Select only numeric columns for vegdist
+  df <- cat_randomly_resampled %>% dplyr::select(where(is.numeric))
+  
+  # Check if df is valid for vegdist
+  if (ncol(df) == 0) {
+    next  # Skip if no numeric columns
+  }
+  
+  # Calculate Bray-Curtis distance matrix
+  BC_res <- vegdist(as.matrix(df), method = "bray", binary = FALSE, diag = TRUE) %>% 
+    as.matrix()
+  
+  res_list[[i]] <- BC_res
+}
+
+# Filter out NULL elements
+res_list <- res_list[!sapply(res_list, is.null)]
+
+# Check if res_list is empty
+if (length(res_list) == 0) {
+  stop("No valid results in res_list")
+}
+
+# Combine and reshape
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+BC_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
+
+
+
+# calculate a mean of the results
+BC_melt<-melt(BC_res_mean)
+cat_BC_sub_mean_8 <- summarise(BC_melt,
+                     mean_BC = mean(value),
+                     sd_BC = sd(value))
+#BC_mean
+
+mantel_result_cat_BC_sub_8 <- data.frame(
+  index ="Bray-Curtis",
+  Community = "Caterpillars_subsampled",
+  mean = round(cat_BC_sub_mean_8$mean,3),
+  sd = round(cat_BC_sub_mean_8$sd,3),
+  test = "Mantel",
+  statistic = round (res_mantel_BC_sub_8$statistic,3),
+  p.value = round(res_mantel_BC_sub_8$signif,3), Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_BC_sub_8)
+
+
+```
+
+# New_version_of_subsampling
+```{r}
+## Calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  data_testing %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups = "keep",
+    N = n()) %>% 
+  ungroup()
+
+# Pre-allocate tibble with all sites 
+site_tibble <-  
+  data_testing %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+set.seed(1234)
+n_rand <- 99
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+  
+  cat_randomly_resampled <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(.f = function(current_locality) {
+    
+    # Get the number of parasitoids for the current locality
+    N_para <- n_par_specimens_in_site %>% 
+      filter(locality == current_locality) %>% 
+      dplyr::select(N) %>% 
+      pluck(1, .default = 0)
+    
+    if (N_para == 0) {
+      return(data.frame())  # Skip if no parasitoids
+    }
+    
+    # Get the number of rows available in the filtered dataset
+    available_rows <- nrow(data_testing %>% filter(locality == current_locality))
+    
+    # Adjust N_para if it exceeds available rows
+    if (N_para > available_rows) {
+      N_para <- available_rows
+    }
+    
+    # Sample data for the current locality
+    sampled_data <- data_testing %>% 
+      filter(locality == current_locality) %>% 
+      sample_n(size = N_para, replace = TRUE)
+    
+    # Return the sampled data
+    return(sampled_data)
+  }) %>% 
+  bind_rows()
+  
+  # Check if data is not empty
+  if (nrow(cat_randomly_resampled) == 0) {
+    message(paste("No valid samples for resampling iteration", i))  # Add message for debugging
+    next
+  }
+  
+  # Select only numeric columns for vegdist
+  df <- cat_randomly_resampled %>% dplyr::select(where(is.numeric))
+  
+  # Check if df is valid for vegdist
+  if (ncol(df) == 0) {
+    message(paste("No numeric columns for resampling iteration", i))  # Add message for debugging
+    next  # Skip if no numeric columns
+  }
+  
+  # Calculate Bray-Curtis distance matrix
+  BC_res <- vegdist(as.matrix(df), method = "bray", binary = FALSE, diag = TRUE) %>% 
+    as.matrix()
+  
+  res_list[[i]] <- BC_res
+}
+
+# Filter out NULL elements
+res_list <- res_list[!sapply(res_list, is.null)]
+
+# Check if res_list is empty
+if (length(res_list) == 0) {
+  stop("No valid results in res_list")
+}
+
+# Combine and reshape
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+BC_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+# Assign row and column names
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang", "Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang", "Yapsiei")
+
+# Calculate the mean of the results
+BC_melt <- melt(BC_res_mean)
+BC_mean <- summarise(BC_melt,
+                     mean_BC = mean(value),
+                     sd_BC = sd(value))
+#BC_mean
+
+
+```
+
+
+
+
+# CS - Subsampling of caterpillars
+```{r echo=FALSE}
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  MASTER_8 %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  MASTER_8 %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+
+set.seed(1234)
+
+n_rand <-  999
+
+# pre-alocate space
+
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+ 
+  #print(i)
+  
+   cat_randomly_resampled  <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x){
+        
+        N_para <-
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1)
+        
+        res <-
+          MASTER_8 %>% 
+          filter(locality == x) %>% 
+          sample_n(., size = N_para)
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+  
+    
+  #----------------------------------------------------------#
+  # 2.3 Saving results and count mean for the data -----
+  #----------------------------------------------------------#
+  
+  df <- 
+    cat_randomly_resampled %>% 
+    dplyr::select(locality, CAT_sp) %>%
+    group_by(locality, CAT_sp) %>% 
+    summarise(
+      .groups = "keep",
+      N = n()) %>% 
+    ungroup() %>% 
+    pivot_wider(names_from = CAT_sp, values_from = N) %>% 
+    replace(is.na(.), 0) %>% 
+    column_to_rownames(var = "locality")
+  
+  #----------------------------------------------------------#
+  # 2.4 Chao_Sorensen comparison-----
+  #----------------------------------------------------------#
+ 
+  
+  Chao_Sor_res <- 
+    CommEcol::dis.chao(df, index="sorensen", version="rare", freq=NULL) %>% 
+    as.matrix()
+  
+  
+  res_list[[i]] <- Chao_Sor_res
+  
+}
+
+#  calculate a mean
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+Chao_Sor_res_mean <-
+apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+
+rownames(Chao_Sor_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(Chao_Sor_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+
+
+# calculate a mean of the results
+CS_melt<-melt(Chao_Sor_res_mean)
+CS_mean <- summarise(CS_melt,
+                      mean_CS = mean(value),
+                      sd_CS = sd(value))
+#----------------------------------------------------------#
+# 2.5 Mantel test-----
+#----------------------------------------------------------#
+library(vegan)
+# Distance between localities
+
+res_mantel_CS_sub_8 <-
+mantel(Chao_Sor_res_mean, Distance , method="spear")
+
+#saveRDS(
+  Chao_Sor_res_mean,
+  here::here("~/ownCloud/000_/000_R_stat/ParaDiv_2023/output/Chao_Sor_res_mean.rds")
+)
+
+saveRDS(
+  res_mantel_CS_sub_8,
+  here::here("~/ownCloud/000_/000_R_stat/ParaDiv_2023/output/mantel_result.rds")
+)
+
+
+CS_subsampled_res_cat <- dplyr::rename (CS_melt, Locality_A = X1, Locality_B = X2, hodnota = value)
+CS_subsampled_figure_cat <- CS_subsampled_res_cat %>%
+  add_column(guild = "Caterpillars_subsampled") %>% 
+  filter (hodnota > 0)
+  
+CS_subsampled_figure_cat<- merge(CS_subsampled_figure_cat, distance_plot, by=c("Locality_A", "Locality_B"))
+
+
+CS_lm_hou <- lm(hodnota~distance, data = CS_subsampled_figure_cat)
+CS_lm_hou
+
+cat_CS_sub_mean_8 <- summarise(CS_subsampled_figure_cat,
+                     mean_sor = mean(hodnota),
+                     sd_sor = sd(hodnota)) 
+cat_CS_sub_mean_8
+
+mantel_result_cat_CS_sub_8 <- data.frame(
+  index ="Chao-Sorensen",
+  Community = "Caterpillars_subsampled",
+  mean = round(cat_CS_sub_mean_8$mean,3),
+  sd = round(cat_CS_sub_mean_8$sd,3),
+  test = "Mantel",
+  statistic = round (res_mantel_CS_sub_8$statistic,3),
+  p.value = round(res_mantel_CS_sub_8$signif,3),  Dataset = "Without Ohu2",
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_CS_sub_8)
+```
+
+
+# Summary of Indices
+```{r}
+# Combine all tables into one - main WITHOUT subsampling
+all_mantel_results_8 <- rbind(mantel_result_cat_SOR, mantel_result_par_SOR,mantel_result_cat_CS, mantel_result_par_CS, mantel_result_cat_BC, mantel_result_Par_BC)
+# Print the merged table# Print the merged tablemantel_result_Par_BC
+print(all_mantel_results_8)
+
+
+
+# Combine all tables into one - main WITHsubsampling
+all_mantel_results_8_sub <- rbind(mantel_result_cat_CS_sub_8, mantel_result_cat_SOR_sub_8)
+
+# Print the merged table# Print the merged tablemantel_result_Par_BC
+print(all_mantel_results_8_sub)
+
+all_mantel_results_8_sub$Dataset <- "Without Ohu 2"
+
+print(all_mantel_results_8_sub)
+
+
+Mantel_table_8 <- rbind(all_mantel_results_8, all_mantel_results_8_sub )
+
+library(gt)
+
+# Create and pre-format the Mantel_table data frame
+Mantel_table <- data.frame(
+  index = c("Sorensen", "Sorensen", "Chao-Sorensen", "Chao-Sorensen", 
+            "Bray-Curtis", "Bray-Curtis", "Chao-Sorensen", "Sorensen"),
+  Community = c("Caterpillars", "Parasitoids", "Caterpillars", "Parasitoids", 
+                "Caterpillars", "Parasitoids", "Caterpillars_subsampled", 
+                "Caterpillars_subsampled"),
+  mean = c(0.503, 0.667, 0.107, 0.041, 0.586, 0.252, 0.210, 0.531),
+  sd = c(0.040, 0.075, 0.056, 0.018, 0.066, 0.105, 0.052, 0.044),
+  test_statistic = c(0.240, 0.334, -0.026, 0.054, 0.357, 0.179, 0.097, 0.090),
+  p.value = c(0.129, 0.072, 0.571, 0.371, 0.047, 0.184, 0.267, 0.273),
+  Dataset = c("No Ohu 2", "No Ohu 2", "No Ohu 2", "No Ohu 2", 
+              "No Ohu 2", "No Ohu 2", "No Ohu 2", "No Ohu 2")
+)
+
+# Round numeric columns to three decimal places
+Mantel_table <- Mantel_table %>%
+  dplyr::mutate(across(c(mean, sd, test_statistic, p.value), ~ round(., 3)))
+
+# Format the table using gt
+Mantel_table %>%
+  gt() %>%
+  tab_header(
+    title = "Mantel test results",
+  ) %>%
+  cols_label(
+    index = "Index",
+    Community = "Community",
+    mean = "Mean",
+    sd = "SD",
+    test_statistic = "Test Statistic",
+    p.value = "P-Value",
+    Dataset = "Dataset"
+  ) %>%
+  tab_style(
+    style = list(cell_text(align = "center")),
+    locations = cells_body()
+  )
+
+gtsave(Mantel_table_gt, "Mantel_Test_Results.png")
+
+
+```
