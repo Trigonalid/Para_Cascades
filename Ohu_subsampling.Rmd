@@ -13,6 +13,11 @@ library(betapart)  # Beta diversity analysis
 
 # Load your data from an Excel file
 MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
+# Filter data for parasitoids (PAR) and remove removed parasitoids
+parasitoid_data <- MASTER %>%
+  filter(guild == "PAR", Par_remove == "0", locality %in% c("Ohu1", "Ohu2")) %>%
+  select(locality, PAR_sp)
+
 ```
 
 Sorensen index
