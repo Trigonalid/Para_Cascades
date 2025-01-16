@@ -11,7 +11,7 @@ library(skimr)
 library(tibble)
 
 # Full data
-MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 
 # Removing useless columns + Removing data of OHU2
 MASTER_8 <- MASTER %>% 
