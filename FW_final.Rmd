@@ -251,7 +251,7 @@ FW_ST.lh_full_PC_2<- merge(FW_ST.lh_full_PC_2, distance_plot, by=c("Locality_A",
 #FW - FULL - PC - Mantel test
 
 # Perform Mantel tests
-mantel_FW_S_full_PC <- mantel(FW_S_full_PC, Distance, method = "spear")
+
 mantel_FW_OS_full_PC <- mantel(FW_OS_full_PC, Distance, method = "spear")
 mantel_FW_ST_full_PC <- mantel(FW_ST_full_PC, Distance, method = "spear")
 mantel_FW_WN_full_PC <- mantel(FW_WN_full_PC, Distance, method = "spear")
@@ -260,7 +260,7 @@ mantel_FW_ST_h_full_PC <- mantel(FW_ST.h_full_PC, Distance, method = "spear")
 mantel_FW_ST_lh_full_PC <- mantel(FW_ST.lh_full_PC, Distance, method = "spear")
 
 # Summarize datasets
-summary_FW_S_full_PC <- summarise(FW_S_full_PC_2, mean_S = mean(hodnota), sd_S = sd(hodnota))
+
 summary_FW_OS_full_PC <- summarise(FW_OS_full_PC_2, mean_OS = mean(hodnota), sd_OS = sd(hodnota))
 summary_FW_WN_full_PC <- summarise(FW_WN_full_PC_2, mean_WN = mean(hodnota), sd_WN = sd(hodnota))
 summary_FW_ST_full_PC <- summarise(FW_ST_full_PC_2, mean_ST = mean(hodnota), sd_ST = sd(hodnota))
@@ -303,19 +303,6 @@ combined_results_FULL_PAR_CAT$Dataset <-"Complete dataset"
 
 # Caterpillar - Plant - all data
 ```{r}
-main_table <- MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
-main_table <- main_table %>%
-  dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp)
-
-Distance <- 
-  read.csv2(
-    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
-
-# Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
-distance_2 <- melt(Distance_fig)   #melt a matrix
-distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
-
 #Preparing contingency table - All cats
 Elem_full_CP<-main_table %>%
   filter(locality =="Elem") %>% #all data needed 
@@ -585,19 +572,10 @@ combined_results_FULL_CAT_PLANT$Dataset <-"Complete dataset"
 
 # 50+ Parasitoid - Caterpillar - reduced to common caterpillars
 ```{r}
-main_table <- MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+main_table  <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 main_common_cat <- main_table %>%
   filter(fifty == "1") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp,fifty)
-
-Distance <- 
-  read.csv2(
-    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
-
-# Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
-distance_2 <- melt(Distance_fig)   #melt a matrix
-distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
 #Preparing contingency table - All cats
 Elem_common_cat_PC<-main_common_cat %>%
@@ -866,19 +844,10 @@ combined_results_common_cat_PC$Dataset <- "Common caterpillars only"
 
 # 50+ Caterpillar- Plant - reduced to common caterpillars 50+
 ```{r}
-main_table <- MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+main_table <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 main_table_common_cat <- main_table %>%
   filter(fifty == "1") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp,fifty)
-
-Distance <- 
-  read.csv2(
-    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
-
-# Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
-distance_2 <- melt(Distance_fig)   #melt a matrix
-distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
 #Preparing contingency table - All cats
 Elem_common_cat_CPL<-main_common_cat %>%
@@ -1149,19 +1118,10 @@ combined_results_common_cat_CPL$Dataset <- "Common caterpillars only"
 
 # 4+ sites Parasitoid - Caterpillar - reduced to common plants occuring on four more localities
 ```{r}
-main_table <- MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+main_table <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 main_table_4plus <- main_table %>%
   filter(common_plants_only == "Yes") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp,common_plants_only)
-
-Distance <- 
-  read.csv2(
-    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
-
-# Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
-distance_2 <- melt(Distance_fig)   #melt a matrix
-distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
 #Preparing contingency table - All cats
 Elem_4plus_PC<-main_table_4plus %>%
@@ -1431,19 +1391,10 @@ combined_results_4plus_PC$Dataset <-"Common plants only"
 
 # 4+ sites Caterpillar - Plants reduced to common plants occuring on four more localities
 ```{r}
-main_table <- MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+main_table <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 main_table_4plus <- main_table %>%
   filter(common_plants_only == "Yes") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp,common_plants_only)
-
-Distance <- 
-  read.csv2(
-    here::here("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance22.csv"), row.names=1)
-
-# Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("~/ownCloud/000_/000_R_stat/Beta_diversity/data/input/Distance.csv")
-distance_2 <- melt(Distance_fig)   #melt a matrix
-distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
 
 #Preparing contingency table - All cats
 Elem_4plus_CPL<-main_table_4plus %>%
@@ -1823,10 +1774,6 @@ Figure_SX_data <- bind_rows(
   FW_WN_4plus_CPL_2,
   FW_ST_4plus_CPL_2
 )
-
-
-
-
 # View the merged data
 print(Figure_SX_data)
 
@@ -1837,13 +1784,11 @@ WN_only_PAR_CAT <- Figure_SX_data %>%
 WN_only_CAT_PLANT <- Figure_SX_data %>% 
   filter(guild =="WN", Dataset== "CAT-PLANT" )
 
-
-
 # Load necessary libraries
 library(ggplot2)
 library(ggpubr)  # For significance annotations
 library(viridis) # For colorblind-friendly colors
-
+library(viridisLite)
 
 # Display the plot
 Figure_S2a_PC <- ggplot(WN_only_PAR_CAT, aes(x = Type, y = hodnota, color = Type, shape = Type)) +
