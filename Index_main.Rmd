@@ -9,9 +9,10 @@ library(reshape)
 library(betapart)
 library(skimr)
 library(tibble)
+library(readxl)
 
 # Full data
-MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 
 # Removing useless columns + Removing data of OHU2
 #MASTER_8 <- MASTER %>% 
@@ -21,11 +22,11 @@ MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
 
 
 # Loading distance matrix
-Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of localities
+Distance <- read.csv2(here::here("DATA", "Distance.csv"), row.names = 1) # loading distance matrix of localities
 #Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
 
 # Prepare the distance matrix for a figure
-Distance_fig <- read.csv2("DATA/Distance.csv")
+Distance_fig <- read.csv2(here::here("DATA/Distance.csv"))
 
 distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
 #distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
@@ -72,7 +73,6 @@ species_locality_count <- family_species %>%
 # View the result
 species_locality_count
 
-
 family_species_cat <- MASTER %>%
    select(CAT_sp, locality)
 
@@ -95,14 +95,14 @@ BC_res_par_mantel <- vegan::mantel(BC_par_res, Distance , method="spear"); BC_re
 
 ####preparation for a figure - Bray-Curtis
 Bray_C_parasitoids <- reshape::melt(BC_par_res)
-Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = Var1, Locality_B = Var2, hodnota = value) # rename columns
+Bray_C_figure_par <- dplyr::rename (Bray_C_parasitoids, Locality_A = X1, Locality_B = X2, hodnota = value) # rename columns
 Bray_C_figure_par <- Bray_C_figure_par %>%
   add_column(guild = "Parasitoids")
 par_fig_table_BC <-merge(Bray_C_figure_par, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
   filter (hodnota > 0)
 
 # 
-BC_par_inter <- lm(hodnota ~ distance, data = par_fig_table_BC) # 0.679025     0.000375
+BC_par_inter <- lm(hodnota ~ distance, data = par_fig_table_BC) # 0.6855963     0.0003595
 anova(BC_par_inter)
 BC_par_inter$coefficients
 
@@ -137,7 +137,7 @@ BC_cat_res_mantel <- mantel(BC_cat_res, Distance , method="spear"); BC_cat_res_m
 
 ####preparation for a figure
 Bray_C_Caterpillars <- melt(BC_cat_res)
-Bray_C_figure_cat <- dplyr::rename (Bray_C_Caterpillars, Locality_A = Var1, Locality_B = Var2, hodnota = value)
+Bray_C_figure_cat <- dplyr::rename (Bray_C_Caterpillars, Locality_A = X1, Locality_B = X2, hodnota = value)
 Bray_C_figure_cat <- Bray_C_figure_cat %>%
   add_column(guild = "Caterpillars")
 
@@ -166,6 +166,66 @@ mantel_result_cat_BC <- data.frame(
 )
 print(mantel_result_cat_BC)
 ```
+
+
+```{r Bray-Curtis, echo=FALSE}
+# Bray-Curtis index computation and analysis for a given community
+calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
+  
+  # Compute Bray-Curtis distance matrix
+  bc_res <- vegan::vegdist(data_matrix, method = "bray", binary = FALSE, diag = TRUE) %>% as.matrix()
+  
+  # Mantel test
+  bc_res_mantel <- vegan::mantel(bc_res, distance_matrix, method = "spear")
+  
+  # Prepare data for plotting
+  bc_melted <- reshape::melt(bc_res)
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+    dplyr::mutate(guild = guild_name)
+  
+  bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
+    dplyr::filter(hodnota > 0)
+  
+  # Linear model for Bray-Curtis vs Distance
+  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  
+  # Summary statistics
+  bc_summary <- bc_fig_table %>%
+    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+  
+  # Create result table
+  mantel_result <- data.frame(
+    index = "Bray-Curtis",
+    Community = guild_name,
+    mean = round(bc_summary$mean_BC, 3),
+    sd = round(bc_summary$sd_BC, 3),
+    test = "Mantel",
+    statistic = round(bc_res_mantel$statistic, 3),
+    p.value = round(bc_res_mantel$signif, 3),
+    Dataset = "Full",
+    stringsAsFactors = FALSE
+  )
+  
+  # Return all results as a list
+  return(list(
+    mantel_result = mantel_result,
+    linear_model = summary(bc_lm),
+    summary_stats = bc_summary
+  ))
+}
+
+# Apply the function to Parasitoids
+parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
+print(parasitoid_results$mantel_result)
+
+# Apply the function to Caterpillars
+caterpillar_results <- calculate_bray_curtis(cat_pivot2, Distance, "Caterpillars")
+print(caterpillar_results$mantel_result)
+
+
+```
+
+
 
 ```{r Chao-Sorensen, echo=FALSE}
 # Chao-Sorensen index for parasitoids
@@ -328,7 +388,7 @@ all_mantel_results$Dataset <- "Full"
 ```{r SOR - Subsampling, echo=FALSE}
 library(tidyr)
 library(purrr)
-MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
 
 data_testing <- MASTER %>% 
@@ -490,8 +550,6 @@ print(mantel_result_cat_SOR_sub)
 ```
 
 ```{r BC - subsampling}
-
-
 MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
 

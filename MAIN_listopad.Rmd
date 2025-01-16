@@ -1,7 +1,7 @@
 
 
 #Diversity indices
-```{r}
+```{r Data load}
 library(dplyr)
 library(vegan)
 library(ggplot2)
@@ -12,6 +12,7 @@ library(tibble)
 
 # Full data
 MASTER <- read.delim(here::here("DATA/MASTER.csv")) %>% as_tibble()
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 
 # Removing useless columns + Removing data of OHU2
 #MASTER_8 <- MASTER %>% 
@@ -240,7 +241,7 @@ print(mantel_result_cat_CS)
 
 ```
 
-#
+
 # Sorensen
 ```{r Sorensen, echo=FALSE}
 #Sorensen index 
