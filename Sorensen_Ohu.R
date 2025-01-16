@@ -8,7 +8,7 @@ library(readxl)
 library(betapart)
 
 # Load your data
-MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 
 # Filter data for parasitoids
 parasitoid_data <- MASTER %>%

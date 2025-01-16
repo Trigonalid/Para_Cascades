@@ -19,11 +19,8 @@ MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble()
 ```
 
 
-
 PARASITOIDS-CATERPILLARS
 ```{r}
-
-
 # Select relevant columns for analysis: locality, parasitoid species (PAR_sp), caterpillar species (CAT_sp), and plant species (PLANT_sp)
 main_table <- MASTER %>%
   select(locality, PAR_sp, CAT_sp, PLANT_sp)
