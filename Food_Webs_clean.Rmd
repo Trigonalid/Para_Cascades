@@ -1,4 +1,14 @@
 ```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+library(tibble)
+library(readxl)
+library(usedist)
+
 # Load the main data table and select necessary columns
 main_table <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 main_table <- main_table %>%
@@ -62,8 +72,8 @@ Yapsiei3_full_PC <- as.matrix(table(Yapsiei_full_PC$CAT_sp, Yapsiei_full_PC$PAR_
 
 # Analyses of interactions
 
-FW_full_PC_results<-betalinkr_multi(webs2array(Elem3_full_PC,Morox3_full_PC,Niksek3_full_PC,Ohu13_full_PC,Ohu2_3_full_PC,Utai3_full_PC, Wamangu3_full_PC, Wanang3_full_PC, Yapsiei3_full_PC), partitioning="commondenom", partition.st=TRUE)
-bFW_full_PC_results<-FW_full_PC_results %>% add_column(dataset = "whole_CAT_PAR")
+FW_full_PC_results<-bipartite::betalinkr_multi(bipartite::webs2array(Elem3_full_PC,Morox3_full_PC,Niksek3_full_PC,Ohu13_full_PC,Ohu2_3_full_PC,Utai3_full_PC, Wamangu3_full_PC, Wanang3_full_PC, Yapsiei3_full_PC), partitioning="commondenom", partition.st=TRUE)
+FW_full_PC_results<-FW_full_PC_results %>% add_column(dataset = "whole_CAT_PAR")
 
 FW_ST_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, ST)
 FW_OS_full_PC<-pivot_to_numeric_matrix(FW_full_PC_results, i, j, OS)
@@ -92,7 +102,7 @@ colnames(FW_OS_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", 
 
 FW_OS_full_PC <- as.matrix(FW_OS_full_PC)
 FW_OS_full_PC_2 <- melt(FW_OS_full_PC)
-FW_OS_full_PC_2 <- dplyr::rename(FW_OS_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_OS_full_PC_2 <- dplyr::rename(FW_OS_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "OS")
 FW_OS_full_PC_2<- merge(FW_OS_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
   filter (hodnota > 0)
@@ -117,7 +127,7 @@ colnames(FW_WN_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", 
 
 FW_WN_full_PC <- as.matrix(FW_WN_full_PC)
 FW_WN_full_PC_2 <- melt(FW_WN_full_PC)
-FW_WN_full_PC_2 <- dplyr::rename(FW_WN_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_WN_full_PC_2 <- dplyr::rename(FW_WN_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "WN")
 FW_WN_full_PC_2<- merge(FW_WN_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
   filter (hodnota > 0)
@@ -142,7 +152,7 @@ colnames(FW_ST_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", 
 
 FW_ST_full_PC <- as.matrix(FW_ST_full_PC)
 FW_ST_full_PC_2 <- melt(FW_ST_full_PC)
-FW_ST_full_PC_2 <- dplyr::rename(FW_ST_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_ST_full_PC_2 <- dplyr::rename(FW_ST_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "ST")
 FW_ST_full_PC_2<- merge(FW_ST_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
   filter (hodnota > 0)
@@ -167,7 +177,7 @@ colnames(FW_ST.l_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai"
 
 FW_ST.l_full_PC <- as.matrix(FW_ST.l_full_PC)
 FW_ST.l_full_PC_2 <- melt(FW_ST.l_full_PC)
-FW_ST.l_full_PC_2 <- dplyr::rename(FW_ST.l_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_ST.l_full_PC_2 <- dplyr::rename(FW_ST.l_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "ST.l")
 FW_ST.l_full_PC_2<- merge(FW_ST.l_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
   filter (hodnota > 0)
@@ -191,7 +201,7 @@ colnames(FW_ST.h_full_PC) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai"
 
 FW_ST.h_full_PC <- as.matrix(FW_ST.h_full_PC)
 FW_ST.h_full_PC_2 <- melt(FW_ST.h_full_PC)
-FW_ST.h_full_PC_2 <- dplyr::rename(FW_ST.h_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_ST.h_full_PC_2 <- dplyr::rename(FW_ST.h_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "ST.h")
 FW_ST.h_full_PC_2<- merge(FW_ST.h_full_PC_2, distance_plot, by=c("Locality_A", "Locality_B")) %>%
   filter (hodnota > 0)
@@ -223,7 +233,7 @@ FW_ST.lh_full_PC <- as.matrix(FW_ST.lh_full_PC)
 FW_ST.lh_full_PC_2 <- melt(FW_ST.lh_full_PC)
 
 # Rename columns for clarity and add a "guild" column
-FW_ST.lh_full_PC_2 <- dplyr::rename(FW_ST.lh_full_PC_2, Locality_A = Var1, Locality_B = Var2, hodnota = value) %>%
+FW_ST.lh_full_PC_2 <- dplyr::rename(FW_ST.lh_full_PC_2, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
   add_column(guild = "ST.lh")
 
 # Merge with the distance_plot dataset and filter rows with hodnota > 0
@@ -279,8 +289,6 @@ combined_results_FULL_PAR_CAT <- merge(mantel_results, summary_results, by = "Gr
 
 # Add a column indicating the dataset type
 combined_results_FULL_PAR_CAT$Dataset <- "Complete dataset"
-
-
 
 ```
 
