@@ -56,7 +56,7 @@ cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Soren
 ```
 
 
-```{r Pocty}
+```{r Counts}
 skim(MASTER)
 
 family_species <- MASTER %>%
@@ -130,18 +130,19 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
   return(list(
     mantel_result = mantel_result,
     linear_model = summary(bc_lm),
-    summary_stats = bc_summary
+    summary_stats = bc_summary,
+    bc_fig_table = bc_fig_table
   ))
 }
 
 # Apply the function to Parasitoids
 parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
 print(parasitoid_results$mantel_result)
-
+BC_par <- (parasitoid_results$bc_fig_table)
 # Apply the function to Caterpillars
 caterpillar_results <- calculate_bray_curtis(cat_pivot2, Distance, "Caterpillars")
 print(caterpillar_results$mantel_result)
-
+BC_cat <- (caterpillar_results$bc_fig_table)
 
 ```
 
@@ -189,18 +190,19 @@ calculate_chao_sorensen <- function(data_matrix, distance_matrix, guild_name) {
   return(list(
     mantel_result = mantel_result,
     linear_model = summary(cs_lm),
-    summary_stats = cs_summary
+    summary_stats = cs_summary,
+    cs_fig_table = cs_fig_table
   ))
 }
 
 # Apply the function to Parasitoids
 parasitoid_results_cs <- calculate_chao_sorensen(para_pivot2, Distance, "Parasitoids")
 print(parasitoid_results_cs$mantel_result)
-
+CS_par <-(parasitoid_results_cs$cs_fig_table)
 # Apply the function to Caterpillars
 caterpillar_results_cs <- calculate_chao_sorensen(cat_pivot2, Distance, "Caterpillars")
 print(caterpillar_results_cs$mantel_result)
-
+CS_cat <-(caterpillar_results_cs$cs_fig_table)
 
 
 ```
@@ -248,18 +250,19 @@ calculate_sorensen <- function(data_presence_absence, distance_matrix, guild_nam
   return(list(
     mantel_result = mantel_result,
     linear_model = summary(sor_lm),
-    summary_stats = sor_summary
+    summary_stats = sor_summary,
+    sor_fig_table =sor_fig_table
   ))
 }
 
 # Apply the function to Parasitoids
 parasitoid_results_sor <- calculate_sorensen(para_pivot_P_A, Distance, "Parasitoids")
 print(parasitoid_results_sor$mantel_result)
-
+SOR_par <-(parasitoid_results_sor$sor_fig_table)
 # Apply the function to Caterpillars
 caterpillar_results_sor <- calculate_sorensen(cat_pivot_P_A, Distance, "Caterpillars")
 print(caterpillar_results_sor$mantel_result)
-
+SOR_cat <-(caterpillar_results_sor$sor_fig_table)
 ```
 
 Summary of Indices
@@ -275,6 +278,7 @@ all_mantel_results$Dataset <- "Full"
 ```
 
 # Subsampling
+# SOR - sub
 ```{r SOR - Subsampling, echo=FALSE}
 library(tidyr)
 library(purrr)
@@ -412,11 +416,11 @@ Sorensen_para_sub<- melt(Sor_res_mean)
 Sorensen_figure_sub <- dplyr::rename (Sorensen_para_sub, Locality_A = X1, Locality_B = X2, hodnota = value)
 Sorensen_figure_sub  <- Sorensen_figure_sub  %>%
   add_column(guild = "Caterpillars-subsampled")
-Sorensen_fig_subsampled <-merge(Sorensen_figure_sub, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+SOR_fig_subsampled <-merge(Sorensen_figure_sub, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
   filter (hodnota > 0)
 
 
-SOR_lm_hous <- lm(hodnota~distance, data = Sorensen_fig_subsampled)
+  SOR_lm_hous <- lm(hodnota~distance, data = Sorensen_fig_subsampled)
 SOR_lm_hous
 
 cat_SOR_sub_mean <- summarise(Sorensen_fig_subsampled,
@@ -438,7 +442,7 @@ print(mantel_result_cat_SOR_sub)
 
 
 ```
-
+# BC - sub
 ```{r BC - subsampling}
 MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
@@ -545,17 +549,13 @@ rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "W
 colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
 
 
-
-
-
-
 # calculate a mean of the results
 BC_melt<-melt(BC_res_mean)
 BC_melt <- dplyr::rename (BC_melt, Locality_A = X1, Locality_B = X2, hodnota = value)
 
 BC_melt_subsampling <- BC_melt %>% 
   add_column(guild = "Caterpillars_subsampled")
-BC_melt_subsampling_fig <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+BC_fig_subsampled <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
   filter (hodnota > 0)
 
 
@@ -581,7 +581,7 @@ print(mantel_result_cat_BC_subsampled)
 
 ```
 
-
+# CS - sub
 ```{r CS - subsampling, echo=FALSE}
 # calculate the total abundance of parasitoids in each plot
 n_par_specimens_in_site <-
@@ -719,7 +719,7 @@ CS_subsampled_figure_cat <- CS_subsampled_res_cat %>%
   add_column(guild = "Caterpillars-subsampled") %>% 
   filter (hodnota > 0)
   
-CS_subsampled_figure_cat<- merge(CS_subsampled_figure_cat, distance_plot, by=c("Locality_A", "Locality_B"))
+CS_fig_subsampled<- merge(CS_subsampled_figure_cat, distance_plot, by=c("Locality_A", "Locality_B"))
 
 
 CS_lm_hou <- lm(hodnota~distance, data = CS_subsampled_figure_cat)
@@ -744,12 +744,17 @@ print(mantel_result_cat_CS_sub)
 ```
 
 
-Tabulka
+# Table
 ```{r Tabulka}
 # Combine all tables into one - main WITHOUT subsampling
 all_mantel_results <- rbind(mantel_result_cat_SOR, mantel_result_par_SOR,mantel_result_cat_CS, mantel_result_par_CS, mantel_result_cat_BC, mantel_result_Par_BC)
 # Print the merged table# Print the merged tablemantel_result_Par_BC
 print(all_mantel_results)
+
+
+# Combine data for figure
+
+figure_1_merged <- rbind(BC_par, BC_cat, BC_fig_subsampled, CS_par, CS_cat, CS_fig_subsampled,SOR_par, SOR_cat, SOR_fig_subsampled)
 ```
 
 
