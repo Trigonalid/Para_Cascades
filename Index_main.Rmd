@@ -87,7 +87,7 @@ species_locality_count_cat <- family_species_cat %>%
 species_locality_count_cat
 ```
 
-
+# Bray-Curtis
 ```{r Bray-Curtis, echo=FALSE}
 # Bray-Curtis index computation and analysis for a given community
 calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
@@ -104,7 +104,8 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
     dplyr::mutate(guild = guild_name)
   
   bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0)
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Bray-Curtis")
   
   # Linear model for Bray-Curtis vs Distance
   bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
@@ -147,7 +148,7 @@ BC_cat <- (caterpillar_results$bc_fig_table)
 ```
 
 
-
+# Chao-Sorensen
 ```{r Chao-Sorensen, echo=FALSE}
 # Chao-Sorensen index computation and analysis for a given community
 calculate_chao_sorensen <- function(data_matrix, distance_matrix, guild_name) {
@@ -164,7 +165,8 @@ calculate_chao_sorensen <- function(data_matrix, distance_matrix, guild_name) {
     dplyr::mutate(guild = guild_name)
   
   cs_fig_table <- merge(cs_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0)
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Chao-Sorensen")
   
   # Linear model for Chao-Sorensen vs Distance
   cs_lm <- lm(hodnota ~ distance, data = cs_fig_table)
@@ -206,7 +208,7 @@ CS_cat <-(caterpillar_results_cs$cs_fig_table)
 
 
 ```
-
+# Sorensen
 ```{r Sorensen, echo=FALSE}
 # Sorensen index computation and analysis for a given community
 calculate_sorensen <- function(data_presence_absence, distance_matrix, guild_name) {
@@ -224,7 +226,8 @@ calculate_sorensen <- function(data_presence_absence, distance_matrix, guild_nam
     dplyr::mutate(guild = guild_name)
   
   sor_fig_table <- merge(sorensen_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0)
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Sorensen")
   
   # Linear model for Sorensen vs Distance
   sor_lm <- lm(hodnota ~ distance, data = sor_fig_table)
@@ -288,8 +291,6 @@ Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matri
 data_testing <- MASTER %>% 
   filter(remove_cat == "0") %>% 
   select(locality,CAT_sp, PAR_sp, guild, PLANT_sp)
-
-
 
 # calculate the total abundance of parasitoids in each plot
 n_par_specimens_in_site <-
@@ -417,7 +418,8 @@ Sorensen_figure_sub <- dplyr::rename (Sorensen_para_sub, Locality_A = X1, Locali
 Sorensen_figure_sub  <- Sorensen_figure_sub  %>%
   add_column(guild = "Caterpillars-subsampled")
 SOR_fig_subsampled <-merge(Sorensen_figure_sub, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
-  filter (hodnota > 0)
+  filter (hodnota > 0) %>% 
+    add_column(indexy = "Sorensen")
 
 
   SOR_lm_hous <- lm(hodnota~distance, data = Sorensen_fig_subsampled)
@@ -554,9 +556,10 @@ BC_melt<-melt(BC_res_mean)
 BC_melt <- dplyr::rename (BC_melt, Locality_A = X1, Locality_B = X2, hodnota = value)
 
 BC_melt_subsampling <- BC_melt %>% 
-  add_column(guild = "Caterpillars_subsampled")
+  add_column(guild = "Caterpillars-subsampled")
 BC_fig_subsampled <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
-  filter (hodnota > 0)
+  filter (hodnota > 0) %>% 
+    add_column(indexy = "Bray-Curtis")
 
 
 
@@ -567,7 +570,7 @@ BC_mean_sub <- summarise(BC_melt,
 
 mantel_result_cat_BC_subsampled <- data.frame(
   index ="Bray-Curtis",
-  Community = "Caterpillars - subsampled",
+  Community = "Caterpillars-subsampled",
   mean = round(BC_mean_sub$mean,3),
   sd = round(BC_mean_sub$sd,3),
   test = "Mantel",
@@ -717,16 +720,14 @@ saveRDS(
 CS_subsampled_res_cat <- rename (CS_melt, Locality_A = X1, Locality_B = X2, hodnota = value)
 CS_subsampled_figure_cat <- CS_subsampled_res_cat %>%
   add_column(guild = "Caterpillars-subsampled") %>% 
-  filter (hodnota > 0)
+  filter (hodnota > 0) %>% 
+    add_column(indexy = "Chao-Sorensen")
   
 CS_fig_subsampled<- merge(CS_subsampled_figure_cat, distance_plot, by=c("Locality_A", "Locality_B"))
 
 
 CS_lm_hou <- lm(hodnota~distance, data = CS_subsampled_figure_cat)
 CS_lm_hou
-
-
-
 
 
 mantel_result_cat_CS_sub <- data.frame(
@@ -755,6 +756,190 @@ print(all_mantel_results)
 # Combine data for figure
 
 figure_1_merged <- rbind(BC_par, BC_cat, BC_fig_subsampled, CS_par, CS_cat, CS_fig_subsampled,SOR_par, SOR_cat, SOR_fig_subsampled)
+```
+# Figure 1 - violin plot
+```{r}
+figure_1_merged <- figure_1_merged %>% 
+  dplyr::filter(!(Locality_A == "Ohu2" | Locality_B == "Ohu2"))
+ind_BC <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Bray-Curtis")
+
+ind_CS <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Chao-Sorensen")
+
+ind_Sor <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Sorensen")
+
+
+# Ensure 'guild' is a factor with the desired order
+ind_BC$guild <- factor(ind_BC$guild, 
+                              levels = c("Parasitoids", "Caterpillars", "Caterpillars-subsampled"))
+
+# Create the plot
+BC_FIG_1 <- ggplot(ind_BC, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange", 
+                               "Caterpillars-subsampled" = "#ffb681")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                                "Caterpillars" = "black", 
+                                "Caterpillars-subsampled" = "black")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Bray-Curtis", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20)
+
+# Display the plot
+BC_FIG_1
+```
+
+
+# Figure 1 - with distance
+```{r}
+figure_1_merged <- rbind(BC_par, BC_cat, BC_fig_subsampled, CS_par, CS_cat, CS_fig_subsampled,SOR_par, SOR_cat, SOR_fig_subsampled)
+
+
+
+ind_BC <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Bray-Curtis")
+
+ind_CS <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Chao-Sorensen")
+
+ind_Sor <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Sorensen")
+
+
+
+
+
+# Bray-Curtis
+BC_FIG_1 <-ggplot(ind_BC, aes(x = distance, y = hodnota, 
+                                color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars-subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars-subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars-subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Bray-Curtis",
+       x = "",
+       y = "",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild")  +
+  theme_classic(base_size = 20)  ;BC_FIG_1 
+
+CS_FIG_1 <-ggplot(ind_CS, aes(x = distance, y = hodnota, 
+                                color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars-subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars-subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars-subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Chao-Sorensen",
+       x = "",
+       y = "",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild") +
+  theme_classic(base_size = 20)  ;CS_FIG_1  
+
+
+SOR_FIG_1 <-ggplot(ind_Sor, aes(x = distance, y = hodnota, 
+                                  color = guild, shape = guild, linetype = guild)) +
+  geom_point(size = 3) +  # Adjust size as needed
+  geom_smooth(method = "lm", se = FALSE, aes(group = guild), formula = y ~ x, fullrange = TRUE) +
+  scale_color_manual(values = c("Parasitoids" = "darkgreen", 
+                                "Caterpillars" = "darkorange", 
+                                "Caterpillars-subsampled" = "#ffb681")) +
+  scale_shape_manual(values = c("Parasitoids" = 17,  # Triangle
+                                "Caterpillars" = 16,  # Full Circle
+                                "Caterpillars-subsampled" = 1)) +  # Empty Circle
+  scale_linetype_manual(values = c("Parasitoids" = "solid", 
+                                   "Caterpillars" = "solid", 
+                                   "Caterpillars-subsampled" = "dashed")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  labs(title = "Sorensen",
+       x = "",
+       y = "β diversity",
+       color = "Guild",   # Change legend title for color
+       shape = "Guild",   # Change legend title for shape
+       linetype = "Guild") +  # Change legend title for linetype
+  theme_classic(base_size = 20) ; SOR_FIG_1
+
+
+Fig_1_final_new <-ggarrange(SOR_FIG_1 , CS_FIG_1 , BC_FIG_1, common.legend = TRUE, legend = "bottom", nrow = 1)
+Fig_1_final_new
+ggsave("output/fig/Fig_1_final_new.tiff",
+       Fig_1_final_new,
+       height = 14,
+       width = 29,
+       units = "cm")   # save the plot as .tiff
+
+
+
+
+
+```
+
+# Figure 1 No Ohu2
+
+```{r}
+##### No Ohu 2 in data
+
+
+figure_1_merged_no_ohu <- figure_1_merged %>% 
+  dplyr::filter(!(Locality_A == "Ohu2" | Locality_B == "Ohu2"))
+ind_BC_no_Ohu <- figure_1_merged_no_ohu %>% 
+  dplyr::filter(indexy == "Bray-Curtis")
+
+ind_CS_no_Ohu <- figure_1_merged_no_ohu %>% 
+  dplyr::filter(indexy == "Chao-Sorensen")
+
+ind_Sor_no_Ohu <- figure_1_merged_no_ohu %>% 
+  dplyr::filter(indexy == "Sorensen")
+
+
+# Ensure 'guild' is a factor with the desired order
+ind_BC_no_Ohu$guild <- factor(ind_BC_no_Ohu$guild, 
+                              levels = c("Parasitoids", "Caterpillars", "Caterpillars-subsampled"))
+
+# Create the plot
+BC_FIG_1_no_OHU <- ggplot(ind_BC_no_Ohu, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange", 
+                               "Caterpillars-subsampled" = "#ffb681")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                                "Caterpillars" = "black", 
+                                "Caterpillars-subsampled" = "black")) +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Bray-Curtis", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20)
+
+# Display the plot
+BC_FIG_1_no_OHU
+
 ```
 
 
