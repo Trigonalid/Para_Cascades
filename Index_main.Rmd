@@ -1017,8 +1017,6 @@ ggplot(bray_common_rare, aes(y = hodnota,
 ```
 
 
-```
-
 # Tabulka celistvá
 ```{r Tabulka}
 # Tabulka with rarity of parasitoids
