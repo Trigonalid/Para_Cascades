@@ -1,3 +1,12 @@
+
+
+par_fig_table_BC
+
+
+
+
+
+
 par_fig_table_BC <- par_fig_table_BC %>% 
   add_column(indexy = "Bray-Curtis")
 Cat_fig_table_BC <- Cat_fig_table_BC %>% 
