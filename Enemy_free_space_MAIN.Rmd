@@ -465,5 +465,80 @@ ggplot2::ggsave(
 )
 
 
+
+
+```
+
+```{r}
+library(ggplot2)
+
+# Example data
+set.seed(42)
+data <- data.frame(
+  x = rnorm(100),
+  y = rnorm(100)
+)
+
+# PNAS-style ggplot
+pnas_plot <- ggplot(data, aes(x = x, y = y)) +
+  geom_point(size = 2, alpha = 0.7) +  # Adjust point size and transparency
+  geom_smooth(method = "lm", color = "blue", linewidth = 1) +  # Updated to `linewidth`
+  
+  # Titles and labels
+  labs(
+    title = "PNAS Style Plot Example",
+    x = "X-axis Label",
+    y = "Y-axis Label"
+  ) +
+  
+  # Axis text, labels, and title sizes
+  theme_minimal(base_size = 10) +  # Base font size (Arial or sans-serif)
+  theme(
+    text = element_text(family = "Arial"),  # Use Arial font
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),  # Centered title
+    axis.title = element_text(size = 10),  # Axis labels
+    axis.text = element_text(size = 8),  # Tick labels
+    legend.title = element_text(size = 10),  # Legend title
+    legend.text = element_text(size = 8),  # Legend text
+    panel.grid.major = element_line(linewidth = 0.2, color = "gray80"),  # Subtle grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5)  # Updated to `linewidth`
+  )
+
+# Save the plot
+ggsave("PNAS_plot_example.png", pnas_plot, width = 7, height = 5, dpi = 300)  # Adjust size as needed
+
+```
+
+
+
+```{r}
+p2 <- ggplot(summary_long_2, aes(x = group, y = mean_localities, fill = group)) +
+  geom_violin(linewidth = 0.8) +  # Updated to use `linewidth` for the violin plot
+  geom_boxplot(width = 0.2, fill = "white", linewidth = 0.5) +  # Updated to use `linewidth` for the boxplot
+  geom_jitter(size = 1.5, alpha = 0.6) +  # Adjusted point size and transparency for jitter
+  
+  # Custom color palette
+  scale_fill_manual(values = c("#E69F00", "#009E73")) +  # Colorblind-friendly colors
+  
+  # Labels
+  labs(
+    x = "Group",
+    y = "Mean Number of Localities",
+    title = "Enemy-Free Space for Caterpillars\n(Number of Localities Without Parasitoids / Detected Localities)"
+  ) +
+  
+  # Minimal theme with adjustments
+  theme_minimal() +
+  theme(
+    legend.position = "none",  # Remove legend
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5),  # Centered and bold title
+    axis.title = element_text(size = 10),  # Axis labels
+    axis.text = element_text(size = 8),  # Tick labels
+    panel.grid.major = element_line(linewidth = 0.2, color = "gray80"),  # Subtle major grid lines
+    panel.grid.minor = element_blank(),  # Remove minor grid lines
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5)  # Add border
+  )
+
 ```
 
