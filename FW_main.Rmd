@@ -45,7 +45,7 @@ data_distance_matrix <-
 ```
 
 ```{r}
-# helper funcctions
+# helper functions
 get_contingency_table <- function(data_source, guild_a, guild_b) {
   data_source %>%
     dplyr::group_by(locality) %>%
