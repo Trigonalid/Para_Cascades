@@ -42,19 +42,6 @@ data_distance_matrix <-
   ) %>%
   tibble::column_to_rownames("...1") %>%
   as.matrix()
-
-# Prepare the distance matrix for visualization
-data_distance_long <-
-  data_distance_matrix %>%
-  as.data.frame() %>%
-  tibble::rownames_to_column("Locality_A") %>%
-  # Transform the matrix into a long format
-  tidyr::pivot_longer(
-    cols = -Locality_A,
-    names_to = "Locality_B",
-    values_to = "distance"
-  ) %>%
-  dplyr::arrange(Locality_A, Locality_B)
 ```
 
 ```{r}
@@ -95,7 +82,6 @@ get_mantel_test_per_each_metric <- function(data_source) {
     ) %>%
     unique() %>%
     sort()
-
 
   data_localities_template <-
     tidyr::expand_grid(
@@ -416,6 +402,7 @@ data_to_plot_cat_plant_wn <-
   dplyr::select(data, metric, type) %>%
   tidyr::unnest(data)
 
+set.seed(1234)
 figure_s2a_pc <-
   data_to_plot_cat_par_wn %>%
   ggplot2::ggplot(,
@@ -457,7 +444,7 @@ figure_s2a_pc <-
     axis.ticks.x = ggplot2::element_blank()
   )
 
-
+set.seed(1234)
 figure_s2b_pc <-
   data_to_plot_cat_plant_wn %>%
   ggplot2::ggplot(,
@@ -499,7 +486,6 @@ figure_s2b_pc <-
     axis.ticks.x = ggplot2::element_blank()
   )
 
-
 fig_s2 <-
   ggpubr::ggarrange(
     figure_s2a_pc,
@@ -519,4 +505,9 @@ ggplot2::ggsave(
 ```
 
 
+```{r}
+# how to access tibble values?
 
+# this will get the `data` column from the first row (ST)
+data_mantel_cat_par$data[[1]]
+```
