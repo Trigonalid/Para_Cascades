@@ -1,4 +1,5 @@
 CAT_sp,PAR_sp,localities_total
+AcontiinaeGEN sp. AAG0292,NA,3
 Addaea nr. probolopsis,APAN124,1
 Addaea nr. probolopsis,BETH002,2
 Addaea nr. probolopsis,CHAL008,1
@@ -9,6 +10,7 @@ Addaea nr. probolopsis,MICR187,1
 Addaea nr. probolopsis,MICR272,1
 Addaea nr. probolopsis,TACH364,2
 Addaea nr. probolopsis,TACH519,1
+Addaea nr. probolopsis,NA,4
 Addaea pusilla,AGAT055,3
 Addaea pusilla,APAN124,2
 Addaea pusilla,BETH002,1
@@ -24,14 +26,27 @@ Addaea pusilla,TACH247,1
 Addaea pusilla,TACH285,1
 Addaea pusilla,TACH364,1
 Addaea pusilla,TACH438,1
+Addaea pusilla,NA,8
+Addaea sp. AAL8409,NA,1
+Addaea syndesma,NA,3
+Adoxophyes,NA,4
+Adoxophyes fasciculana,NA,4
 Adoxophyes n. sp. nr. orana,CHEL028,1
 Adoxophyes n. sp. nr. orana,MICR187,1
+Adoxophyes n. sp. nr. orana,NA,8
 Adoxophyes sp. 3,ORGI004,1
 Adoxophyes sp. 3,TACH026,1
+Adoxophyes sp. 3,NA,8
+Adoxophyes templana complex,NA,4
 Adoxophyes thoracica,CENT007,1
+Adoxophyes thoracica,NA,7
 Adoxophyes tripselia,CHEL001,1
 Adoxophyes tripselia,MICR237,1
+Adoxophyes tripselia,NA,6
+Aetholix flavibasalis,NA,1
+Agriophara sp. AAD4601,NA,1
 Agriophara sp. AAD4602,CHEL001,1
+Agriophara sp. AAD4602,NA,3
 Agrotera genuflexa,BETH002,1
 Agrotera genuflexa,CHEL001,1
 Agrotera genuflexa,CHOR074,1
@@ -40,6 +55,7 @@ Agrotera genuflexa,MICR184,1
 Agrotera genuflexa,MICR240,1
 Agrotera genuflexa,MICR240a,1
 Agrotera genuflexa,TACH366,1
+Agrotera genuflexa,NA,5
 Agrotera ignepictoides,AGAT028,1
 Agrotera ignepictoides,APAN117,1
 Agrotera ignepictoides,CHEL001,1
@@ -49,6 +65,7 @@ Agrotera ignepictoides,MICR037,1
 Agrotera ignepictoides,MICR184,1
 Agrotera ignepictoides,MICR240,1
 Agrotera ignepictoides,TACH411,1
+Agrotera ignepictoides,NA,6
 Agrotera nr. effertalis,AGAT028,1
 Agrotera nr. effertalis,CHEL026,1
 Agrotera nr. effertalis,CHOR074,2
@@ -58,8 +75,19 @@ Agrotera nr. effertalis,MICR074,1
 Agrotera nr. effertalis,MICR240,1
 Agrotera nr. effertalis,ROGAb01,1
 Agrotera nr. effertalis,TACH032,1
+Agrotera nr. effertalis,NA,7
+Agrotera sp. AAJ7071,NA,2
+Agrotera sp.2 nr basinotata,NA,1
 Albinospila sp. AAB0430,ICHN178,1
 Albinospila sp. AAB0430,TACH019,1
+Albinospila sp. AAB0430,NA,8
+Albinospila sp. AAB0431,NA,4
+Albinospila sp. AAB0432,NA,3
+Albinospila sp. AAH9003,NA,3
+Albinospila syntyche,NA,3
+Anomis flava,NA,1
+Anthela nr. ekeikei,NA,1
+Archigraptis chrysodema,NA,1
 Arctornis nr. intacta 1 SEM-2008,APAN010,1
 Arctornis nr. intacta 1 SEM-2008,APAN124,1
 Arctornis nr. intacta 1 SEM-2008,ORGI030,1
@@ -69,9 +97,24 @@ Arctornis nr. intacta 1 SEM-2008,TACH294,1
 Arctornis nr. intacta 1 SEM-2008,TACH393,2
 Arctornis nr. intacta 1 SEM-2008,TACH423,1
 Arctornis nr. intacta 1 SEM-2008,TACH438,1
+Arctornis nr. intacta 1 SEM-2008,NA,8
 Arctornis nr. intacta 2 SEM-2008,ROGA019,1
+Arctornis nr. intacta 2 SEM-2008,NA,3
 Arctornis nr. intacta 3 SEM-2008,BETH002,1
 Arctornis nr. intacta 3 SEM-2008,TACH393,2
+Arctornis nr. intacta 3 SEM-2008,NA,5
+Arctornis nr. intacta 4 SEM-2008,NA,4
+Arctornis sp. AAE6183,NA,3
+Ardozyga cf. amphiplaca,NA,1
+Ardozyga nr. amphiplaca,NA,1
+Arhopala AAC8740,NA,1
+Arhopala sp. AAC8743,NA,1
+Arhopala sp. ABZ4430,NA,2
+Arhopala thamyras,NA,1
+Arna,NA,2
+Arna sp. nr. galactopis,NA,1
+Artaxa sp. AAB8719,NA,2
+Artaxa sp. AAD5374,NA,1
 Asota caricae,CENT023,1
 Asota caricae,CHOR076,1
 Asota caricae,TACH010,2
@@ -85,14 +128,21 @@ Asota caricae,TACH296,1
 Asota caricae,TACH438,1
 Asota caricae,TACH505,4
 Asota caricae,TACH516,1
+Asota caricae,NA,5
 Asota eusemioides,TACH010,1
 Asota eusemioides,TACH079,1
 Asota eusemioides,TACH113,1
+Asota eusemioides,NA,4
+Asota heliconia,NA,1
 Asota plana,ROGAb01,1
 Asota plana,TACH010,2
 Asota plana,TACH079,1
 Asota plana,TACH296,1
 Asota plana,TACH505,2
+Asota plana,NA,6
+Barasa cymatistis,NA,1
+Berta albiplaga,NA,1
+Berta sp. AAD4670,NA,1
 Brenthia JR22,AGAT054,1
 Brenthia JR22,DOLI010,1
 Brenthia JR22,GLYP049,1
@@ -100,9 +150,12 @@ Brenthia JR22,MICR031,1
 Brenthia JR22,MICR084,1
 Brenthia JR22,MICR170,1
 Brenthia JR22,MICR243,1
+Brenthia JR22,NA,5
+Brenthia JR24,NA,4
 Brenthia JR32,APAN010,1
 Brenthia JR32,MICR038,2
 Brenthia JR32,TACH233,1
+Brenthia JR32,NA,6
 Brenthia JR34,AGAT023,1
 Brenthia JR34,APAN010,1
 Brenthia JR34,APAN014,1
@@ -113,15 +166,19 @@ Brenthia JR34,MICR181,1
 Brenthia JR34,MICR195,1
 Brenthia JR34,MICR238,1
 Brenthia JR34,ROGAb01,1
+Brenthia JR34,NA,5
 Brenthia JR37,AGAT023,2
 Brenthia JR37,APAN010,2
 Brenthia JR37,ICHN074,1
 Brenthia JR37,MICR101,1
 Brenthia JR37,MICR238,1
 Brenthia JR37,MICR291,1
+Brenthia JR37,NA,5
 Brenthia JR39,CHAL013,1
 Brenthia JR39,MICR038a,2
 Brenthia JR39,MICR174,1
+Brenthia JR39,NA,3
+Brenthia JR53,NA,4
 Brenthia JR54,AGAT023,1
 Brenthia JR54,AGAT035,1
 Brenthia JR54,AGAT049,1
@@ -142,6 +199,7 @@ Brenthia JR54,MICR239,1
 Brenthia JR54,ROGA022,1
 Brenthia JR54,ROGAb01,1
 Brenthia JR54,TACH050,1
+Brenthia JR54,NA,8
 Brenthia JR62,AGAT049,1
 Brenthia JR62,HORM001,1
 Brenthia JR62,ICHN074,1
@@ -149,31 +207,60 @@ Brenthia JR62,MICR016,1
 Brenthia JR62,MICR038,3
 Brenthia JR62,MICR173,1
 Brenthia JR62,TACH050,1
+Brenthia JR62,NA,6
 Brenthia sp. AAC1202,MICR038,1
 Brenthia sp. AAC1202,MICR232,1
+Brenthia sp. AAC1202,NA,4
 Brenthia sp. AAC1206,MICR238,1
 Brenthia sp. AAC1206,ROGAb01,1
+Brenthia sp. AAC1206,NA,3
 Brenthia sp. AAF6821,APAN113,1
 Brenthia sp. AAF6821,MICR084,1
+Brenthia sp. AAF6821,NA,2
 Brenthia sp. AAI3833,AGAT049,1
+Brenthia sp. AAI3833,NA,4
+Brenthia sp. AAI3834,NA,2
 Brenthia sp. AAI3835,APAN010,1
 Brenthia sp. AAI3835,ICHN074,1
+Brenthia sp. AAI3835,NA,3
+Brenthia sp. AAI3836,NA,1
 Brenthia sp. AAL5584,MICR084,1
+Brenthia sp. AAL5584,NA,2
+Caeneressa bernhardi,NA,1
+Calindoea dorilusalis,NA,2
 Cangetta cf. rectilinea,AGAT087,1
+Cangetta cf. rectilinea,NA,2
+Cathyalia sp. AAG0397,NA,1
+Catoria delectaria,NA,4
+Chaetocneme lunula,NA,1
+Chaetocneme sp. AAF8537,NA,1
+Chalcidoptera emissalis,NA,4
+Chamaita pr. barnardi,NA,3
 Chamaita pr. metamelaena,APAN010,1
 Chamaita pr. metamelaena,MICR011,1
 Chamaita pr. metamelaena,MICR028,1
 Chamaita pr. metamelaena,MICR101,1
+Chamaita pr. metamelaena,NA,2
+Chora ekeikei,NA,1
 Chora huntei,TACH113,1
+Chora huntei,NA,4
+Choreutidae,NA,1
 Choreutis JR06,MICR014,1
 Choreutis JR06,MICR038,1
+Choreutis JR06,NA,3
+Choreutis JR07,NA,1
+Choreutis JR08,NA,1
 Choreutis JR09,APAN004,1
 Choreutis JR09,TACH050,1
+Choreutis JR09,NA,3
+Choreutis JR11,NA,2
 Choreutis JR2,APAN132,1
+Choreutis JR2,NA,4
 Choreutis JR5,BETH001,2
 Choreutis JR5,MICR014,1
 Choreutis JR5,MICR038,1
 Choreutis JR5,MICR243,1
+Choreutis JR5,NA,5
 Choreutis basalis,APAN010,2
 Choreutis basalis,BETH001,1
 Choreutis basalis,CHAL008,1
@@ -188,6 +275,7 @@ Choreutis basalis,MICR238,3
 Choreutis basalis,MICR289,1
 Choreutis basalis,TACH050,4
 Choreutis basalis,TACH227,2
+Choreutis basalis,NA,8
 Choreutis cf. anthorma,AGAT023,1
 Choreutis cf. anthorma,APAN002,2
 Choreutis cf. anthorma,APAN010,2
@@ -233,7 +321,9 @@ Choreutis cf. anthorma,TACH467,1
 Choreutis cf. anthorma,TACH505,1
 Choreutis cf. anthorma,TACH511,1
 Choreutis cf. anthorma,TACH513,1
+Choreutis cf. anthorma,NA,8
 Choreutis chi,TACH050,1
+Choreutis chi,NA,1
 Choreutis lutescens,AGAT022,6
 Choreutis lutescens,APAN017,2
 Choreutis lutescens,BETH001,1
@@ -258,12 +348,23 @@ Choreutis lutescens,TACH244,1
 Choreutis lutescens,TACH366,1
 Choreutis lutescens,TACH372,1
 Choreutis lutescens,TACH405,1
+Choreutis lutescens,NA,8
+Choreutis tricyanitis,NA,4
 Chrysocraspeda nr. inundata,MICR033,1
+Chrysocraspeda nr. inundata,NA,3
+Chrysocraspeda praegriseata,NA,2
+Chrysocraspeda rothschildi?,NA,2
 Chrysocraspeda sp. AAB1427,TACH118,1
+Chrysocraspeda sp. AAB1427,NA,3
 Chrysocraspeda sp. AAC8547,ICHN186,1
+Chrysocraspeda sp. AAC8547,NA,1
+"Chrysoscota sp, near flavostrigata B-B and vagivitta",NA,1
+Cirrhochrista cf. brizoalis,NA,1
 Cirrhochrista xanthographis,CHEL009,1
 Cirrhochrista xanthographis,ICHN166,1
 Cirrhochrista xanthographis,ORGI019,1
+Cirrhochrista xanthographis,NA,5
+Cleora repetita,NA,4
 Coelorhyncidia nitidalis,APAN103,1
 Coelorhyncidia nitidalis,BETH001,1
 Coelorhyncidia nitidalis,BETH005,2
@@ -285,9 +386,25 @@ Coelorhyncidia nitidalis,TACH079,1
 Coelorhyncidia nitidalis,TACH366,2
 Coelorhyncidia nitidalis,TACH440,1
 Coelorhyncidia nitidalis,TACH516,1
+Coelorhyncidia nitidalis,NA,7
 CopromorphidaeGEN sp. AAG0483,ORGI019,1
 CopromorphidaeGEN sp. AAG0483,TACH364,1
+CopromorphidaeGEN sp. AAG0483,NA,1
 CopromorphidaeGEN sp. AAG3732,MICR174,2
+CopromorphidaeGEN sp. AAG3732,NA,2
+CopromorphidaeGEN sp. AAH4359,NA,1
+Cotana sp. AAI6038,NA,2
+Crambidae sp.CRAM082,NA,1
+Crambidae sp.CRAM097,NA,1
+Crambidae sp.CRAM132,NA,1
+Crambidae sp.PYRA038,NA,1
+Cryptoblabes sp. AAG0395,NA,2
+Cyclophora sp. AAF7883,NA,1
+Cyclophora sp. AAF7884,NA,3
+Cyrestis acilia,NA,6
+Darantasia caerulescens,NA,3
+Delonoma pyrrhoplecta,NA,1
+Derambila strigicosta,NA,1
 Dichomeris n. sp. nr. ochreoviridella,APAN126,2
 Dichomeris n. sp. nr. ochreoviridella,APAN127,2
 Dichomeris n. sp. nr. ochreoviridella,BETH002,1
@@ -302,13 +419,18 @@ Dichomeris n. sp. nr. ochreoviridella,TACH142,1
 Dichomeris n. sp. nr. ochreoviridella,TACH285,4
 Dichomeris n. sp. nr. ochreoviridella,TACH294,1
 Dichomeris n. sp. nr. ochreoviridella,TACH438,2
+Dichomeris n. sp. nr. ochreoviridella,NA,8
 Dichomeris ochreoviridella,CENT012,1
 Dichomeris ochreoviridella,ICHN081,1
 Dichomeris ochreoviridella,MICR170,2
 Dichomeris ochreoviridella,ORGI004,1
 Dichomeris ochreoviridella,TACH142,1
 Dichomeris ochreoviridella,TACH285,3
+Dichomeris ochreoviridella,NA,8
+Dichomeris sp. AAA9076,NA,2
 Dichomeris sp. AAB2697,TACH294,1
+Dichomeris sp. AAB2697,NA,4
+Dichomeris sp. AAI6257,NA,4
 Dichomeris sp. XXXX068,AGAT054,1
 Dichomeris sp. XXXX068,AGAT055,1
 Dichomeris sp. XXXX068,APAN010,1
@@ -329,21 +451,57 @@ Dichomeris sp. XXXX068,ORGI029,1
 Dichomeris sp. XXXX068,TACH014,1
 Dichomeris sp. XXXX068,TACH294,1
 Dichomeris sp. XXXX068,TACH393,1
+Dichomeris sp. XXXX068,NA,8
 Dichomeris sp. XXXX120,MICR170,2
 Dichomeris sp. XXXX120,MICR170a,1
 Dichomeris sp. XXXX120,MICR171,1
 Dichomeris sp. XXXX120,TACH014,1
 Dichomeris sp. XXXX120,TACH393,1
+Dichomeris sp. XXXX120,NA,7
+Dilophothripa sp. AAL1093,NA,1
+Dizuga recusataria,NA,7
+Drepanidae,NA,1
 Dudua n. sp. nr. aprobola,CENT011,1
 Dudua n. sp. nr. aprobola,ICHN058,1
 Dudua n. sp. nr. aprobola,ICHN185,1
 Dudua n. sp. nr. aprobola,MICR237,1
 Dudua n. sp. nr. aprobola,MICR240,1
 Dudua n. sp. nr. aprobola,ROGAb01,1
+Dudua n. sp. nr. aprobola,NA,5
+Dysaethria,NA,1
+Dysrhombia nr. alabastraria,NA,1
+Ectropis bhurmitra,NA,1
+Eilema plana,NA,1
+Elachyophtalma cf. kebeae,NA,1
+Eucyclodes absona,NA,1
+Eucyclodes albilauta,NA,1
+Eucyclodes sp. ACF0440,NA,2
+Eugoa nr. perfasciata,NA,1
 Euploea leucostictos,MICR240,1
+Euploea leucostictos,NA,5
+Focillodes,NA,1
+Gabala australiata,NA,1
+Garudinodes nr. trizona,NA,1
 Gauna phaealis,ICHN017,1
+Gauna phaealis,NA,5
 Gauna sp. AAF4890,ICHN082,1
+Gauna sp. AAF4890,NA,1
+Gelechiidae sp.TORT188,NA,1
+GelechiidaeGEN sp. AAN5589,NA,1
+Gelechioidea sp.TORT193,NA,1
+Gelechioidea sp.XXXX121,NA,1
+Gelechioidea sp.XXXX126,NA,1
 Geometridae sp.GEOM056,TACH134,1
+Geometridae sp.GEOM138,NA,1
+Geometridae sp.GEOM143,NA,1
+Geometridae sp.GEOM147,NA,1
+Geometridae sp.GEOM148,NA,1
+Geometridae sp.GEOM160,NA,1
+Geometridae sp.GEOM163,NA,1
+Geometrinae,NA,1
+Glyphodes caesalis,NA,1
+Glyphodes canthusalis,NA,1
+Glyphodes doleschalii,NA,2
 Glyphodes margaritaria,APAN002,2
 Glyphodes margaritaria,BETH001,1
 Glyphodes margaritaria,CHEL010,1
@@ -365,31 +523,119 @@ Glyphodes margaritaria,TACH050,1
 Glyphodes margaritaria,TACH227,1
 Glyphodes margaritaria,TACH405,1
 Glyphodes margaritaria,TACH511,3
+Glyphodes margaritaria,NA,8
+Glyphodes pseudocaesalis,NA,1
+Gnathothlibus heliodes,NA,2
+Gymnasura sp. USNM2,NA,2
+Gymnasura sp. USNM9,NA,3
+Haritalodes sp. AAB8316,NA,1
+Helcystogramma sp. AAI2045,NA,2
+Heterocnephes scapulalis,NA,1
+Holocola n. sp. AAC7734,NA,4
+Homodes iomolybda,NA,3
+Homona aestivana,NA,5
+Homona auriga,NA,3
 Homona mermerodes,TACH026,1
+Homona mermerodes,NA,6
+Homona spargotis,NA,3
+Homona trachyptera,NA,2
+Hydroclada antigona,NA,1
+Hypolycaena phorbas,NA,1
+Hypomecis infaustaria,NA,3
+Hyposidra,NA,2
 Hyposidra incomptaria,MICR176,1
+Hyposidra incomptaria,NA,5
 Hyposidra talaca,DOLI026,1
+Hyposidra talaca,NA,3
+Hypsopygia nigrivitta,NA,1
+Idiophantis,NA,2
 Idiophantis n. sp. AAB7063,MICR241,1
+Idiophantis n. sp. AAB7063,NA,7
 Idiophantis n. sp. AAB7064,ICHN198,1
+Idiophantis n. sp. AAB7064,NA,2
+Idiophantis n. sp. AAZ1655,NA,2
+Imma,NA,1
+Imma monastica,NA,3
+Imma sp. AAD4328,NA,2
+Imma sp. AAD4329,NA,1
+Imma sp. AAF9965,NA,1
+Imma sp. AAI2315,NA,1
+Immidae,NA,1
+Isotenes nr. miserana,NA,3
+Isotenes sp. AAC7575,NA,5
 Jodis albifusa,MICR013,1
 Jodis albifusa,ORGI002,1
 Jodis albifusa,TACH232,1
 Jodis albifusa,TACH238,1
 Jodis albifusa,TACH473,1
+Jodis albifusa,NA,8
+Jodis sp. AAE5694,NA,4
+Jodis sp. AAO0087,NA,2
+Labdia sp. AAH4360,NA,1
 Lactura rhodographa,TACH111,1
+Lactura rhodographa,NA,1
+Lactura sp. AAI2177,NA,2
+Lambula agraphia,NA,2
+Lambula sp. ACE6062,NA,1
+Lambula sp. USNM1,NA,1
 Lambula sp. USNM5,CHAL003,1
+Lambula sp. USNM5,NA,3
+Lecithocera sp. AAI1270,NA,1
+Lecithocera sp. AAI1271,NA,1
+Lecithocera sp. AAI1272,NA,1
+Lepidoptera sp.XXXX113,NA,1
+Lepidoptera sp.XXXX128,NA,1
+Lepidoptera sp.XXXX137,NA,1
+Lepidoptera sp.XXXX138,NA,1
+Lepidoptera sp.XXXX140,NA,1
+Lepidoptera sp.XXXX141,NA,1
+Lepidoptera sp.XXXX145,NA,1
+Lepidoptera sp.XXXX146,NA,1
+Lepidoptera sp.XXXX150,NA,1
+LepidopteraGEN sp. AAH4358,NA,1
+LepidopteraGEN sp. AAH4361,NA,1
+Leucoma sp. ABU6384,NA,1
 Limacodidae sp.LIMA007,BETH002,1
+Limacodidae sp.LIMA027,NA,1
 Lista carniola,MICR187,1
 Lista carniola,TACH380,1
+Lista carniola,NA,1
+Lithosiinae sp.PYRA039,NA,1
+Lithosiinae sp.TORT189,NA,1
+Lithosiinae sp.XXXX149,NA,1
+Loboschiza,NA,1
 Loboschiza sp. AAI1072,AGAT013,1
+Loboschiza sp. AAI1072,NA,8
+Lophopepla sp. AAI1091,NA,2
+Luxiaria sp. AAF9578,NA,1
+Lymantria,NA,1
+Lymantria novaguineensis,NA,2
 Lymantriidae sp.LYMA045,ROGA017,1
+Lymantriidae sp.LYMA067,NA,1
+Lymantriidae sp.LYMA072,NA,1
+Lymantriidae sp.LYMA077,NA,1
+LymantriinaeGEN sp. AAG9399,NA,1
 Macarostola sp. AAI1170,ORGI003,1
 Macarostola sp. AAI1170,ORGI017,2
+Macarostola sp. AAI1170,NA,4
+Macarostola sp. AAI1171,NA,1
+Macroglossum inspida papuanum,NA,4
 Macroglossum melas pullius,TACH001,1
+Macroglossum melas pullius,NA,7
 Macrothyma sanguinolenta,MICR187,1
+Macrothyma sanguinolenta,NA,4
+Mambara sp. AAK7402,NA,3
+Mambara sp. AAL3983,NA,1
+Marapana pulverata,NA,1
+Mecistoptera franzwagneri,NA,5
 Mecistoptera n. sp. AAB6947,TACH478,1
+Mecistoptera n. sp. AAB6947,NA,4
 Mecistoptera sophiewagnerae,TACH134,1
+Mecistoptera sophiewagnerae,NA,4
 Meekiaria nigriscriptalis,CHOR078,1
+Meekiaria nigriscriptalis,NA,2
 Meekiaria nr. lignea,ICHN067,1
+Meekiaria nr. lignea,NA,1
 Meekiaria purpurea,AGAT001,1
 Meekiaria purpurea,AGAT052,1
 Meekiaria purpurea,AGAT076,1
@@ -416,14 +662,18 @@ Meekiaria purpurea,TACH079,1
 Meekiaria purpurea,TACH134,1
 Meekiaria purpurea,TACH405,1
 Meekiaria purpurea,TACH510,2
+Meekiaria purpurea,NA,8
 Meekiaria sp. AAA3375,APAN020,1
 Meekiaria sp. AAA3375,ICHN067,1
 Meekiaria sp. AAA3375,TACH001,1
+Meekiaria sp. AAA3375,NA,6
 Meekiaria sp. AAA3376,TACH001,1
+Meekiaria sp. AAA3376,NA,5
 Meekiaria sp. AAA3378,CARD001,1
 Meekiaria sp. AAA3378,CARD006,1
 Meekiaria sp. AAA3378,ICHN065,1
 Meekiaria sp. AAA3378,MICR231,1
+Meekiaria sp. AAA3378,NA,5
 Meekiaria sp. AAA3379,BETH006,1
 Meekiaria sp. AAA3379,CARD001,1
 Meekiaria sp. AAA3379,CHEL010,1
@@ -431,8 +681,11 @@ Meekiaria sp. AAA3379,CHOR078,1
 Meekiaria sp. AAA3379,ROGAb01,1
 Meekiaria sp. AAA3379,TACH001,2
 Meekiaria sp. AAA3379,TACH365,1
+Meekiaria sp. AAA3379,NA,5
 Meekiaria sp. AAA3380,ICHN193,1
 Meekiaria sp. AAA3380,TACH496,1
+Meekiaria sp. AAA3380,NA,5
+Meekiaria sp. AAJ1732,NA,2
 Meekiaria sp. BOLD:AAA3374,AGAT001,1
 Meekiaria sp. BOLD:AAA3374,AGAT074,2
 Meekiaria sp. BOLD:AAA3374,AGAT076,1
@@ -457,7 +710,10 @@ Meekiaria sp. BOLD:AAA3374,TACH001,3
 Meekiaria sp. BOLD:AAA3374,TACH134,1
 Meekiaria sp. BOLD:AAA3374,TACH366,2
 Meekiaria sp. BOLD:AAA3374,TACH510,2
+Meekiaria sp. BOLD:AAA3374,NA,7
 Meekiaria sp. CRAM151,TACH001,1
+Meekiaria sp. CRAM151,NA,2
+Mellea,NA,1
 Mellea hieroglyphica,BETH002,1
 Mellea hieroglyphica,CHEL005,1
 Mellea hieroglyphica,MICR272,1
@@ -465,6 +721,7 @@ Mellea hieroglyphica,TACH227,1
 Mellea hieroglyphica,TACH296,1
 Mellea hieroglyphica,TACH393,1
 Mellea hieroglyphica,TACH438,1
+Mellea hieroglyphica,NA,7
 Mellea nitida,BETH002,5
 Mellea nitida,CHEL005,1
 Mellea nitida,MICR013,1
@@ -474,6 +731,7 @@ Mellea nitida,MICR187,1
 Mellea nitida,MICR272,1
 Mellea nitida,TACH393,1
 Mellea nitida,TACH438,3
+Mellea nitida,NA,8
 Mellea ordinaria complex,AGAT010,1
 Mellea ordinaria complex,APAN132,1
 Mellea ordinaria complex,BETH002,5
@@ -492,6 +750,7 @@ Mellea ordinaria complex,TACH401,1
 Mellea ordinaria complex,TACH438,2
 Mellea ordinaria complex,TACH469,1
 Mellea ordinaria complex,TACH516,1
+Mellea ordinaria complex,NA,8
 Mellea ramifera,APAN010,2
 Mellea ramifera,BETH002,5
 Mellea ramifera,MICR170,1
@@ -502,15 +761,18 @@ Mellea ramifera,TACH142,1
 Mellea ramifera,TACH285,1
 Mellea ramifera,TACH296,3
 Mellea ramifera,TACH438,4
+Mellea ramifera,NA,6
 Mellea rectiviata,BETH002,1
 Mellea rectiviata,CHEL005,1
 Mellea rectiviata,TACH296,1
 Mellea rectiviata,TACH438,1
+Mellea rectiviata,NA,4
 Mellea sp. 1 nr. ordinaria,BETH002,1
 Mellea sp. 1 nr. ordinaria,ICHN073,1
 Mellea sp. 1 nr. ordinaria,MICR170,1
 Mellea sp. 1 nr. ordinaria,MICR170b,1
 Mellea sp. 1 nr. ordinaria,TACH438,3
+Mellea sp. 1 nr. ordinaria,NA,7
 Mellea sp. AAI1456,BETH002,1
 Mellea sp. AAI1456,CENT023,1
 Mellea sp. AAI1456,CHOR076,1
@@ -520,23 +782,63 @@ Mellea sp. AAI1456,ICHN167,2
 Mellea sp. AAI1456,TACH285,1
 Mellea sp. AAI1456,TACH296,1
 Mellea sp. AAI1456,TACH438,1
+Mellea sp. AAI1456,NA,6
 Mellea sp. AAI1457,TACH438,1
+Mellea sp. AAI1457,NA,3
 Mellea sp. AAI1460,TACH438,1
+Mellea sp. AAI1460,NA,1
 Mellea sp. AAI1461,ICHN187,1
+Mellea sp. AAI1461,NA,3
 Mellea sp. THYR012,BETH002,1
 Mellea sp. THYR012,TACH142,1
 Mellea sp. THYR012,TACH285,1
 Mellea sp. THYR012,TACH438,3
+Mellea sp. THYR012,NA,8
 Mellea sp.near rectiviata,BETH002,1
 Mellea sp.near rectiviata,BETH004,1
 Mellea sp.near rectiviata,MICR272,1
 Mellea sp.near rectiviata,TACH079,1
 Mellea sp.near rectiviata,TACH438,1
+Mellea sp.near rectiviata,NA,2
+Metaphoenia sp. AAI1563,NA,1
+Moca ancistrota,NA,1
 Moca congrualis,TACH157,1
 Moca congrualis,TACH295,1
+Moca congrualis,NA,8
+Nacaduba berenice,NA,1
+Nausinoe globulipedalis,NA,1
+Noctuidae sp.GEOM149,NA,1
+Noctuidae sp.NOCT095,NA,1
+Noctuidae sp.NOCT097,NA,2
+Noctuidae sp.NOCT100,NA,1
+Noctuidae sp.NOCT104,NA,1
+Noctuidae sp.NOCT107,NA,1
+Noctuidae sp.NOCT117,NA,1
+Noctuidae sp.NOCT119,NA,1
+Noctuidae sp.NOCT121,NA,1
+Noctuidae sp.NOCT122,NA,1
+Noctuidae sp.NOCT123,NA,1
+NoctuidaeGEN sp. AAG0293,NA,3
+Nolidae sp.NOLI002,NA,1
+Nolidae sp.TORT194,NA,2
+NolidaeGEN sp. AAH3366,NA,2
+NolidaeGEN sp. AAH3367,NA,1
+Notarcha sp. ACE6204,NA,1
 Nothomastix klossi,AGAT001,1
+Nothomastix klossi,NA,1
+Nudaria sp. USNM2,NA,2
+Nycteola indicatana,NA,7
 Nycteola n. sp. AAB7439,TACH010,1
+Nycteola n. sp. AAB7439,NA,8
 Nycteola nr. pseudoindica,AGAT028,1
+Nycteola nr. pseudoindica,NA,4
+OecophoridaeGEN sp. AAH7348,NA,2
+OecophorinaeGEN sp. AAF9711,NA,1
+Oenospila sp. AAB6770,NA,5
+Oenospila sp. AAD3332,NA,2
+Olene sp. nr. mendosa,NA,4
+OlethreutinaeGEN sp. AAG0327,NA,1
+Omiodes lasiocnemis,NA,1
 Ophiorrhabda deceptor,AGAT083,1
 Ophiorrhabda deceptor,APAN006,1
 Ophiorrhabda deceptor,HORM002,1
@@ -547,21 +849,40 @@ Ophiorrhabda deceptor,MICR069,3
 Ophiorrhabda deceptor,MICR237,1
 Ophiorrhabda deceptor,MICR240,2
 Ophiorrhabda deceptor,MICR240a,1
+Ophiorrhabda deceptor,NA,8
 Ophyx crinipes,MICR184,1
 Ophyx crinipes,TACH020,3
 Ophyx crinipes,TACH438,1
+Ophyx crinipes,NA,6
+Orthaga melanoperalis,NA,3
 Orthaga nr. percnodes,AGAT083,1
 Orthaga nr. percnodes,CARD005,1
 Orthaga nr. percnodes,MICR037,1
 Orthaga nr. percnodes,MICR174,1
 Orthaga nr. percnodes,MICR240,1
 Orthaga nr. percnodes,TACH284,1
+Orthaga nr. percnodes,NA,5
 Orvasca sp. AAD8421,ROGA007,1
+Orvasca sp. AAD8421,NA,3
+Orvasca sp. AAG9398,NA,1
+Orvasca sp. ADH2494,NA,3
+Orvasca sp.1,NA,1
+Paradromulia nr. but not lignifascia,NA,1
+Parapamemene,NA,1
 Paraphomia disjuncta,CHAL015,1
 Paraphomia disjuncta,ICHN068,3
 Paraphomia disjuncta,TACH284,1
 Paraphomia disjuncta,TACH426,2
 Paraphomia disjuncta,TACH505,1
+Paraphomia disjuncta,NA,6
+Paraphomia sp. AAI2622,NA,3
+Parilyrgis intacta,NA,1
+Parotis hilaralis,NA,2
+Peritornenta,NA,2
+Perixera ampligutta,NA,1
+Perixera sp. AAI2524,NA,1
+Perixera sp. AAI2525,NA,1
+Pharambara micacealis,NA,1
 Pharambara splendida,BETH002,2
 Pharambara splendida,CHEL005,1
 Pharambara splendida,CHEL034,1
@@ -571,6 +892,7 @@ Pharambara splendida,TACH285,1
 Pharambara splendida,TACH296,1
 Pharambara splendida,TACH438,4
 Pharambara splendida,TACH469,1
+Pharambara splendida,NA,8
 Philiris helena,APAN127,1
 Philiris helena,ROGA019,1
 Philiris helena,ROGA020,1
@@ -578,23 +900,44 @@ Philiris helena,ROGA021,2
 Philiris helena,ROGA022,3
 Philiris helena,TACH233,1
 Philiris helena,TACH294,8
+Philiris helena,NA,8
 Philiris moira,ICHN051,1
 Philiris moira,ICHN202,1
 Philiris moira,MICR130,1
 Philiris moira,TACH233,4
 Philiris moira,TACH262,1
+Philiris moira,NA,7
 Philiris sp. AAF6866,CHEL005,1
 Philiris sp. AAF6866,ICHN202,1
 Philiris sp. AAF6866,TACH294,1
 Philiris sp. AAF6866,TACH393,1
+Philiris sp. AAF6866,NA,3
+Phostria lanialis,NA,1
+PhycitinaeGEN sp. AAG0392,NA,1
+PhycitinaeGEN sp. AAG0396,NA,1
 Piletocera sp. CRAM094,ORGI019,1
 Piletocera sp. CRAM094,TACH364,1
 Piletocera sp. CRAM094,TACH396,1
+Piletocera sp. CRAM094,NA,1
+Pingasa chlora,NA,5
+Piratisca minax,NA,3
 Pleuroptya nr. sabinusalis,ROGAb01,1
+Pleuroptya nr. sabinusalis,NA,3
+Polygiton sp. AAH1014,NA,3
+Polypogon sp. AAI2776,NA,1
 Pseudocera nr. trissosticha,AGAT028,2
 Pseudocera nr. trissosticha,TACH145,1
+Pseudocera nr. trissosticha,NA,3
 Pseudocera sp. AAB1481,AGAT028,1
+Pseudocera sp. AAB1481,NA,3
+PterophoridaeGEN sp. AAG1468,NA,1
+Pterophorus albidus,NA,2
+Pycnozancla sp. AAE8365,NA,1
+Pyralidae sp.PYRA032,NA,1
+Pyralidae sp.PYRA035,NA,1
 Pyrophractis isotherma,TACH228,1
+Pyrophractis isotherma,NA,3
+Rehimena cissophora,NA,1
 Rhodoneura aurata,BETH002,1
 Rhodoneura aurata,CENT023,1
 Rhodoneura aurata,ICHN168,1
@@ -604,7 +947,31 @@ Rhodoneura aurata,TACH142,1
 Rhodoneura aurata,TACH285,1
 Rhodoneura aurata,TACH438,3
 Rhodoneura aurata,TACH505,1
+Rhodoneura aurata,NA,7
+Roeselia hemizona,NA,2
+Saptha cf. exanthista,NA,1
+Sarobides inconclusa,NA,2
+Scopelodes nitens,NA,2
+Scopula amala,NA,1
+Scopula sp. AAG9552,NA,1
+Scythropiodes n sp near perissa,NA,1
+Selepa discigera,NA,2
+Simplicia,NA,1
+Simplicia cornicalis,NA,1
+Simplicia erebina,NA,1
+Somena,NA,1
+Sphenarches anisodactylus,NA,1
+Spilosoma niceta,NA,1
+Sporostigena n. sp. AAJ3512,NA,1
 Statherotis discana,ORGI022,1
+Statherotis discana,NA,1
+Striglina asinina,NA,1
+Striglina cinnamomea,NA,1
+Syllepte nr. iopasalis,NA,1
+Syllepte solilucis,NA,1
+Symmacra solidaria ochrea,NA,2
+Syntomaula n sp,NA,1
+Tabidia insanalis,NA,2
 Talanga deliciosa,APAN002,4
 Talanga deliciosa,CHEL033,2
 Talanga deliciosa,ICHN049,1
@@ -619,6 +986,7 @@ Talanga deliciosa,TACH050,2
 Talanga deliciosa,TACH405,1
 Talanga deliciosa,TACH511,1
 Talanga deliciosa,TACH513,1
+Talanga deliciosa,NA,6
 Talanga excelsalis,AGAT022,2
 Talanga excelsalis,BETH002,1
 Talanga excelsalis,CHAL008,1
@@ -649,9 +1017,11 @@ Talanga excelsalis,TACH428,2
 Talanga excelsalis,TACH438,1
 Talanga excelsalis,TACH506,2
 Talanga excelsalis,TACH522,1
+Talanga excelsalis,NA,8
 Talanga polyzonalis,APAN002,1
 Talanga polyzonalis,DOLI001,1
 Talanga polyzonalis,DOLI023,1
+Talanga polyzonalis,NA,6
 Talanga sexpunctalis complex,CHEL033,1
 Talanga sexpunctalis complex,MICR014,1
 Talanga sexpunctalis complex,MICR174,1
@@ -662,6 +1032,8 @@ Talanga sexpunctalis complex,TACH142,1
 Talanga sexpunctalis complex,TACH296,3
 Talanga sexpunctalis complex,TACH438,1
 Talanga sexpunctalis complex,TACH469,1
+Talanga sexpunctalis complex,NA,8
+Tamba,NA,1
 Tamba kebea,BETH001,1
 Tamba kebea,CHOR074,1
 Tamba kebea,GLYP061,1
@@ -678,8 +1050,35 @@ Tamba kebea,TACH143,1
 Tamba kebea,TACH144,1
 Tamba kebea,TACH432,1
 Tamba kebea,TACH482,1
+Tamba kebea,NA,5
+Tamba magniplaga,NA,1
+Tamba plumipes,NA,1
 Targalla palliatrix,TACH508,1
+Targalla palliatrix,NA,5
+Targalla subocellata,NA,1
+Targalla suffundens,NA,2
+Teia sp. AAB5680,NA,1
+Teia sp. AAE9809,NA,1
+Teia sp. AAI3599,NA,1
+Teia sp. ABX5688,NA,1
+Teldenia,NA,1
+Thosea monoloncha?,NA,3
+Thyrididae,NA,1
+Tipasa sp. AAI0376,NA,1
 Tipasa sp. AAI0377,TACH089,1
+Tipasa sp. AAI0377,NA,1
+Tipasa sp. GEOM158,NA,1
+Tortricidae sp.TORT100,NA,1
+Tortricidae sp.TORT174,NA,1
+Tortricidae sp.TORT175,NA,1
+Tortricidae sp.TORT185,NA,1
+Tortricidae sp.TORT186,NA,1
+Tortricidae sp.TORT205,NA,1
+Tortricidae sp.TORT207,NA,1
+Tortricidae sp.TORT209,NA,1
+Tortricidae sp.XXXX123,NA,1
+Trichalis nr. aereoplagiata,NA,1
+Trischalis iridescens,NA,1
 Unadophanes trissomita,AGAT054,1
 Unadophanes trissomita,APAN015,1
 Unadophanes trissomita,MICR031,6
@@ -694,6 +1093,16 @@ Unadophanes trissomita,ROGA012,1
 Unadophanes trissomita,TACH014,2
 Unadophanes trissomita,TACH078,1
 Unadophanes trissomita,TACH368,1
+Unadophanes trissomita,NA,8
+Uraniidae sp.URAN012,NA,2
+Uraniidae sp.URAN013,NA,1
+Uraniidae sp.URAN014,NA,1
 Xenothictis gnetivora,ICHN198,2
 Xenothictis gnetivora,ORGI013,1
 Xenothictis gnetivora,TACH391,1
+Xenothictis gnetivora,NA,7
+Xylinophylla maculata,NA,2
+Xyloryctinae,NA,1
+Zaratha sp.1,NA,1
+Zygaenosia sp. USNM1,NA,3
+nr. Peritornenta,NA,1

@@ -1,12 +1,16 @@
 # Setup
 
-Load all packages and data needed for the analysis.
+Load all packages
 
 ```{r setup}
 # Load necessary libraries
 library(tidyverse)
 library(ggpubr)
+```
 
+# Data 
+
+```{r}
 data_master <-
   readr::read_delim(
     here::here(
@@ -14,17 +18,13 @@ data_master <-
     )
   ) %>%
   tibble::as_tibble()
-```
 
-# Data wrangling
-
-```{r}
-data_work <-
+data_full <-
   data_master %>%
   dplyr::filter(locality != "Ohu2")
 
 vec_cat_with_par <-
-  data_work %>%
+  data_full %>%
   dplyr::group_by(CAT_sp) %>%
   dplyr::summarize(
     .groups = "drop",
@@ -37,8 +37,8 @@ vec_cat_with_par <-
   filter(has_parasitoid == TRUE) %>%
   dplyr::pull("CAT_sp")
 
-data_only_cat_with_par <-
-  data_work %>%
+data_work <-
+  data_full %>%
   filter(CAT_sp %in% vec_cat_with_par)
 ```
 
@@ -46,8 +46,9 @@ data_only_cat_with_par <-
 
 ```{r}
 # helper function
-get_summary_localities <- function(data_source) {
+get_summary_localities_per_cat <- function(data_source) {
   data_source %>%
+    dplyr::group_by(CAT_sp) %>%
     dplyr::summarize(
       .groups = "drop",
       localities_total = dplyr::n_distinct(locality),
@@ -55,7 +56,18 @@ get_summary_localities <- function(data_source) {
       localities_cat_and_par = dplyr::n_distinct(locality[!is.na(PAR_sp)]),
       # Localities where the caterpillar is detected but not parasitized
       localities_cat_no_par = localities_total - localities_cat_and_par,
-      localities_prop_no_par = localities_cat_no_par / localities_total
+      localities_prop = localities_cat_no_par / localities_total
+    ) %>%
+    dplyr::select(CAT_sp, localities_total, localities_prop) %>%
+    return()
+}
+
+get_summary_localities_per_pair <- function(data_source) {
+  data_source %>%
+    dplyr::group_by(CAT_sp, PAR_sp) %>%
+    dplyr::summarize(
+      .groups = "drop",
+      localities_total = dplyr::n_distinct(locality)
     ) %>%
     return()
 }
@@ -64,141 +76,99 @@ get_summary_localities <- function(data_source) {
 ## Enemy free space - full dataset
 
 ```{r}
-data_interaction_summary_per_interaction_pair <-
-  data_work %>%
+data_full %>%
   dplyr::group_by(CAT_sp, PAR_sp) %>%
-  get_summary_localities()
-
-data_interaction_summary_per_cat <-
-  data_work %>%
-  dplyr::group_by(CAT_sp) %>%
-  get_summary_localities()
-
-tab_efs_work <-
-  data_interaction_summary_per_interaction_pair %>%
-  dplyr::filter(localities_cat_and_par > 0) %>%
-  dplyr::select(CAT_sp, PAR_sp, localities_total)
-
-readr::write_csv(
-  tab_efs_work,
-  here::here("output", "tab_esf_orig.csv")
-)
+  get_summary_localities_per_pair() %>%
+  dplyr::select(CAT_sp, PAR_sp, localities_total) %>%
+  readr::write_csv(
+    here::here("output", "tab_esf_orig.csv")
+  )
 ```
 
 ## Enemy free space - only caterpillar species with parasitoids
 
 ```{r}
-data_only_cat_with_par_interaction_summary_per_interaction_pair <-
-  data_only_cat_with_par %>%
-  dplyr::group_by(CAT_sp, PAR_sp) %>%
-  get_summary_localities()
+data_interaction_summary_per_cat <-
+  data_work %>%
+  get_summary_localities_per_cat()
 
-data_only_cat_with_par_interaction_summary_per_cat <-
-  data_only_cat_with_par %>%
-  dplyr::group_by(CAT_sp) %>%
-  get_summary_localities()
-
-data_efs_mean_long <-
-  data_only_cat_with_par_interaction_summary_per_cat %>%
-  dplyr::select(CAT_sp, localities_total, localities_cat_no_par, localities_prop_no_par) %>%
+data_interaction_summary_per_interaction_pair <-
+  data_interaction_summary_per_cat %>%
   dplyr::left_join(
-    data_only_cat_with_par_interaction_summary_per_interaction_pair %>%
-      dplyr::select(CAT_sp, PAR_sp, localities_total),
+    get_summary_localities_per_pair(data_work),
     by = "CAT_sp",
-    suffix = c("_cat", "_par")
+    suffix = c("_cat", "_pair")
   ) %>%
   dplyr::mutate(
-    efs_par = (localities_total_cat - localities_total_par) / localities_total_cat
+    localities_prop = (localities_total_cat - localities_total_pair) /
+      localities_total_cat
   ) %>%
   dplyr::filter(!is.na(PAR_sp)) %>%
-  dplyr::group_by(CAT_sp) %>%
-  dplyr::summarise(
-    efs_car_mean = mean(localities_prop_no_par, na.rm = TRUE),
-    efs_par_mean = mean(efs_par, na.rm = TRUE)
-  ) %>%
-  tidyr::pivot_longer(
-    cols = c(efs_car_mean, efs_par_mean),
-    names_to = "group",
-    values_to = "mean_prop_localities"
+  dplyr::select(
+    CAT_sp, PAR_sp, localities_prop
   )
 ```
 
 ## Calcutate summary statistic
 
 ```{r}
-data_only_cat_with_par_interaction_summary_per_cat %>%
+data_interaction_summary_per_cat %>%
   dplyr::summarise(
-    mean = mean(localities_prop_no_par, na.rm = TRUE),
-    median = median(localities_prop_no_par, na.rm = TRUE)
+    mean = mean(localities_prop, na.rm = TRUE),
+    median = median(localities_prop, na.rm = TRUE)
   )
 
-data_efs_mean_long %>%
-  dplyr::filter(group == "efs_par_mean") %>%
+data_interaction_summary_per_interaction_pair %>%
   dplyr::summarise(
-    mean = mean(mean_prop_localities, na.rm = TRUE),
-    median = median(mean_prop_localities, na.rm = TRUE)
+    mean = mean(localities_prop, na.rm = TRUE),
+    median = median(localities_prop, na.rm = TRUE)
   )
 ```
 
 # Visualization
 
 ```{r}
+get_figure <- function(data_source) {
+  data_source %>%
+    ggplot2::ggplot(
+      mapping = ggplot2::aes(
+        x = "group",
+        y = localities_prop,
+        fill = "group"
+      )
+    ) +
+    ggplot2::geom_violin() +
+    ggplot2::geom_boxplot(width = 0.2, fill = "white") +
+    ggplot2::geom_jitter(width = 0.2, height = 0, alpha = 0.5) +
+    ggplot2::coord_cartesian(ylim = c(0, 1)) +
+    ggplot2::scale_x_discrete(labels = c("")) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = ""
+    ) +
+    ggplot2::theme(
+      legend.position = "none",
+      axis.text.x = ggplot2::element_text(color = "black")
+    ) %>%
+    return()
+}
+
 set.seed(1234)
 fig_a <-
-  data_efs_mean_long %>%
-  dplyr::filter(group == "efs_car_mean") %>%
-  ggplot2::ggplot(
-    mapping = ggplot2::aes(
-      x = group,
-      y = mean_prop_localities,
-      fill = group
-    )
-  ) +
-  ggplot2::geom_violin() +
-  ggplot2::geom_boxplot(width = 0.2, fill = "white") +
-  ggplot2::geom_jitter(width = 0.2) +
+  data_interaction_summary_per_cat %>%
+  get_figure() +
   ggplot2::scale_fill_manual(values = c("#E69F00")) +
-  ggplot2::scale_x_discrete(labels = c("")) + # Colorblind-friendly colors
   ggplot2::labs(
-    x = "",
     y = "Proportion of localities without parasitoids",
-    title = ""
-  ) +
-  ggplot2::coord_cartesian(ylim = c(0, 1)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none",
-    axis.text.x = ggplot2::element_text(color = "black"),
-    axis.title.y = ggplot2::element_text(size = 14)
   )
 
 set.seed(1234)
 fig_b <-
-  data_efs_mean_long %>%
-  dplyr::filter(group == "efs_par_mean") %>%
-  ggplot2::ggplot(
-    mapping = ggplot2::aes(
-      x = group,
-      y = mean_prop_localities,
-      fill = group
-    )
-  ) +
-  ggplot2::geom_violin() +
-  ggplot2::geom_boxplot(width = 0.2, fill = "white") +
-  ggplot2::geom_jitter(width = 0.2) +
-  ggplot2::scale_fill_manual(values = c("#009E73")) +
-  ggplot2::scale_x_discrete(labels = c("")) +
-  ggplot2::labs(
-    x = "",
-    y = "",
-    title = ""
-  ) +
-  ggplot2::coord_cartesian(ylim = c(0, 1)) +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(
-    legend.position = "none",
-    axis.text.x = ggplot2::element_text(color = "black")
-  )
+  data_interaction_summary_per_interaction_pair %>%
+  get_figure() +
+  ggplot2::scale_fill_manual(values = c("#009E73"))
 
 fig_merged <-
   ggpubr::ggarrange(
