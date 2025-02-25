@@ -1,5 +1,3 @@
-
-
 #Diversity indices
 ```{r}
 library(dplyr)
@@ -16,8 +14,8 @@ MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
 
 # Removing useless columns + Removing data of OHU2
 #MASTER_8 <- MASTER %>% 
- # dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
-  # dplyr:: filter(locality != "Ohu2")
+ dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
+  dplyr:: filter(locality != "Ohu2")
 
 
 
@@ -757,6 +755,7 @@ print(all_mantel_results)
 
 figure_1_merged <- rbind(BC_par, BC_cat, BC_fig_subsampled, CS_par, CS_cat, CS_fig_subsampled,SOR_par, SOR_cat, SOR_fig_subsampled)
 ```
+
 # Figure 1 - violin plot
 ```{r}
 figure_1_merged <- figure_1_merged %>% 
@@ -767,7 +766,7 @@ ind_BC <- figure_1_merged %>%
 ind_CS <- figure_1_merged %>% 
   dplyr::filter(indexy == "Chao-Sorensen")
 
-ind_Sor <- figure_1_merged %>% 
+ind_SOR <- figure_1_merged %>% 
   dplyr::filter(indexy == "Sorensen")
 
 
@@ -784,16 +783,132 @@ BC_FIG_1 <- ggplot(ind_BC, aes(x = guild, y = hodnota, fill = guild)) +
                                "Caterpillars" = "darkorange", 
                                "Caterpillars-subsampled" = "#ffb681")) +
   scale_color_manual(values = c("Parasitoids" = "black", 
-                                "Caterpillars" = "black", 
-                                "Caterpillars-subsampled" = "black")) +
+                               "Caterpillars" = "black", 
+                               "Caterpillars-subsampled" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
   labs(title = "Bray-Curtis", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
-  theme_classic(base_size = 20)
+  theme_classic(base_size = 20) ;BC_FIG_1
 
 # Display the plot
 BC_FIG_1
+
+# Create the plot
+CS_FIG_1 <- ggplot(ind_CS, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange", 
+                               "Caterpillars-subsampled" = "#ffb681")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black", 
+                               "Caterpillars-subsampled" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Chao-Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20) ;CS_FIG_1
+
+# Display the plot
+CS_FIG_1
+
+# Create the plot
+SOR_FIG_1 <- ggplot(ind_SOR, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange", 
+                               "Caterpillars-subsampled" = "#ffb681")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black", 
+                               "Caterpillars-subsampled" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20) ;SOR_FIG_1
+
+# Display the plot
+SOR_FIG_1
 ```
 
+# Figure 1 - without subsampling - theoretically for the interactive figure
+```{r}
+figure_1_merged <- figure_1_merged %>% 
+  dplyr::filter(!(Locality_A == "Ohu2" | Locality_B == "Ohu2"))
+ind_BC <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Bray-Curtis")
+
+ind_CS <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Chao-Sorensen")
+
+ind_SOR <- figure_1_merged %>% 
+  dplyr::filter(indexy == "Sorensen")
+
+
+# Ensure 'guild' is a factor with the desired order
+ind_BC$guild <- factor(ind_BC$guild, 
+                              levels = c("Caterpillars", "Parasitoids"))
+ind_BC_simple <- ind_BC %>% 
+  dplyr::filter(! (guild == "Caterpillars-subsampled"))
+ind_CS_simple <- ind_CS %>% 
+  dplyr::filter(! (guild == "Caterpillars-subsampled"))
+ind_SOR_simple <- ind_SOR %>% 
+  dplyr::filter(! (guild == "Caterpillars-subsampled"))
+
+# Create the plot
+BC_FIG_1_simple <- ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20) ;BC_FIG_1_simple
+
+# Display the plot
+BC_FIG_1_simple
+
+# Ensure 'guild' is a factor with the desired order
+ind_CS$guild <- factor(ind_CS$guild, 
+                              levels = c("Caterpillars", "Parasitoids"))
+
+# Create the plot
+CS_FIG_1_simple <- ggplot(ind_CS_simple, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+    scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Chao-Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20) ;CS_FIG_1_simple
+
+# Display the plot
+CS_FIG_1_simple
+
+
+# Ensure 'guild' is a factor with the desired order
+ind_SOR$guild <- factor(ind_SOR$guild, 
+                              levels = c("Parasitoids", "Caterpillars"))
+# Create the plot
+SOR_FIG_1_simple <- ggplot(ind_SOR_simple, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+   scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
+                               "Caterpillars" = "darkorange")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  theme_classic(base_size = 20) ;SOR_FIG_1_simple
+
+# Display the plot
+SOR_FIG_1_simple
+```
 
 # Figure 1 - with distance
 ```{r}

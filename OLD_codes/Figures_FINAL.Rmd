@@ -343,7 +343,7 @@ distances_beta_one_ohu <- read.csv("~/ownCloud/000_//000_Papers/Beta/R_data/dist
 
 myLocation_beta <- c(141, -7, 146.5, -3)
 
-#myMap_beta <- get_map(location=myLocation_beta, source="stamen", maptype= "terrain", crop=FALSE)
+myMap_beta <- get_map(location=myLocation_beta, source="stamen", maptype= "terrain", crop=FALSE)
 
 pb<- ggmap(myMap_beta)+geom_point(data=distances_beta_one_ohu,aes(x=Long,y=Lat),size=3)
 pb <- pb + xlab("Longitude")+ylab("Latitude")
