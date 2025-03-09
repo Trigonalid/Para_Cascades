@@ -8,6 +8,7 @@ library(betapart)
 library(skimr)
 library(tibble)
 library(readxl)
+library(tidyverse)
 
 # Full data
 MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 

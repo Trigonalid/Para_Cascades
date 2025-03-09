@@ -49,19 +49,19 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
   
   # Prepare data for plotting
   bc_melted <- reshape::melt(bc_res)
-  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2) %>%
     dplyr::mutate(guild = guild_name)
   
   bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0) %>% 
+    dplyr::filter(value > 0) %>% 
     add_column(indexy = "Bray-Curtis")
   
   # Linear model for Bray-Curtis vs Distance
-  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  bc_lm <- lm(value ~ distance, data = bc_fig_table)
   
   # Summary statistics
   bc_summary <- bc_fig_table %>%
-    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+    dplyr::summarise(mean_BC = mean(value), sd_BC = sd(value))
   
   # Create result table
   mantel_result <- data.frame(
@@ -89,10 +89,10 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
 parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
 print(parasitoid_results$mantel_result)
 BC_par_HYM <- (parasitoid_results$bc_fig_table) %>%
-  mutate(family = "Hymenoptera")
+  mutate(Order = "Hymenoptera")
 ```
 
-# Bray-Curtis - Tachinidae
+# Bray-Curtis - Diptera
 ```{r Bray-Curtis, echo=FALSE}
 MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
   dplyr:: filter(locality != "Ohu2") %>% 
@@ -133,19 +133,19 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
   
   # Prepare data for plotting
   bc_melted <- reshape::melt(bc_res)
-  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2) %>%
     dplyr::mutate(guild = guild_name)
   
   bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0) %>% 
+    dplyr::filter(value > 0) %>% 
     add_column(indexy = "Bray-Curtis")
   
   # Linear model for Bray-Curtis vs Distance
-  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  bc_lm <- lm(value ~ distance, data = bc_fig_table)
   
   # Summary statistics
   bc_summary <- bc_fig_table %>%
-    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+    dplyr::summarise(mean_BC = mean(value), sd_BC = sd(value))
   
   # Create result table
   mantel_result <- data.frame(
@@ -172,8 +172,8 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
 # Apply the function to Parasitoids
 parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
 print(parasitoid_results$mantel_result)
-BC_par_TACH <- (parasitoid_results$bc_fig_table) %>%
-  mutate(family = "Diptera")
+BC_par_DIP <- (parasitoid_results$bc_fig_table) %>%
+  mutate(Order = "Diptera")
 
 ```
 
@@ -226,19 +226,19 @@ calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
   
   # Prepare data for plotting
   bc_melted <- reshape::melt(bc_res)
-  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2) %>%
     dplyr::mutate(guild = guild_name)
   
   bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
-    dplyr::filter(hodnota > 0) %>% 
+    dplyr::filter(value > 0) %>% 
     add_column(indexy = "Bray-Curtis")
   
   # Linear model for Bray-Curtis vs Distance
-  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  bc_lm <- lm(value ~ distance, data = bc_fig_table)
   
   # Summary statistics
   bc_summary <- bc_fig_table %>%
-    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+    dplyr::summarise(mean_BC = mean(value), sd_BC = sd(value))
   
   # Create result table
   mantel_result <- data.frame(
@@ -271,31 +271,312 @@ BC_par_LEP <- (parasitoid_results$bc_fig_table) %>%
 caterpillar_results <- calculate_bray_curtis(cat_pivot2, Distance, "Caterpillars")
 print(caterpillar_results$mantel_result)
 BC_cat_LEP<- (caterpillar_results$bc_fig_table) %>%
-  mutate(family = "Lepidoptera")
+  mutate(Order = "Lepidoptera")
 ```
+
+
+
+ 
+# Bray-Curtis - subsampling of Lepidoptera
 ```{r}
-figure_1_merged_family <- rbind(BC_par_HYM,  BC_par_TACH, BC_par_LEP, BC_cat_LEP)
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
+Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
+
+data_testing <- MASTER %>% 
+  filter(remove_cat == "0") %>% 
+  select(locality,CAT_sp, PAR_sp, guild, PLANT_sp, Order)
+
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  data_testing %>% 
+  filter(Order == "Diptera") %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  data_testing %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+
+
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+
+set.seed(1234)
+
+n_rand <-  1000
+
+
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+ 
+  #print(i)
+  
+   cat_randomly_resampled  <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x){
+        
+        N_para <-
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1)
+        
+        res <-
+          data_testing %>% 
+          filter(locality == x) %>% 
+          sample_n(., size = N_para)
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+   
+  df <- 
+    cat_randomly_resampled %>% 
+    dplyr::select(locality, CAT_sp) %>%
+    group_by(locality, CAT_sp) %>% 
+    summarise(
+      .groups = "keep",
+      N = n()) %>% 
+    ungroup() %>% 
+    pivot_wider(names_from = CAT_sp, values_from = N) %>% 
+    replace(is.na(.), 0) %>% 
+    column_to_rownames(var = "locality")
+  
+  
+    
+#----------------------------------------------------------#
+# 2.4 Bray_curtis comparison-----
+#----------------------------------------------------------#
+
+
+BC_res <- vegdist(df, method="bray", binary=FALSE, diag=TRUE) %>% 
+  as.matrix()
+
+
+res_list[[i]] <- BC_res
+
+}
+
+#  calculate a mean
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+BC_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+
+
+# calculate a mean of the results
+BC_melt<-melt(BC_res_mean)
+BC_melt <- dplyr::rename (BC_melt, Locality_A = X1, Locality_B = X2)
+
+
+BC_melt_subsampling <- BC_melt %>% 
+  add_column(guild = "Caterpillars")
+BC_fig_Lepidoptera_subsampled <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (value > 0) %>% 
+    add_column(indexy = "Bray-Curtis") %>% 
+  mutate(Order = "Lepidoptera - Subsampled")
+
+
+
+BC_mean_sub <- summarise(BC_melt,
+                     mean_BC = mean(value),
+                     sd_BC = sd(value))
+
+
+mantel_result_cat_BC_subsampled <- data.frame(
+  index ="Bray-Curtis",
+  family = "Lepidoptera-subsampled",
+  mean = round(BC_mean_sub$mean,3),
+  sd = round(BC_mean_sub$sd,3),
+  test = "Mantel",
+  statistic = round (BC_cat_res_mantel$statistic,3),
+  p.value = round(BC_cat_res_mantel$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_BC_subsampled)
+#BC_mean
+
+```
+
+# Bray-Curtis - subsampling of Hymenoptera
+```{r}
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") # loading the master file with all data available
+Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
+
+data_testing <- MASTER %>% 
+  filter(remove_cat == "0") %>% 
+  select(locality,CAT_sp, PAR_sp, guild, PLANT_sp, Order)
+
+# calculate the total abundance of parasitoids in each plot
+n_par_specimens_in_site <-
+  data_testing %>% 
+  filter(Order == "Diptera") %>% 
+  filter(guild == "PAR") %>%
+  drop_na() %>% 
+  group_by(locality) %>% 
+  summarise(
+    .groups= "keep",
+    N= n()) %>% 
+  ungroup()
+
+# pre-allocate tibble with all sites 
+site_tibble <-  
+  data_testing %>% 
+  group_by(locality) %>% 
+  summarise(.groups = "keep")
+
+
+
+
+#----------------------------------------------------------#
+# 2.2 Function for subsampling -----
+#----------------------------------------------------------#
+
+set.seed(1234)
+
+n_rand <- 1000
+res_list <- vector("list", length = n_rand)
+
+for (i in 1:n_rand) {
+  
+  cat_randomly_resampled  <- 
+    as.list(site_tibble$locality) %>% 
+    purrr::map_df(
+      .x = .,
+      .f = function(x){
+        
+        # Get the number of Diptera parasitoids in this locality
+        N_para <-
+          n_par_specimens_in_site %>% 
+          filter(locality == x) %>% 
+          dplyr::select(N) %>% 
+          pluck(1)
+        
+        # Filter Hymenoptera parasitoids only
+        res <-
+          data_testing %>% 
+          filter(locality == x, Order == "Hymenoptera", guild == "PAR") %>%
+          sample_n(., size = min(N_para, n()), replace = FALSE)  # Ensure it doesn't exceed available specimens
+        
+        return(res)
+      }
+    ) %>% 
+    bind_rows()
+   
+  df <- 
+    cat_randomly_resampled %>%
+    dplyr::select(locality, PAR_sp) %>%
+    group_by(locality, PAR_sp) %>% 
+    summarise(
+      .groups = "keep",
+      N = n()) %>% 
+    ungroup() %>% 
+    pivot_wider(names_from = PAR_sp, values_from = N) %>% 
+    replace(is.na(.), 0) %>% 
+    column_to_rownames(var = "locality")
+  
+#----------------------------------------------------------#
+#  Bray-Curtis comparison
+#----------------------------------------------------------#
+
+  BC_res <- vegdist(df, method="bray", binary=FALSE, diag=TRUE) %>% 
+    as.matrix()
+
+  res_list[[i]] <- BC_res
+}
+
+#  Calculate the mean Bray-Curtis dissimilarity matrix
+Y <- do.call(cbind, res_list)
+Y <- array(Y, dim = c(dim(res_list[[1]]), length(res_list)))
+
+
+
+BC_res_mean <-
+  apply(Y, c(1, 2), mean, na.rm = TRUE)
+
+
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1",  "Utai", "Wamangu", "Wanang","Yapsiei")
+
+
+# calculate a mean of the results
+BC_melt<-melt(BC_res_mean)
+BC_melt <- dplyr::rename (BC_melt, Locality_A = X1, Locality_B = X2)
+
+
+BC_melt_subsampling <- BC_melt %>% 
+  add_column(guild = "Parasitoids")
+BC_fig_subsampled_hymenoptera <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
+  filter (value > 0) %>% 
+    add_column(indexy = "Bray-Curtis") %>% 
+   mutate(Order = "Hymenoptera parasitoids - Subsampled")
+
+
+
+BC_mean_sub <- summarise(BC_melt,
+                     mean_BC = mean(value),
+                     sd_BC = sd(value))
+
+
+mantel_result_cat_BC_subsampled <- data.frame(
+  index ="Bray-Curtis",
+  family = "Hymenoptera Parasitoids -subsampled",
+  mean = round(BC_mean_sub$mean,3),
+  sd = round(BC_mean_sub$sd,3),
+  test = "Mantel",
+  statistic = round (BC_cat_res_mantel$statistic,3),
+  p.value = round(BC_cat_res_mantel$signif,3),
+  stringsAsFactors = FALSE
+)
+print(mantel_result_cat_BC_subsampled)
+#BC_mean
 
 ```
 
 
 
+# Figure XX
 ```{r}
 library(ggplot2)
 library(dplyr)
-friendly_colors <- c("#E69F00", "#56B4E9", "#009E73", "pink") 
+friendly_colors <- c("#1B9E77", "#D95F02" ,"#7570B3" ,"#E7298A", "#66A61E" ) 
 # Create the violin plot
-Parasitoid_family_plot <- ggplot(figure_1_merged_family, aes(x = family, y = hodnota, fill = family)) +
-  geom_violin(trim = FALSE, alpha = 0.7) +  # Violin plots with transparency
+figure_1_merged_family <- rbind(BC_par_HYM,  BC_par_DIP, BC_cat_LEP, BC_fig_subsampled_diptera, BC_fig_subsampled_hymenoptera)
+
+Parasitoid_family_plot <- ggplot(figure_1_merged_family, aes(x = Order, y = value, fill = Order)) +
+  geom_violin(trim = FALSE, alpha = 0.7) + 
+  geom_jitter() +# Violin plots with transparency
   geom_boxplot(width = 0.1, outlier.shape = NA, color = "black") +  # Add boxplot inside
   labs(
-    title = "Beta diversity of different families of parasitoids and their caterpillar host",
+    title = "Beta diversity (Bray-Curtis index) of different orders of parasitoids\n and their caterpillar host",
     x = "",
     y = "Dissimilarity",
-    fill = "Family"
+    fill = "Order"
   ) +
   scale_fill_manual(values = friendly_colors) +  # Use friendly colors
-  theme_classic(base_size = 16) +
+  theme_classic(base_size = 12) +
+  coord_cartesian(ylim = c(0, 1)) +
   theme(
     legend.position = "none"  # Remove legend if not needed
   )
@@ -303,11 +584,10 @@ Parasitoid_family_plot
 ggplot2::ggsave(
   here::here("output/fig/Parasitoid_family_plot.tiff"),
   Parasitoid_family_plot,
-  height = 17,
-  width = 18,
+  height = 9,
+  width = 13,
   units = "cm"
 )
 
 
 ```
-
