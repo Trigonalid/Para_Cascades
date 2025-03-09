@@ -1,0 +1,92 @@
+```{r}
+library(tidyverse)     # for data cleaning and plotting
+library(ggmap)
+library(maps)          # for map data
+library(maptools)
+library(RColorBrewer)  # for color palettes
+library(sf)            # for working with spatial data
+library(leaflet)       # for highly customizable mapping
+library(ggthemes)      # for more themes (including theme_map())
+library(ggrepel)
+library(ggspatial)
+
+
+# Final tmap# Final version of the map
+
+
+#(e51158ea-af87-4e42-9c69-febc43b92453 
+# The basal map
+myLocation_beta <- c(141, -7, 146.5, -3)
+
+myMap_beta <- get_stadiamap(bbox = myLocation_beta, maptype = "stamen_terrain_background")
+ggmap(myMap_beta)
+
+
+
+pb<- ggmap(myMap_beta) + geom_point(data=distances_beta_one_ohu,aes(x=Long,y=Lat),size=3)
+pb <- pb + xlab("Longitude")+ylab("Latitude")
+pb
+
+
+
+
+#######
+
+pb2<- pb + scale_bar(lon = 141.3, lat = -6.5, 
+              distance_lon = 100, distance_lat = 10, distance_legend = -10, 
+              dist_unit = "km", orientation = FALSE) +
+  theme_bw(base_size = 15) + theme(text = element_text(family = "Arial"))
+
+pb2 <-pb + ggspatial::annotation_north_arrow(
+    location = "tr", which_north = "true",
+    pad_x = unit(0.4, "in"), pad_y = unit(0.4, "in"),
+    style = ggspatial::north_arrow_nautical(
+      fill = c("black", "white"),
+      line_col = "black"
+    )
+)
+
+pb2
+
+
+pb2
+ggsave("output/fig/pb2.png",
+pb2,
+height = 14,
+width = 25,
+units = "cm")   # save the plot as .png
+
+
+
+# Mapa do vyseku
+library(ggplot2)
+library(rnaturalearth)
+library(sf)
+
+# Get the data for countries
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Subset the data for Australia and Papua New Guinea
+australia_png <- world %>% 
+    dplyr::filter(name %in% c("Australia", "Papua New Guinea", "Indonesia"))
+# Create the map using ggplot2
+vysek <- ggplot(data = australia_png) +
+    geom_sf(color = "black", fill = "white") +
+    theme_minimal() +
+    theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5) # Set the panel border to black,
+    ) +
+    coord_sf(xlim = c(130, 155), ylim = c(-25, 0), expand = FALSE)
+
+vysek
+ggsave("output/fig/vysek.tiff",
+vysek,
+height = 14,
+width = 25,
+units = "cm") 
+```
+
+

@@ -51,7 +51,44 @@ cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Soren
 ```
 
 
-```{r Counts}
+```{r Diversity}
+
+# Load required packages
+library(dplyr)
+library(iNEXT)
+library(ggplot2)
+library(tidyr)
+
+# Example dataset: Replace with your actual dataframe
+df <- MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") %>% 
+  select(CAT_sp, PAR_sp)
+
+
+# Remove NAs
+df_long <- df %>%
+  pivot_longer(cols = c(CAT_sp, PAR_sp), names_to = "Group", values_to = "Species") %>%
+  filter(!is.na(Species))
+
+# Count species abundances separately for caterpillars and parasitoids
+abundance_data <- df_long %>%
+  group_by(Group, Species) %>%
+  summarise(count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = Species, values_from = count, values_fill = 0)
+
+# Convert to iNEXT input format
+caterpillar_abundance <- as.numeric(abundance_data[abundance_data$Group == "CAT_sp", -1])
+parasitoid_abundance <- as.numeric(abundance_data[abundance_data$Group == "PAR_sp", -1])
+
+# Create a list for iNEXT
+data_list <- list(Caterpillars = caterpillar_abundance, Parasitoids = parasitoid_abundance)
+
+# Run iNEXT
+inext_res <- iNEXT(data_list, q = c(0, 1, 2), datatype = "abundance")
+
+inext_res  # Results of diversity
+
+
 skim(MASTER)
 
 family_species <- MASTER %>%
