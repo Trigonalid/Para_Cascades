@@ -9,6 +9,7 @@ library(betapart)
 library(ggsignif)
 library(beeswarm)
 library(ggpubr)
+library(tibble)
 
 # colours 
 #   Parasitoids: tmavě zelená: #1b9e77

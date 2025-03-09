@@ -509,5 +509,5 @@ ggplot2::ggsave(
 # how to access tibble values?
 
 # this will get the `data` column from the first row (ST)
-data_mantel_cat_par$data[[1]]
+data_mantel_cat_par$data[[2]]
 ```

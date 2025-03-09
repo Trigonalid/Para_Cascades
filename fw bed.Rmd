@@ -1,0 +1,543 @@
+
+```{r}
+library(dplyr)
+library(vegan)
+library(ggplot2)
+library(reshape)
+library(betapart)
+library(skimr)
+library(tibble)
+library(readxl)
+library(networkD3)
+
+
+# Load necessary libraries
+library(dplyr)
+library(igraph)
+library(networkD3)
+library(readxl)
+library(igraph)
+library(ggraph)
+library(tidyverse)
+
+# Load the Data_FWset
+Data_FW <- read_excel("DATA/food_web_meta.xlsx")
+
+
+# Ensure column names are correct
+colnames(Data_FW) <- c("CAT_sp", "PLANT_sp", "PAR_sp")
+
+edges_plant_cat <- Data_FW %>% select(PLANT_sp, CAT_sp) %>% distinct()
+edges_cat_par <- Data_FW %>% select(CAT_sp, PAR_sp) %>% distinct()
+
+# Merge both sets into a single edge list
+edges <- bind_rows(
+  edges_plant_cat %>% dplyr::rename(from = PLANT_sp, to = CAT_sp),
+  edges_cat_par %>% dplyr::rename(from = CAT_sp, to = PAR_sp)
+)
+
+g <- graph_from_data_frame(edges, directed = FALSE)
+
+# Define x-coordinates based on trophic level
+node_positions <- tibble(
+  name = V(g)$name,
+  x = case_when(
+    name %in% Data_FW$PLANT_sp ~ 1,       # Plants on level 1
+    name %in% Data_FW$CAT_sp ~ 2,         # Caterpillars on level 2
+    name %in% Data_FW$PAR_sp ~ 3          # Parasitoids on level 3
+  ),
+  y = runif(length(V(g)), min = 0, max = 1)  # Random y positions for spacing
+)
+
+# Merge positions into the graph
+node_positions <- node_positions %>% filter(!is.na(x))  # Remove any NAs
+
+# Ensure V(g)$x and V(g)$y have correct coordinates
+V(g)$x <- node_positions$x[match(V(g)$name, node_positions$name)]
+V(g)$y <- node_positions$y[match(V(g)$name, node_positions$name)]
+
+
+ggraph(g, layout = "manual") +
+  geom_edge_link(aes(start_cap = label_rect(node1.name), end_cap = label_rect(node2.name)),
+                 alpha = 0.5) +
+  geom_node_point(aes(x = x, y = y, color = type), size = 5) +
+  geom_node_text(aes(x = x, y = y, label = name), repel = TRUE, size = 3) +
+  scale_color_manual(values = c("Plant" = "green", "Caterpillar" = "blue", "Parasitoid" = "red")) +
+  theme_minimal() +
+  ggtitle("Tripartite Food Web: Plants, Caterpillars, and Parasitoids")
+
+
+```
+
+
+
+```{r}
+# Library
+library(networkD3)
+library(dplyr)
+ 
+# Load the Data_FWset
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+# From these flows we need to create a node data frame: it lists every entities involved in the flow
+nodes <- data.frame(
+  name=c(as.character(links$source), 
+  as.character(links$target)) %>% unique()
+)
+ 
+# With networkD3, connection must be provided using id, not using real name like in the links dataframe.. So we need to reformat it.
+links$IDsource <- match(links$source, nodes$name)-1 
+links$IDtarget <- match(links$target, nodes$name)-1
+ 
+
+
+# Define a color scale for links
+color_scale <- 'd3.scaleOrdinal()
+  .domain(["Plant-Caterpillar", "Caterpillar-Parasitoid", "Other"])
+  .range(["darkviolet", "orange", "red"])'
+
+# Make the Sankey Diagram with colors
+p <- sankeyNetwork(Links = links, Nodes = nodes,
+                   Source = "IDsource", Target = "IDtarget",
+                   Value = "value", NodeID = "name",
+                   sinksRight = FALSE, fontSize = 0,  # Hide text
+                   LinkGroup = "LinkGroup", colourScale = color_scale)
+p
+
+
+
+
+# Make the Network
+p <- sankeyNetwork(Links = links, Nodes = nodes,
+                   Source = "IDsource", Target = "IDtarget",
+                   Value = "value", NodeID = "name",
+                   sinksRight = FALSE, fontSize = 0)  # Hide text
+p
+
+
+
+
+```
+
+
+
+```{r}
+library(htmlwidgets)
+library(webshot)
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+Elem_FW <- links %>% 
+  filter(locality == "Elem")
+
+# From these flows we need to create a node data frame: it lists every entities involved in the flow
+nodes <- data.frame(
+  name=c(as.character(Elem_FW$source), 
+  as.character(Elem_FW$target)) %>% unique()
+)
+ 
+# With networkD3, connection must be provided using id, not using real name like in the Elem_FW dataframe.. So we need to reformat it.
+Elem_FW$IDsource <- match(Elem_FW$source, nodes$name)-1 
+Elem_FW$IDtarget <- match(Elem_FW$target, nodes$name)-1
+ 
+# Define a color scale for Elem_FW
+color_scale <- 'd3.scaleOrdinal()
+  .domain(["Plant-Caterpillar", "Caterpillar-Parasitoid"])
+  .range(["darkviolet", "orange"])'
+
+# Make the Sankey Diagram with colors
+Elem_sankey <- sankeyNetwork(Links = Elem_FW, Nodes = nodes,
+                   Source = "IDsource", Target = "IDtarget",
+                   Value = "value", NodeID = "name",
+                   sinksRight = FALSE, fontSize = 0,  # Hide text
+                   LinkGroup = "LinkGroup", colourScale = color_scale)
+Elem_sankey
+
+saveWidget(Elem_sankey, "Elem_sankey.html", selfcontained = TRUE)
+webshot("Elem_sankey.html", file = "Elem_sankey.png", vwidth = 1000, vheight = 800)
+
+
+
+Niksek_FW <- links %>% 
+  filter(locality == "Niksek")
+
+Ohu1_FW <- links %>% 
+  filter(locality == "Ohu1")
+
+Utai_FW <- links %>% 
+  filter(locality == "Utai")
+
+Wamangu_FW <- links %>% 
+  filter(locality == "Wamangu")
+
+Wanang_FW <- links %>% 
+  filter(locality == "Wanang")
+
+Yapsiei_FW <- links %>% 
+  filter(locality == "Yapsiei")
+
+
+
+
+
+
+```
+
+
+```{r}
+library(dplyr)
+library(readxl)
+
+# Load the dataset
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+# Get unique localities
+localities <- unique(links$locality)
+
+# Create a nested list: first split by locality, then by LinkGroup
+locality_subsets <- lapply(localities, function(loc) {
+  
+  # Filter data for the current locality
+  loc_data <- links %>% filter(locality == loc)
+  
+  # Get unique LinkGroups for this locality
+  linkgroups <- unique(loc_data$LinkGroup)
+  
+  # Create a list of dataframes, each for a specific LinkGroup within the locality
+  linkgroup_subsets <- lapply(linkgroups, function(lg) {
+    loc_data %>% filter(LinkGroup == lg)
+  })
+  
+  # Name the list elements by their LinkGroup
+  names(linkgroup_subsets) <- linkgroups
+  
+  return(linkgroup_subsets)
+})
+
+# Name the top-level list elements by locality
+names(locality_subsets) <- localities
+
+
+
+
+```
+
+
+
+
+
+
+
+
+```{r}
+# Load necessary libraries
+library(ggalluvial)
+library(ggplot2)
+library(readxl)
+library(dplyr)
+
+# Load the dataset
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+# Create a directory to save plots
+dir.create("AlluvialPlots", showWarnings = FALSE)
+
+# Define color scale
+color_palette <- c("Plant-Caterpillar" = "darkviolet",
+                   "Caterpillar-Parasitoid" = "orange",
+                   "Other" = "red")
+
+# Loop through each locality and create an alluvial plot
+for (loc in unique(links$locality)) {
+  
+  # Filter data for the locality
+  links_subset <- links %>% filter(locality == loc)
+  
+  # Generate Alluvial plot
+  p <- ggplot(links_subset, aes(axis1 = source, axis2 = target, y = value)) +
+    geom_alluvium(aes(fill = LinkGroup), width = 0.3, alpha = 0.7) +
+    geom_stratum(fill = "gray", color = "black") +
+    geom_text(stat = "stratum", aes(label = after_stat(stratum)), size = 3, hjust = 0) +
+    scale_fill_manual(values = color_palette) +  # Use custom colors
+    theme_minimal() +
+    ggtitle(paste("Alluvial Plot -", loc)) +
+    theme(axis.text.y = element_blank(), axis.ticks = element_blank(),
+          axis.title = element_blank(), legend.title = element_blank(),
+          panel.grid = element_blank(), plot.title = element_text(hjust = 0.5))
+
+  # Save plot as PNG
+  ggsave(filename = paste0("AlluvialPlots/", loc, ".png"), plot = p, width = 10, height = 6, dpi = 300)
+}
+
+print("Alluvial plots saved in the 'AlluvialPlots' folder.")
+```
+
+
+All plots
+
+```{r}
+# Load required libraries
+library(readxl)
+library(networkD3)
+library(dplyr)
+library(htmlwidgets)
+library(webshot)  # Required for converting HTML to PNG
+
+# Install webshot if not installed
+if (!requireNamespace("webshot", quietly = TRUE)) {
+  install.packages("webshot")
+  webshot::install_phantomjs()  # Required for rendering PNG
+}
+
+# Load the Data
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+# Define a color scale for links
+color_scale <- 'd3.scaleOrdinal()
+  .domain(["Plant-Caterpillar", "Caterpillar-Parasitoid"])
+  .range(["darkviolet", "orange"])'
+
+# Function to generate Sankey plot for each locality
+generate_sankey <- function(data, locality_name) {
+  
+  # Filter data for the given locality
+  locality_data <- data %>% filter(locality == locality_name)
+  
+  # Create node data frame with unique names
+  nodes <- data.frame(name = unique(c(locality_data$source, locality_data$target)))
+  
+  # Create ID mapping for networkD3
+  locality_data$IDsource <- match(locality_data$source, nodes$name) - 1
+  locality_data$IDtarget <- match(locality_data$target, nodes$name) - 1
+
+  # Generate the Sankey diagram
+  p <- sankeyNetwork(
+    Links = locality_data, Nodes = nodes,
+    Source = "IDsource", Target = "IDtarget",
+    Value = "value", NodeID = "name",
+    sinksRight = FALSE, fontSize = 0,
+    LinkGroup = "LinkGroup", colourScale = color_scale
+  )
+
+  return(p)
+}
+
+# Generate and save plots for each locality
+localities <- unique(links$locality)
+
+for (loc in localities) {
+  print(paste("Generating Sankey for:", loc))
+  
+  # Generate plot
+  sankey_plot <- generate_sankey(links, loc)
+  
+  # Create a safe filename (remove spaces, special characters)
+  safe_filename <- gsub("[^A-Za-z0-9_]", "_", loc)
+  html_filepath <- paste0("Sankey_", safe_filename, ".html")
+  png_filepath <- paste0("Sankey_", safe_filename, ".png")
+
+  # Save as an HTML file (temporarily)
+  saveWidget(sankey_plot, file = html_filepath, selfcontained = TRUE)
+
+  # Convert HTML to PNG
+  webshot(html_filepath, file = png_filepath, vwidth = 1000, vheight = 800)
+  
+  # Remove temporary HTML file
+  file.remove(html_filepath)
+
+  print(paste("Saved PNG:", png_filepath))
+}
+
+```
+
+
+```{r}
+# Load required libraries
+library(readxl)
+library(networkD3)
+library(dplyr)
+library(htmlwidgets)
+library(webshot)
+
+# Load the Data
+links <- read_excel("DATA/separated_data_fw.xlsx")
+
+# Filter only Plant → Caterpillar interactions (Lower Trophic Level)
+links_lower_trophic <- links %>%
+  filter(!grepl("Plant-Caterpillar", target))  # Exclude parasitoid interactions
+
+# Function to generate Sankey plot for each locality (only lower trophic level)
+generate_sankey <- function(data, locality_name) {
+  
+  # Filter data for the given locality
+  locality_data <- data %>% filter(locality == locality_name)
+  
+  # Create node data frame with unique names
+  nodes <- data.frame(name = unique(c(locality_data$source, locality_data$target)))
+  
+  # Create ID mapping for networkD3
+  locality_data$IDsource <- match(locality_data$source, nodes$name) - 1
+  locality_data$IDtarget <- match(locality_data$target, nodes$name) - 1
+
+  # Define color scale without LinkGroup
+  color_scale <- 'd3.scaleOrdinal().range(["orange"])'
+
+  # Generate the Sankey diagram
+  p <- sankeyNetwork(
+    Links = locality_data, Nodes = nodes,
+    Source = "IDsource", Target = "IDtarget",
+    Value = "value", NodeID = "name",
+    sinksRight = FALSE, fontSize = 12,
+    colourScale = color_scale  # Apply orange color to all links
+  )
+
+  return(p)
+}
+
+# Generate and save plots for each locality (only lower trophic level)
+localities <- unique(links_lower_trophic$locality)
+
+for (loc in localities) {
+  print(paste("Generating Sankey for Lower Trophic Level:", loc))
+  
+  # Generate plot
+  sankey_plot <- generate_sankey(links_lower_trophic, loc)
+  
+  # Create a safe filename (remove spaces, special characters)
+  safe_filename <- gsub("[^A-Za-z0-9_]", "_", loc)
+  html_filepath <- paste0("Sankey_Lower_", safe_filename, ".html")
+  png_filepath <- paste0("Sankey_Lower_", safe_filename, ".png")
+
+  # Save as an HTML file (temporarily)
+  saveWidget(sankey_plot, file = html_filepath, selfcontained = TRUE)
+
+  # Convert HTML to PNG
+  webshot(html_filepath, file = png_filepath, vwidth = 1000, vheight = 800)
+  
+  # Remove temporary HTML file
+  file.remove(html_filepath)
+
+  print(paste("Saved PNG:", png_filepath))
+}
+
+```
+
+
+
+
+
+```{r}
+# Create an igraph object from links
+graph <- graph_from_data_frame(d = links, vertices = nodes, directed = TRUE)
+
+# Create a hierarchical edge bundling plot
+ggraph(graph, layout = "dendrogram", circular = TRUE) +
+  geom_edge_arc(aes(color = as.factor(LinkGroup), alpha = value), show.legend = TRUE) +
+  geom_node_point(size = 5, aes(color = as.factor(name))) +
+  geom_node_text(aes(label = name), repel = TRUE) +
+  scale_edge_color_manual(values = c("green", "blue", "red")) +  # Adjust colors
+  theme_void()
+# Display updated plot with manual colors
+p
+```
+
+
+
+```{r}
+# Load necessary package
+library(bipartite)
+
+# Plant-Caterpillar interactions (First Level)
+plants_caterpillars <- matrix(c(
+  1, 1, 0,  # Plant1 interactions
+  0, 1, 1,  # Plant2 interactions
+  1, 0, 1   # Plant3 interactions
+), nrow = 3, byrow = TRUE)
+
+rownames(plants_caterpillars) <- c("Plant1", "Plant2", "Plant3")
+colnames(plants_caterpillars) <- c("Caterpillar1", "Caterpillar2", "Caterpillar3")
+
+# Caterpillar-Parasitoid interactions (Second Level)
+caterpillars_parasitoids <- matrix(c(
+  1, 0, 1,  # Caterpillar1 interactions
+  1, 1, 0,  # Caterpillar2 interactions
+  0, 1, 1   # Caterpillar3 interactions
+), nrow = 3, byrow = TRUE)
+
+rownames(caterpillars_parasitoids) <- c("Caterpillar1", "Caterpillar2", "Caterpillar3")
+colnames(caterpillars_parasitoids) <- c("Parasitoid1", "Parasitoid2", "Parasitoid3")
+
+
+# Create an empty plot
+par(mfrow = c(2, 1))  # Stack two plots vertically
+
+# Plot 1: Plants → Caterpillars
+plotweb(plants_caterpillars, method = "normal", col.low = "green", col.high = "blue")
+
+# Plot 2: Caterpillars → Parasitoids
+plotweb(caterpillars_parasitoids, method = "normal", col.low = "blue", col.high = "red")
+
+```
+
+
+
+```{r}
+library(bipartite)
+# Example adjacency matrices (replace with your data)
+PC_matrix <- matrix(c(
+  1, 0, 1,  
+  1, 1, 0,  
+  0, 1, 1  
+), nrow=3, byrow=TRUE)
+
+rownames(PC_matrix) <- c("Plant1", "Plant2", "Plant3")
+colnames(PC_matrix) <- c("Caterpillar1", "Caterpillar2", "Caterpillar3")
+
+CP_matrix <- matrix(c(
+  1, 0, 1,  
+  0, 1, 1,  
+  1, 1, 0  
+), nrow=3, byrow=TRUE)
+
+rownames(CP_matrix) <- c("Caterpillar1", "Caterpillar2", "Caterpillar3")
+colnames(CP_matrix) <- c("Parasitoid1", "Parasitoid2", "Parasitoid3")
+
+# Create a tripartite interaction web
+plotweb2(PC_matrix, CP_matrix, ybig = 2)
+```
+
+```{r}
+
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2")
+
+FW_figure <- MASTER %>% 
+ dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp) %>% 
+  dplyr:: filter(locality == "Ohu1")
+
+
+
+PC_matrix <- as.matrix(table(FW_figure $CAT_sp, FW_figure $PAR_sp))
+CPL_matrix <- as.matrix(table(FW_figure $PLANT_sp, FW_figure $CAT_sp))
+
+plotweb2(PC_matrix,CPL_matrix, ybig = 2, lablength = 0, lablength2 = 0)
+```
+
+
+```{r}
+plotweb(PC_matrix)
+plotweb(CPL_matrix)
+
+# Convert matrices into edge lists
+PC_edges <- as.data.frame(as.table(PC_matrix))
+CPL_edges <- as.data.frame(as.table(CPL_matrix))
+
+# Rename columns
+colnames(PC_edges) <- c("Caterpillar", "Parasitoid", "Frequency")
+colnames(CPL_edges) <- c("Plant", "Caterpillar", "Frequency")
+
+# Remove zero interactions
+PC_edges <- PC_edges[PC_edges$Frequency > 0, ]
+CPL_edges <- CPL_edges[CPL_edges$Frequency > 0, ]
+
+```
+

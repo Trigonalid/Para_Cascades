@@ -10,11 +10,7 @@ library(tibble)
 library(readxl)
 
 # Full data
-MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble()
-
-# Removing useless columns + Removing data of OHU2
-#MASTER_8 <- MASTER %>% 
- dplyr:: select(locality, CAT_sp, PLANT_sp, PAR_sp, guild) %>% 
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
   dplyr:: filter(locality != "Ohu2")
 
 
@@ -863,7 +859,7 @@ BC_FIG_1_simple <- ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guil
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(y = "Dissimilarity") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;BC_FIG_1_simple
 
 # Display the plot
@@ -908,6 +904,15 @@ SOR_FIG_1_simple <- ggplot(ind_SOR_simple, aes(x = guild, y = hodnota, fill = gu
 
 # Display the plot
 SOR_FIG_1_simple
+
+Fig_1_final_new_simple <-ggarrange(BC_FIG_1_simple, CS_FIG_1_simple, SOR_FIG_1_simple, common.legend = TRUE, legend = "bottom", nrow = 1)
+Fig_1_final_new_simple
+ggsave("output/fig/Fig_1_final_new_simple.tiff",
+       Fig_1_final_new_simple,
+       height = 14,
+       width = 29,
+       units = "cm")   # save the plot as .tiff
+
 ```
 
 # Figure 1 - with distance

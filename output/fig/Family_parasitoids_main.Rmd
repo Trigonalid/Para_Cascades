@@ -1,0 +1,313 @@
+
+# Bray-Curtis - Hymenoptera
+```{r Bray-Curtis, echo=FALSE}
+# Full data
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") %>% 
+  filter(family_par %in% c("Braconidae", "Ichneumonidae", "Bethylidae", "Chalcidididea"))
+# Loading distance matrix
+Distance <- read.csv2(here::here("DATA", "Distance.csv"), row.names = 1) # loading distance matrix of localities
+#Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2(here::here("DATA/Distance.csv"))
+
+distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
+#distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  select(locality, PAR_sp, Par_remove)
+
+para_pivot <- para_pivot %>% 
+  filter(Par_remove == "0")
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+# Make a dataframe for caterpillars
+cat_pivot <-  MASTER %>% 
+  select(locality, CAT_sp)
+
+cat_pivot2 <- as.matrix(table(cat_pivot$locality, cat_pivot$CAT_sp))  # dataframe ready for indices
+cat_pivot2[is.na(cat_pivot2)] <- 0 # Replacing NA values with 0
+cat_pivot_P_A <- cat_pivot2
+cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Sorensen index only
+
+# Bray-Curtis index computation and analysis for a given community
+calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
+  
+  # Compute Bray-Curtis distance matrix
+  bc_res <- vegan::vegdist(data_matrix, method = "bray", binary = FALSE, diag = TRUE) %>% as.matrix()
+  
+  # Mantel test
+  bc_res_mantel <- vegan::mantel(bc_res, distance_matrix, method = "spear")
+  
+  # Prepare data for plotting
+  bc_melted <- reshape::melt(bc_res)
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+    dplyr::mutate(guild = guild_name)
+  
+  bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Bray-Curtis")
+  
+  # Linear model for Bray-Curtis vs Distance
+  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  
+  # Summary statistics
+  bc_summary <- bc_fig_table %>%
+    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+  
+  # Create result table
+  mantel_result <- data.frame(
+    index = "Bray-Curtis",
+    Community = guild_name,
+    mean = round(bc_summary$mean_BC, 3),
+    sd = round(bc_summary$sd_BC, 3),
+    test = "Mantel",
+    statistic = round(bc_res_mantel$statistic, 3),
+    p.value = round(bc_res_mantel$signif, 3),
+    Dataset = "Full",
+    stringsAsFactors = FALSE
+  )
+  
+  # Return all results as a list
+  return(list(
+    mantel_result = mantel_result,
+    linear_model = summary(bc_lm),
+    summary_stats = bc_summary,
+    bc_fig_table = bc_fig_table
+  ))
+}
+
+# Apply the function to Parasitoids
+parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
+print(parasitoid_results$mantel_result)
+BC_par_HYM <- (parasitoid_results$bc_fig_table) %>%
+  mutate(family = "Hymenoptera")
+```
+
+# Bray-Curtis - Tachinidae
+```{r Bray-Curtis, echo=FALSE}
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") %>% 
+  filter(family_par %in% c("Tachinidae"))
+# Loading distance matrix
+Distance <- read.csv2(here::here("DATA", "Distance.csv"), row.names = 1) # loading distance matrix of localities
+#Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2(here::here("DATA/Distance.csv"))
+
+distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
+#distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  select(locality, PAR_sp, Par_remove)
+
+para_pivot <- para_pivot %>% 
+  filter(Par_remove == "0")
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+
+# Bray-Curtis index computation and analysis for a given community
+calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
+  
+  # Compute Bray-Curtis distance matrix
+  bc_res <- vegan::vegdist(data_matrix, method = "bray", binary = FALSE, diag = TRUE) %>% as.matrix()
+  
+  # Mantel test
+  bc_res_mantel <- vegan::mantel(bc_res, distance_matrix, method = "spear")
+  
+  # Prepare data for plotting
+  bc_melted <- reshape::melt(bc_res)
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+    dplyr::mutate(guild = guild_name)
+  
+  bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Bray-Curtis")
+  
+  # Linear model for Bray-Curtis vs Distance
+  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  
+  # Summary statistics
+  bc_summary <- bc_fig_table %>%
+    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+  
+  # Create result table
+  mantel_result <- data.frame(
+    index = "Bray-Curtis",
+    Community = guild_name,
+    mean = round(bc_summary$mean_BC, 3),
+    sd = round(bc_summary$sd_BC, 3),
+    test = "Mantel",
+    statistic = round(bc_res_mantel$statistic, 3),
+    p.value = round(bc_res_mantel$signif, 3),
+    Dataset = "Full",
+    stringsAsFactors = FALSE
+  )
+  
+  # Return all results as a list
+  return(list(
+    mantel_result = mantel_result,
+    linear_model = summary(bc_lm),
+    summary_stats = bc_summary,
+    bc_fig_table = bc_fig_table
+  ))
+}
+
+# Apply the function to Parasitoids
+parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
+print(parasitoid_results$mantel_result)
+BC_par_TACH <- (parasitoid_results$bc_fig_table) %>%
+  mutate(family = "Diptera")
+
+```
+
+# Bray-Curtis - Lepidoptera
+```{r Bray-Curtis, echo=FALSE}
+# Full data
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2") 
+# Loading distance matrix
+Distance <- read.csv2(here::here("DATA", "Distance.csv"), row.names = 1) # loading distance matrix of localities
+#Distance <-Distance[!(rownames(Distance) == "Ohu2"), !(colnames(Distance) == "Ohu2")]
+
+# Prepare the distance matrix for a figure
+Distance_fig <- read.csv2(here::here("DATA/Distance.csv"))
+
+distance_2 <- reshape::melt(Distance_fig)   #melt a matrix
+#distance_2 <- distance_2[!(distance_2$X == "Ohu2" | distance_2$variable == "Ohu2"), ]
+
+distance_plot <- dplyr::rename (distance_2, Locality_A = X, Locality_B = variable, distance = value)  # rename columns
+
+# data for parasitoids
+para_pivot<-  MASTER  %>%
+  select(locality, PAR_sp, Par_remove)
+
+para_pivot <- para_pivot %>% 
+  filter(Par_remove == "0")
+
+para_pivot2 <- as.matrix(table(para_pivot$locality, para_pivot$PAR_sp))  # dataframe ready for indices
+para_pivot2[is.na(para_pivot2)] <- 0 # Replacing NA values with 0
+para_pivot_P_A <- para_pivot2
+para_pivot_P_A [para_pivot_P_A > 0] <- 1 #converts from abundance to P/A - for Sorensen index only
+
+# Make a dataframe for caterpillars
+cat_pivot <-  MASTER %>% 
+  select(locality, CAT_sp)
+
+cat_pivot2 <- as.matrix(table(cat_pivot$locality, cat_pivot$CAT_sp))  # dataframe ready for indices
+cat_pivot2[is.na(cat_pivot2)] <- 0 # Replacing NA values with 0
+cat_pivot_P_A <- cat_pivot2
+cat_pivot_P_A [cat_pivot_P_A > 0] <- 1 #converts from abundance to P/A for Sorensen index only
+
+# Bray-Curtis index computation and analysis for a given community
+calculate_bray_curtis <- function(data_matrix, distance_matrix, guild_name) {
+  
+  # Compute Bray-Curtis distance matrix
+  bc_res <- vegan::vegdist(data_matrix, method = "bray", binary = FALSE, diag = TRUE) %>% as.matrix()
+  
+  # Mantel test
+  bc_res_mantel <- vegan::mantel(bc_res, distance_matrix, method = "spear")
+  
+  # Prepare data for plotting
+  bc_melted <- reshape::melt(bc_res)
+  bc_figure <- dplyr::rename(bc_melted, Locality_A = X1, Locality_B = X2, hodnota = value) %>%
+    dplyr::mutate(guild = guild_name)
+  
+  bc_fig_table <- merge(bc_figure, distance_plot, by = c("Locality_A", "Locality_B")) %>%
+    dplyr::filter(hodnota > 0) %>% 
+    add_column(indexy = "Bray-Curtis")
+  
+  # Linear model for Bray-Curtis vs Distance
+  bc_lm <- lm(hodnota ~ distance, data = bc_fig_table)
+  
+  # Summary statistics
+  bc_summary <- bc_fig_table %>%
+    dplyr::summarise(mean_BC = mean(hodnota), sd_BC = sd(hodnota))
+  
+  # Create result table
+  mantel_result <- data.frame(
+    index = "Bray-Curtis",
+    Community = guild_name,
+    mean = round(bc_summary$mean_BC, 3),
+    sd = round(bc_summary$sd_BC, 3),
+    test = "Mantel",
+    statistic = round(bc_res_mantel$statistic, 3),
+    p.value = round(bc_res_mantel$signif, 3),
+    Dataset = "Full",
+    stringsAsFactors = FALSE
+  )
+  
+  # Return all results as a list
+  return(list(
+    mantel_result = mantel_result,
+    linear_model = summary(bc_lm),
+    summary_stats = bc_summary,
+    bc_fig_table = bc_fig_table
+  ))
+}
+
+# Apply the function to Parasitoids
+parasitoid_results <- calculate_bray_curtis(para_pivot2, Distance, "Parasitoids")
+print(parasitoid_results$mantel_result)
+BC_par_LEP <- (parasitoid_results$bc_fig_table) %>%
+  mutate(family = "Lepidoptera")
+# Apply the function to Caterpillars
+caterpillar_results <- calculate_bray_curtis(cat_pivot2, Distance, "Caterpillars")
+print(caterpillar_results$mantel_result)
+BC_cat_LEP<- (caterpillar_results$bc_fig_table) %>%
+  mutate(family = "Lepidoptera")
+```
+```{r}
+figure_1_merged_family <- rbind(BC_par_HYM,  BC_par_TACH, BC_par_LEP, BC_cat_LEP)
+
+```
+
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+friendly_colors <- c("#E69F00", "#56B4E9", "#009E73", "pink") 
+# Create the violin plot
+Parasitoid_family_plot <- ggplot(figure_1_merged_family, aes(x = family, y = hodnota, fill = family)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +  # Violin plots with transparency
+  geom_boxplot(width = 0.1, outlier.shape = NA, color = "black") +  # Add boxplot inside
+  labs(
+    title = "Beta diversity of different families of parasitoids and their caterpillar host",
+    x = "",
+    y = "Dissimilarity",
+    fill = "Family"
+  ) +
+  scale_fill_manual(values = friendly_colors) +  # Use friendly colors
+  theme_classic(base_size = 16) +
+  theme(
+    legend.position = "none"  # Remove legend if not needed
+  )
+Parasitoid_family_plot
+ggplot2::ggsave(
+  here::here("output/fig/Parasitoid_family_plot.tiff"),
+  Parasitoid_family_plot,
+  height = 17,
+  width = 18,
+  units = "cm"
+)
+
+
+```
+
