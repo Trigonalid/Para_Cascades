@@ -75,6 +75,8 @@ ggraph(g, layout = "manual") +
 # Library
 library(networkD3)
 library(dplyr)
+library(webshot2)
+library(htmlwidgets)
  
 # Load the Data_FWset
 links <- read_excel("DATA/separated_data_fw.xlsx")
@@ -90,21 +92,30 @@ links$IDsource <- match(links$source, nodes$name)-1
 links$IDtarget <- match(links$target, nodes$name)-1
  
 
-
-# Define a color scale for links
 color_scale <- 'd3.scaleOrdinal()
   .domain(["Plant-Caterpillar", "Caterpillar-Parasitoid", "Other"])
   .range(["darkviolet", "orange", "red"])'
 
-# Make the Sankey Diagram with colors
 p <- sankeyNetwork(Links = links, Nodes = nodes,
                    Source = "IDsource", Target = "IDtarget",
                    Value = "value", NodeID = "name",
                    sinksRight = FALSE, fontSize = 0,  # Hide text
                    LinkGroup = "LinkGroup", colourScale = color_scale)
-p
+saveNetwork(p, "p.html")
 
 
+
+
+
+
+
+# Save the widget as an SVG file (transparent background)
+svg_file <- "sankey_plot.svg"
+
+# Use svglite for better SVG export
+svglite(svg_file, width = 8, height = 6)
+print(p)  # Save the plot to SVG
+dev.off()  # Close the SVG device
 
 
 # Make the Network

@@ -478,7 +478,8 @@ print(mantel_result_cat_SOR_sub)
 ```
 # BC - sub
 ```{r BC - subsampling}
-MASTER <- read_excel("DATA/MASTER.xlsx") %>% as_tibble() # loading the master file with all data available (detailed info with old sp_code etc check Master_2023 file)
+MASTER <- read_excel(here::here("DATA/MASTER.xlsx")) %>% as_tibble() %>% 
+  dplyr:: filter(locality != "Ohu2")
 Distance <- read.csv2("DATA/Distance.csv", row.names=1) # loading distance matrix of
 
 data_testing <- MASTER %>% 
@@ -579,18 +580,18 @@ BC_res_mean <-
   apply(Y, c(1, 2), mean, na.rm = TRUE)
 
 
-rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
-colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Ohu2", "Utai", "Wamangu", "Wanang","Yapsiei")
+rownames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
+colnames(BC_res_mean) <- c("Elem", "Morox", "Niksek", "Ohu1", "Utai", "Wamangu", "Wanang","Yapsiei")
 
 
 # calculate a mean of the results
 BC_melt<-melt(BC_res_mean)
-BC_melt <- dplyr::rename (BC_melt, Locality_A = X1, Locality_B = X2, hodnota = value)
+BC_melt <- dplyr::rename (BC_melt, Locality_A = Var1, Locality_B = Var2)
 
 BC_melt_subsampling <- BC_melt %>% 
   add_column(guild = "Caterpillars-subsampled")
 BC_fig_subsampled <-merge(BC_melt_subsampling, distance_plot, by=c("Locality_A", "Locality_B")) %>% 
-  filter (hodnota > 0) %>% 
+  filter (value > 0) %>% 
     add_column(indexy = "Bray-Curtis")
 
 

@@ -10,6 +10,8 @@ chao_sorensen_values_CAT
 bray_curtis_values_PAR
 bray_curtis_values_CAT 
 
+bray_curtis_values_CAT_subsampled
+
 # Load ggplot2
 library(ggplot2)
 

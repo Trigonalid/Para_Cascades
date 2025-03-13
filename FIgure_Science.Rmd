@@ -16,49 +16,22 @@ library(viridisLite)
 ```
 
 #Figure 1
-```{r Bray-Curtis, echo=FALSE}
-BC_FIG_1_simple <- ggplot(ind_BC_simple, aes(y = guild, x = hodnota, fill = guild)) +
-  geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
-  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
-  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
-  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
-                               "Caterpillars" = "darkorange")) +
-  scale_color_manual(values = c("Parasitoids" = "black", 
-                               "Caterpillars" = "black"))  +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(title = "Species ß diversity", x = "Dissimilarity", y = NULL) +  # Keep only the x-axis label (Dissimilarity)
-  theme_classic(base_size = 20) +
-  theme(
-    axis.text.y = element_blank(),  # Remove y-axis text
-    axis.ticks.y = element_blank(), # Remove y-axis ticks
-    legend.position = "none"        # Remove legend
-  )
-
-BC_FIG_1_simple
-
-```
-
-
 ```{r Food-web dissimilarity, echo=FALSE}
-
-
 
 #Figure 1
 
-BC_FIG_1B <- ggplot(ind_BC_simple, aes(y = guild, x = hodnota, fill = guild)) +
+BC_FIG_1B <-  ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guild)) +
   geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
   geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
   geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
-  scale_fill_manual(values = c("Parasitoids" = "darkgreen", 
-                               "Caterpillars" = "darkorange")) +
+  scale_fill_manual(values = c("Parasitoids" = "#1B9E77", 
+                               "Caterpillars" = "#D95F02")) +
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
-  coord_cartesian(xlim = c(0, 1)) +
-  labs(title = "Species ß diversity", x = "Dissimilarity", y = NULL) +  # Keep only the x-axis label (Dissimilarity)
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Species beta diversity", x = NULL, y = "Bray-Curtis\n dissimilarity") +  # Keep only the x-axis label (Dissimilarity)
   theme_classic(base_size = 20) +
-  theme(
-    axis.text.y = element_blank(),  # Remove y-axis text
-    axis.ticks.y = element_blank(), # Remove y-axis ticks
+  theme(  # Remove y-axis text
     legend.position = "none"        # Remove legend
   )
 
@@ -91,32 +64,40 @@ combined_data <- bind_rows(
 figure_s23 <- combined_data %>%
   ggplot(mapping = aes(
     x = dataset, y = value,  
-    color = dataset, shape = dataset
+    color = dataset,  fill = dataset
   )) +
-  geom_violin(width = 0.4, trim = FALSE) +  
-  geom_boxplot(width = 0.1, outlier.shape = NA) +  
-  geom_jitter(position = position_jitter(0.2), aes(color = dataset), show.legend = FALSE) +
+  geom_violin(width = 0.4, trim = FALSE, alpha = 0.7) +  
+  geom_boxplot(width = 0.1, outlier.shape = NA, alpha = 0.9) +  
+  geom_jitter(position = position_jitter(width = 0.15, height = 0), size = 2, alpha = 0.8) +
+  
+  scale_fill_manual(values = c("Caterpillar-Plant" = "darkviolet", 
+                               "Parasitoid-Caterpillar" = "orange")) +
+  scale_color_manual(values = c("Caterpillar-Plant" = "black", 
+                                "Parasitoid-Caterpillar" = "black"))  +
+
   labs(
     title = "Dissimilarity of trophic interactions",
-    x = "",
-    y = "",
+    x = NULL,  # Keeps the axis but removes the label
+    y = "Dissimilarity of interactions",
     color = "Dataset", 
-    shape = "Dataset"
+    shape = "Dataset",
+    fill = "Dataset"
   ) +
-  coord_cartesian(ylim = c(0, 1.15)) +
+  
+  coord_cartesian(ylim = c(0, 1)) +
   scale_y_continuous(breaks = seq(0, 1.15, by = 0.25)) +
-  scale_color_manual(values = c("darkviolet", "orange")) +  # Custom colors
+
   theme_classic(base_size = 20) +
-  theme(
-    legend.position = "none",      
-    axis.text.x = element_blank(), 
-    axis.ticks.x = element_blank() 
+  theme(legend.position = "none",
+    axis.text.x = element_text(size = 16), 
+    axis.text.y = element_text(size = 16),
+    axis.ticks.x = element_blank()
   )  
+
+figure_s23
 
 # Print the figure
 figure_s23
-
-
 
 
 ggplot2::ggsave(
