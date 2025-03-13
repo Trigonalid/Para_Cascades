@@ -370,7 +370,7 @@ print(sd_bray_curtis_CAT)
 ```
 
 
-```{r}
+```{r Chao-Sorensen}
 # Filter data for parasitoids (guild == "PAR") and specific localities ("Ohu1", "Ohu2")
 # Remove records where Par_remove is "1" (i.e., remove parasitic records marked for removal)
 parasitoid_data <- MASTER %>%
@@ -527,6 +527,140 @@ sd_chao_sorensen_CAT <- sd(chao_sorensen_values_CAT)      # Standard deviation f
 # Print the results for the caterpillar data
 print(mean_chao_sorensen_CAT)  # Mean dissimilarity for caterpillars
 print(sd_chao_sorensen_CAT)    # Standard deviation of dissimilarity for caterpillars
+
+```
+
+
+```{r Subsampling caterpillars to parasitoid size}
+
+library(dplyr)
+library(tidyr)
+library(vegan)
+
+# Load and filter parasitoid data
+parasitoid_data <- MASTER %>%
+  filter(guild == "PAR", Par_remove == "0", locality %in% c("Ohu1", "Ohu2")) %>%
+  select(locality, PAR_sp)
+
+# Find the smallest parasitoid sample size across both localities
+smallest_parasitoid_size <- parasitoid_data %>%
+  group_by(locality) %>%
+  summarize(count = n()) %>%
+  summarize(min(count)) %>%
+  pull()
+
+# Load and filter caterpillar data
+caterpillar_data <- MASTER %>%
+  filter(guild == "CAT", remove_cat == "0", locality %in% c("Ohu1", "Ohu2")) %>%
+  select(locality, CAT_sp)
+
+# Subsample caterpillars from both localities to match the smallest parasitoid sample size
+set.seed(123)  # For reproducibility
+subsampled_caterpillar_data <- caterpillar_data %>%
+  group_by(locality) %>%
+  sample_n(smallest_parasitoid_size, replace = TRUE) %>%
+  ungroup()
+
+# Create species count table for caterpillars
+tabulated_caterpillar_data <- subsampled_caterpillar_data %>%
+  group_by(locality, CAT_sp) %>%
+  tally() %>%
+  spread(key = locality, value = n, fill = 0) %>%
+  as.data.frame()
+
+# Convert to matrix for Bray-Curtis
+tabulated_caterpillar_data <- tabulated_caterpillar_data %>%
+  column_to_rownames(var = "CAT_sp") %>%
+  as.matrix()
+
+# Calculate Bray-Curtis dissimilarity
+bray_curtis_cat <- vegdist(tabulated_caterpillar_data, method = "bray")
+print(as.matrix(bray_curtis_cat))
+
+# Perform resampling 999 times
+resample_and_calculate_bray_cat <- function(data, sample_size) {
+  set.seed(sample(1:10000, 1))
+  resampled_data <- data %>%
+    group_by(locality) %>%
+    sample_n(sample_size, replace = TRUE) %>%
+    ungroup()
+
+  species_counts <- resampled_data %>%
+    group_by(locality, CAT_sp) %>%
+    tally() %>%
+    spread(key = locality, value = n, fill = 0) %>%
+    as.data.frame() %>%
+    column_to_rownames(var = "CAT_sp") %>%
+    as.matrix()
+  
+  vegdist(species_counts, method = "bray")
+}
+
+bray_curtis_results_CAT <- lapply(1:999, function(x) {
+  resample_and_calculate_bray_cat(caterpillar_data, smallest_parasitoid_size)
+})
+
+# Extract Bray-Curtis values
+bray_curtis_values_CAT_subsampled <- sapply(bray_curtis_results_CAT, function(mat) as.matrix(mat)[1, 2])
+
+
+
+mean_bray_curtis_CAT_subsampled <- mean(bray_curtis_values_CAT_subsampled)
+sd_bray_curtis_CAT_subsampled <- sd(bray_curtis_values_CAT_subsampled)
+
+# Print final results
+print(mean_bray_curtis_CAT_subsampled)
+print(sd_bray_curtis_CAT_subsampled)
+
+
+```
+
+# Plot
+```{r Plot}
+# Graf Ohu dissimilarity
+
+bray_curtis_values_PAR
+bray_curtis_values_CAT 
+
+bray_curtis_values_CAT_subsampled
+
+# Load ggplot2
+library(ggplot2)
+
+# Combine all datasets into a single data frame
+dissimilarity_data <- data.frame(
+  Guild = c(
+    rep("Parasitoids", length(bray_curtis_values_PAR)),
+    rep("Caterpillars", length(chao_sorensen_values_CAT)),
+    rep("Caterpillars - subsampled", length(bray_curtis_values_CAT_subsampled))
+  ),
+  Dissimilarity = c(
+    bray_curtis_values_PAR,
+    bray_curtis_values_CAT,
+    bray_curtis_values_CAT_subsampled
+  ),
+  Index = c(
+    rep("Bray-Curtis", length(bray_curtis_values_PAR) + length(bray_curtis_values_CAT) + length(bray_curtis_values_CAT_subsampled))
+  )
+)
+
+# Create the boxplot
+ggplot(dissimilarity_data, aes(x = Guild, y = Dissimilarity, fill = Guild)) +
+  geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2),  show.legend = FALSE) +
+  labs(
+    title = "Dissimilarity of parasitoids and caterpillars at Ohu locality",
+    x = "Dissimilarity index",
+    y = "Dissimilarity"
+  ) +
+  coord_cartesian(ylim = c(0, 1)) +
+  theme_minimal() +
+  scale_fill_manual(values = c("Parasitoids" = "skyblue", "Caterpillars" = "lightgreen")) +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "right"
+  )
 
 ```
 
