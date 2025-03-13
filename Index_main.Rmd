@@ -177,6 +177,9 @@ caterpillar_results <- calculate_bray_curtis(cat_pivot2, Distance, "Caterpillars
 print(caterpillar_results$mantel_result)
 BC_cat <- (caterpillar_results$bc_fig_table)
 
+
+t.test(BC_par$hodnota , BC_cat$hodnota, var.equal = TRUE)
+
 ```
 
 
@@ -238,7 +241,7 @@ caterpillar_results_cs <- calculate_chao_sorensen(cat_pivot2, Distance, "Caterpi
 print(caterpillar_results_cs$mantel_result)
 CS_cat <-(caterpillar_results_cs$cs_fig_table)
 
-
+t.test(CS_par$hodnota , CS_cat$hodnota, var.equal = TRUE)
 ```
 # Sorensen
 ```{r Sorensen, echo=FALSE}
@@ -298,6 +301,7 @@ SOR_par <-(parasitoid_results_sor$sor_fig_table)
 caterpillar_results_sor <- calculate_sorensen(cat_pivot_P_A, Distance, "Caterpillars")
 print(caterpillar_results_sor$mantel_result)
 SOR_cat <-(caterpillar_results_sor$sor_fig_table)
+t.test(SOR_par$hodnota , SOR_cat$hodnota, var.equal = TRUE)
 ```
 
 Summary of Indices
@@ -800,10 +804,13 @@ ind_BC <- figure_1_merged %>%
 
 ind_CS <- figure_1_merged %>% 
   dplyr::filter(indexy == "Chao-Sorensen")
+ind_CS$guild <- factor(ind_CS$guild, 
+                              levels = c("Parasitoids", "Caterpillars", "Caterpillars-subsampled"))
 
 ind_SOR <- figure_1_merged %>% 
   dplyr::filter(indexy == "Sorensen")
-
+ind_SOR$guild <- factor(ind_SOR$guild, 
+                              levels = c("Parasitoids", "Caterpillars", "Caterpillars-subsampled"))
 
 # Ensure 'guild' is a factor with the desired order
 ind_BC$guild <- factor(ind_BC$guild, 
@@ -862,10 +869,21 @@ SOR_FIG_1 <- ggplot(ind_SOR, aes(x = guild, y = hodnota, fill = guild)) +
 
 # Display the plot
 SOR_FIG_1
+
+
+Fig_S1_final <-ggarrange(BC_FIG_1, CS_FIG_1, SOR_FIG_1, common.legend = TRUE, legend = "bottom", nrow = 1)
+Fig_S1_final
+ggsave("output/fig/Fig_S1_final.tiff",
+       Fig_1_final_new_simple,
+       height = 14,
+       width = 29,
+       units = "cm")   # save the plot as .tiff
 ```
 
 # Figure 1 - without subsampling - theoretically for the interactive figure
 ```{r}
+library(ggpubr)
+
 figure_1_merged <- figure_1_merged %>% 
   dplyr::filter(!(Locality_A == "Ohu2" | Locality_B == "Ohu2"))
 ind_BC <- figure_1_merged %>% 

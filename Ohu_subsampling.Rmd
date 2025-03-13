@@ -648,7 +648,6 @@ dissimilarity_data <- data.frame(
 ggplot(dissimilarity_data, aes(x = Guild, y = Dissimilarity, fill = Guild)) +
   geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
   geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
-  geom_jitter(position = position_jitter(0.2),  show.legend = FALSE) +
   labs(
     title = "Dissimilarity of parasitoids and caterpillars at Ohu locality",
     x = "Dissimilarity index",
