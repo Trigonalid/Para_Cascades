@@ -1,0 +1,215 @@
+Figure 1 - Science
+
+```{r}
+library(tidyverse)
+library(vegan)
+library(reshape)
+library(betapart)
+library(bipartite)
+library(skimr)
+library(readxl)
+library(usedist)
+library(ggpubr) # For significance annotations
+library(viridis) # For colorblind-friendly colors
+library(viridisLite)
+
+```
+
+#Figure 1
+```{r Food-web dissimilarity, echo=FALSE}
+
+#Figure 1
+
+BC_FIG_1B <-  ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guild)) +
+  geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
+  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
+  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
+  scale_fill_manual(values = c("Parasitoids" = "#1B9E77", 
+                               "Caterpillars" = "#D95F02")) +
+  scale_color_manual(values = c("Parasitoids" = "black", 
+                               "Caterpillars" = "black"))  +
+  coord_cartesian(ylim = c(0, 1)) +
+  labs(title = "Species beta diversity", x = NULL, y = "Bray-Curtis\n dissimilarity") +  # Keep only the x-axis label (Dissimilarity)
+  theme_classic(base_size = 20) +
+  theme(  # Remove y-axis text
+    legend.position = "none"        # Remove legend
+  )
+
+BC_FIG_1B
+ggplot2::ggsave(
+  here::here("output/fig/figure_1B.tiff"),
+  BC_FIG_1B,
+  height = 17,
+  width = 18,
+  units = "cm"
+)
+```
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+# Merge datasets and add a dataset column
+combined_data <- bind_rows(
+  data_to_plot_cat_par_wn %>% mutate(dataset = "Parasitoid-Caterpillar"),
+  data_to_plot_cat_plant_wn %>% mutate(dataset = "Caterpillar-Plant")
+) %>%
+  dplyr:: filter(type == "full") %>% # Keep only rows where type is "full"
+  dplyr:: filter(i != "Ohu2") %>% 
+  dplyr:: filter(j != "Ohu2") 
+
+# Create a single plot
+
+figure_s23 <- combined_data %>%
+  ggplot(mapping = aes(
+    x = dataset, y = value,  
+    color = dataset,  fill = dataset
+  )) +
+  geom_violin(width = 0.4, trim = FALSE, alpha = 0.7) +  
+  geom_boxplot(width = 0.1, outlier.shape = NA, alpha = 0.9) +  
+  geom_jitter(position = position_jitter(width = 0.15, height = 0), size = 2, alpha = 0.8) +
+  
+  scale_fill_manual(values = c("Caterpillar-Plant" = "darkviolet", 
+                               "Parasitoid-Caterpillar" = "orange")) +
+  scale_color_manual(values = c("Caterpillar-Plant" = "black", 
+                                "Parasitoid-Caterpillar" = "black"))  +
+
+  labs(
+    title = "Dissimilarity of trophic interactions",
+    x = NULL,  # Keeps the axis but removes the label
+    y = "Dissimilarity of interactions",
+    color = "Dataset", 
+    shape = "Dataset",
+    fill = "Dataset"
+  ) +
+  
+  coord_cartesian(ylim = c(0, 1)) +
+  scale_y_continuous(breaks = seq(0, 1.15, by = 0.25)) +
+
+  theme_classic(base_size = 20) +
+  theme(legend.position = "none",
+    axis.text.x = element_text(size = 16), 
+    axis.text.y = element_text(size = 16),
+    axis.ticks.x = element_blank()
+  )  
+
+figure_s23
+
+# Print the figure
+figure_s23
+
+
+ggplot2::ggsave(
+  here::here("output/fig/figure_1C.tiff"),
+  figure_s23,
+  height = 17,
+  width = 18,
+  units = "cm"
+)
+```
+
+
+```{r}
+
+
+
+
+```
+
+
+
+
+```{r}
+# Load necessary libraries
+library(ggmap)
+library(ggplot2)
+library(ggrepel)
+library(ggspatial)
+
+# Read CSV file
+file_path <- "~/ownCloud/000_//000_Papers/Beta/R_data/distances_beta_one_ohu.csv"
+distances_beta_one_ohu <- read.csv(file_path, sep=";")
+
+# Ensure required columns exist
+if (!all(c("Long", "Lat", "locality") %in% names(distances_beta_one_ohu))) {
+  stop("Error: The CSV file must contain 'Long', 'Lat', and 'locality' columns.")
+}
+
+# Define map boundaries
+myLocation_beta <- c(141, -7, 146.5, -3)
+
+
+library(leaflet)
+
+leaflet(data = distances_beta_one_ohu) %>%
+  addProviderTiles("CartoDB.Positron") %>%  # Light grey map with white sea
+  addCircleMarkers(
+    ~Long, ~Lat, 
+    popup = ~locality, 
+    color = "black", 
+    fillColor = "black",    # Fill the circle with black color
+    fillOpacity = 0.7,      # Adjust opacity for filled circle
+    radius = 4              # Smaller size for the circle
+  )
+
+# Load necessary libraries
+library(leaflet)
+library(leaflet.extras)
+
+# Load necessary libraries
+library(leaflet)
+
+leaflet(data = distances_beta_one_ohu) %>%
+  addProviderTiles("CartoDB.Positron") %>%  # Light grey map with white sea
+  addCircleMarkers(
+    ~Long, ~Lat, 
+    popup = ~locality, 
+    color = "black", 
+    fillColor = "black",    # Fill the circle with black color
+    fillOpacity = 0.7,      # Adjust opacity for filled circle
+    radius = 4              # Smaller size for the circle
+  ) %>%
+  addScaleBar(position = "bottomleft", options = list(imperial = FALSE, metric = TRUE)) 
+```
+
+```{r}
+# Load required libraries
+library(ggplot2)
+library(ggspatial)
+library(ggrepel)
+library(ggmap)
+library(dplyr)
+
+# Convert the data frame to sf object
+distances_sf <- st_as_sf(distances_beta_one_ohu, coords = c("Long", "Lat"), crs = 4326)
+
+# Define the location for the map (bounding box around your area)
+myLocation_beta <- c(left = 141, bottom = -7, right = 146.5, top = -3)
+
+# Get the terrain map from ggmap
+myMap_beta <- get_map(location = myLocation_beta, source = "stadia", maptype = "terrain", crop = FALSE)
+
+# Create the map
+pb <- ggmap(myMap_beta) +
+  # Add points for each locality
+  geom_point(data = distances_beta_one_ohu, aes(x = Long, y = Lat), size = 3, color = "black") +
+  # Add text labels using `geom_label_repel` to avoid overlap
+  geom_label_repel(data = distances_beta_one_ohu, aes(x = Long, y = Lat, label = locality),
+                   size = 4, box.padding = 0.2, point.padding = 0.3, segment.color = 'grey50') +
+  # Customize axis labels
+  xlab("Longitude") + ylab("Latitude") +
+  theme_minimal(base_size = 15) +
+  theme(text = element_text(family = "Arial")) +
+  # Add scale bar
+  annotation_scale(location = "bl", width_hint = 0.2, unit = "km") +
+  # Add North arrow
+  annotation_north_arrow(location = "tr", which_north = "true", 
+                         pad_x = unit(0.4, "in"), pad_y = unit(0.4, "in"),
+                         style = ggspatial::north_arrow_nautical(
+                           fill = c("black", "white"), line_col = "black"))
+
+# Print the map
+pb
+```
+
