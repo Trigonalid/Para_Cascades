@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Vrstva_2" data-name="Vrstva 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 390.54 291.18">
+  <defs>
+    <style>
+      .cls-1 {
+        mask: url(#mask);
+      }
+
+      .cls-2 {
+        stroke: #9692c5;
+      }
+
+      .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8, .cls-9, .cls-10, .cls-11, .cls-12, .cls-13, .cls-14, .cls-15, .cls-16, .cls-17, .cls-18, .cls-19, .cls-20, .cls-21, .cls-22, .cls-23, .cls-24, .cls-25, .cls-26, .cls-27, .cls-28 {
+        fill: none;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-3 {
+        stroke: #9b97c7;
+      }
+
+      .cls-4 {
+        stroke: #bcbada;
+      }
+
+      .cls-5 {
+        stroke: #9f9cca;
+      }
+
+      .cls-6 {
+        stroke: #8c88bf;
+      }
+
+      .cls-7 {
+        stroke: #c6c4df;
+      }
+
+      .cls-8 {
+        stroke: #7570b3;
+      }
+
+      .cls-9 {
+        stroke: #7f7bb8;
+      }
+
+      .cls-10 {
+        stroke: #a4a1cd;
+      }
+
+      .cls-29 {
+        fill: #3b385a;
+      }
+
+      .cls-30 {
+        fill: #3b385a;
+      }
+
+      .cls-31 {
+        fill: url(#Nepojmenovaný_přechod_119);
+      }
+
+      .cls-32 {
+        fill: url(#Nepojmenovaný_přechod_125);
+      }
+
+      .cls-33 {
+        fill: url(#Nepojmenovaný_přechod_121);
+      }
+
+      .cls-34 {
+        fill: url(#Nepojmenovaný_přechod_172);
+      }
+
+      .cls-35 {
+        fill: url(#Nepojmenovaný_přechod_167);
+      }
+
+      .cls-36 {
+        fill: url(#Nepojmenovaný_přechod_169);
+      }
+
+      .cls-37 {
+        fill: url(#Nepojmenovaný_přechod_164);
+      }
+
+      .cls-38 {
+        fill: url(#Nepojmenovaný_přechod_132);
+      }
+
+      .cls-11 {
+        stroke: #7a75b6;
+      }
+
+      .cls-39 {
+        fill: url(#Nepojmenovaný_přechod_56);
+      }
+
+      .cls-12 {
+        stroke: #d9d8ea;
+      }
+
+      .cls-13 {
+        stroke: #cbc9e2;
+      }
+
+      .cls-14 {
+        stroke: #8480bb;
+      }
+
+      .cls-15 {
+        stroke: #a9a6cf;
+      }
+
+      .cls-16 {
+        stroke: #918dc2;
+      }
+
+      .cls-17 {
+        stroke: #cfcee5;
+      }
+
+      .cls-18 {
+        stroke: #b3b0d5;
+      }
+
+      .cls-40 {
+        fill: #fff;
+      }
+
+      .cls-19 {
+        stroke: #8782bd;
+      }
+
+      .cls-41 {
+        fill: url(#Nepojmenovaný_přechod_169-2);
+      }
+
+      .cls-42 {
+        fill: url(#Nepojmenovaný_přechod_167-3);
+      }
+
+      .cls-43 {
+        fill: url(#Nepojmenovaný_přechod_167-4);
+      }
+
+      .cls-44 {
+        fill: url(#Nepojmenovaný_přechod_167-2);
+      }
+
+      .cls-45 {
+        fill: url(#Nepojmenovaný_přechod_172-2);
+      }
+
+      .cls-46 {
+        fill: url(#Nepojmenovaný_přechod_125-2);
+      }
+
+      .cls-20 {
+        stroke: #8e8ac1;
+      }
+
+      .cls-21 {
+        stroke: #d4d3e7;
+      }
+
+      .cls-22 {
+        stroke: #8985be;
+      }
+
+      .cls-47 {
+        fill: #7570b3;
+      }
+
+      .cls-23 {
+        stroke: #c1bfdd;
+      }
+
+      .cls-24 {
+        stroke: #7873b4;
+      }
+
+      .cls-25 {
+        stroke: #b7b5d7;
+      }
+
+      .cls-26 {
+        stroke: #827dba;
+      }
+
+      .cls-27 {
+        stroke: #7d78b7;
+      }
+
+      .cls-28 {
+        stroke: #aeabd2;
+      }
+
+      .cls-48 {
+        clip-path: url(#clippath);
+      }
+
+      .cls-49 {
+        fill: #1d1c2d;
+      }
+    </style>
+    <linearGradient id="Nepojmenovaný_přechod_125" data-name="Nepojmenovaný přechod 125" x1="168.33" y1="177.79" x2="326.87" y2="177.79" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b385a"/>
+      <stop offset="1" stop-color="#7570b3"/>
+    </linearGradient>
+    <clipPath id="clippath">
+      <path class="cls-32" d="M170.82,192.11c-3.29-1.65-2.37-5.33-2.37-5.33,32.91-48.19,122.86-55.29,158.42,2.7,0,0-7.72,19.42-38.59,17.69-43.25-2.42-22.56-36-66.07-37.65-33.44-1.26-51.39,22.59-51.39,22.59Z"/>
+    </clipPath>
+    <linearGradient id="Nepojmenovaný_přechod_167" data-name="Nepojmenovaný přechod 167" x1="205.11" y1="217.85" x2="262.59" y2="206.12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7570b3"/>
+      <stop offset="1" stop-color="#585486"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_121" data-name="Nepojmenovaný přechod 121" x1="109.17" y1="164.41" x2="251.35" y2="22.23" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7570b3"/>
+      <stop offset="1" stop-color="#918dc2" stop-opacity=".5"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_125-2" data-name="Nepojmenovaný přechod 125" x1="40.36" y1="199.52" x2="40.36" y2="29.19" xlink:href="#Nepojmenovaný_přechod_125"/>
+    <linearGradient id="Nepojmenovaný_přechod_169" data-name="Nepojmenovaný přechod 169" x1="184.82" y1="209.68" x2="208.09" y2="209.68" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7570b3"/>
+      <stop offset="1" stop-color="#585486"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_119" data-name="Nepojmenovaný přechod 119" x1="133.63" y1="182.68" x2="241.64" y2="74.67" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#918dc2"/>
+      <stop offset="1" stop-color="#dedded"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_56" data-name="Nepojmenovaný přechod 56" x1="53.74" y1="193.86" x2="82.91" y2="193.86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7570b3"/>
+      <stop offset="1" stop-color="#3b385a"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_167-2" data-name="Nepojmenovaný přechod 167" x1="260.26" y1="225.99" x2="311.76" y2="225.99" xlink:href="#Nepojmenovaný_přechod_167"/>
+    <linearGradient id="Nepojmenovaný_přechod_132" data-name="Nepojmenovaný přechod 132" x1="348.96" y1="268.44" x2="348.96" y2="246.62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#585486"/>
+      <stop offset="1" stop-color="#7570b3"/>
+    </linearGradient>
+    <mask id="mask" x="0" y="18.19" width="63.82" height="181.33" maskUnits="userSpaceOnUse">
+      <path class="cls-40" d="M61.81,31.86c-27.47,15.31-41.81,48.28-39.25,79,1.69,23.38,11.39,45.56,24.12,65.02,3.17,4.93,6.6,9.71,10.2,14.34,0,0,3.6,4.64,3.6,4.64,1.03,1.23.84,3.09-.43,4.07-1.25.97-3.05.73-4-.54-2.17-2.92-5.14-6.71-7.16-9.65-20.74-29.12-36.07-65.52-28.98-101.78,4.67-23.69,19.04-46.07,40.6-57.62,1.65-.78,2.97,1.56,1.32,2.51h0Z"/>
+    </mask>
+    <linearGradient id="Nepojmenovaný_přechod_172" data-name="Nepojmenovaný přechod 172" x1="81.45" y1="252.13" x2="81.45" y2="228.58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#585486"/>
+      <stop offset="1" stop-color="#7570b3"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_167-3" data-name="Nepojmenovaný přechod 167" x1="66.61" y1="257.33" x2="101.38" y2="257.33" xlink:href="#Nepojmenovaný_přechod_167"/>
+    <linearGradient id="Nepojmenovaný_přechod_172-2" data-name="Nepojmenovaný přechod 172" x1="98.41" y1="228.98" x2="98.41" y2="216.97" xlink:href="#Nepojmenovaný_přechod_172"/>
+    <linearGradient id="Nepojmenovaný_přechod_164" data-name="Nepojmenovaný přechod 164" x1="183.78" y1="253.29" x2="218.94" y2="253.29" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#585486"/>
+      <stop offset="1" stop-color="#7570b3"/>
+    </linearGradient>
+    <linearGradient id="Nepojmenovaný_přechod_167-4" data-name="Nepojmenovaný přechod 167" x1="170.82" y1="231.54" x2="218.99" y2="231.54" xlink:href="#Nepojmenovaný_přechod_167"/>
+    <linearGradient id="Nepojmenovaný_přechod_169-2" data-name="Nepojmenovaný přechod 169" x1="156.12" y1="220.7" x2="173.53" y2="220.7" xlink:href="#Nepojmenovaný_přechod_169"/>
+  </defs>
+  <g id="Vrstva_1-2" data-name="Vrstva 1">
+    <g>
+      <path class="cls-49" d="M313.79,198.17c13.08,1.21,26.64-.61,39.28-4.15,11.33-3.34,22.04-8.48,31.77-15.2.72-.49,1.57.62.8,1.17-10.29,7.59-21.83,13.57-34.1,17.23-12.37,3.73-25.19,5.67-38.2,4.93-2.73-.26-2.31-4.31.45-3.97h0Z"/>
+      <path class="cls-30" d="M82.16,193.76v-16.81c0-10.13,8.57-18.16,18.68-17.5l28.58,1.86c18.66,1.22,34.87,13.28,41.4,30.8h0s-5.63,3.2-5.63,3.2c-21.97,12.49-47.73,16.55-72.48,11.41h0c-6.14-1.28-10.55-6.69-10.55-12.97Z"/>
+      <g>
+        <path class="cls-32" d="M170.82,192.11c-3.29-1.65-2.37-5.33-2.37-5.33,32.91-48.19,122.86-55.29,158.42,2.7,0,0-7.72,19.42-38.59,17.69-43.25-2.42-22.56-36-66.07-37.65-33.44-1.26-51.39,22.59-51.39,22.59Z"/>
+        <g class="cls-48">
+          <g>
+            <line class="cls-16" x1="209.6" y1="148.44" x2="206.96" y2="176.89"/>
+            <line class="cls-16" x1="248.85" y1="136.02" x2="234.45" y2="184.15"/>
+            <line class="cls-16" x1="277.23" y1="149.71" x2="258.16" y2="196.63"/>
+            <line class="cls-16" x1="298.45" y1="159.41" x2="274.23" y2="211.69"/>
+            <line class="cls-16" x1="310.49" y1="162.67" x2="282.34" y2="222.98"/>
+            <line class="cls-16" x1="320.42" y1="168.93" x2="292.42" y2="225.62"/>
+            <line class="cls-16" x1="327.33" y1="175.17" x2="301.92" y2="222.98"/>
+          </g>
+        </g>
+      </g>
+      <path class="cls-35" d="M203.35,213.88l58.67-12.83s-9.49,22.42-53.93,14.87l-4.74-2.04Z"/>
+      <path class="cls-33" d="M111.15,166.39S150.11,64.09,201.47,7.87c14.96-16.37,42.16-5.45,41.67,16.72-1.22,56.02-21.15,142.04-131.99,141.8Z"/>
+      <path class="cls-46" d="M61.81,31.86c-27.47,15.31-41.81,48.28-39.25,79,1.69,23.38,11.39,45.56,24.12,65.02,3.17,4.93,6.6,9.71,10.2,14.34,0,0,3.6,4.64,3.6,4.64,1.03,1.23.84,3.09-.43,4.07-1.25.97-3.05.73-4-.54-2.17-2.92-5.14-6.71-7.16-9.65-20.74-29.12-36.07-65.52-28.98-101.78,4.67-23.69,19.04-46.07,40.6-57.62,1.65-.78,2.97,1.56,1.32,2.51h0Z"/>
+      <path class="cls-36" d="M184.82,201.05l23.28,14.87s-4.71,4.14-12.8,1.51-10.48-16.38-10.48-16.38Z"/>
+      <path class="cls-31" d="M122.82,171.87s56.55-73.26,96.41-103.88c9.8-7.53,23.69,1.97,19.54,13.38-14.36,39.45-49.26,107.22-115.95,90.5Z"/>
+      <path class="cls-39" d="M70.01,173.23c11.59,12.4,19.47,27.37,5.27,42-1.89,1.95-4.91,2.3-7.23.9-5.4-3.25-14.3-10.61-14.3-23.84,0-7.15,1.5-12.72,3.3-16.84,2.25-5.17,9.12-6.33,12.97-2.22Z"/>
+      <path class="cls-49" d="M65.6,180.26l2.83,23.54c.38,3.12-3,5.34-5.7,3.71-4.56-2.75-9.72-8.4-8.78-19.79.46-5.59,3.28-8.64,5.96-10.29,2.32-1.43,5.36.11,5.68,2.82Z"/>
+      <path class="cls-29" d="M164.83,187.11l25.9,17.72c1.82,1.16-13.92,6.68-22.4-.8-8.77-7.74-3.51-16.92-3.51-16.92Z"/>
+      <path class="cls-44" d="M262.02,201.05l-1.76,2.84,47.12,47.04s9.04-2.26,1.13-11.29-46.49-38.59-46.49-38.59Z"/>
+      <path class="cls-38" d="M307.39,250.93l4.34-4.31s72.98.17,78.81,21.82c0,0-6.64-15.11-58.16-17.51"/>
+      <g class="cls-1">
+        <g>
+          <line class="cls-8" x1="36.69" y1="184.15" x2="50.54" y2="176.89"/>
+          <line class="cls-24" x1="33.35" y1="177.74" x2="48.44" y2="171.14"/>
+          <line class="cls-11" x1="30.02" y1="171.33" x2="46.33" y2="165.39"/>
+          <line class="cls-27" x1="26.68" y1="164.91" x2="44.23" y2="159.64"/>
+          <line class="cls-9" x1="23.35" y1="158.5" x2="42.12" y2="153.88"/>
+          <line class="cls-26" x1="20.01" y1="152.09" x2="40.02" y2="148.13"/>
+          <line class="cls-14" x1="16.68" y1="145.68" x2="37.91" y2="142.38"/>
+          <line class="cls-19" x1="13.34" y1="139.26" x2="35.81" y2="136.63"/>
+          <line class="cls-22" x1="10.01" y1="132.85" x2="33.7" y2="130.87"/>
+          <line class="cls-6" x1="6.67" y1="126.44" x2="31.6" y2="125.12"/>
+          <line class="cls-20" x1="3.34" y1="120.03" x2="29.49" y2="119.37"/>
+          <line class="cls-16" y1="113.62" x2="27.39" y2="113.62"/>
+          <line class="cls-2" x1="3.3" y1="107.27" x2="29.79" y2="108.72"/>
+          <line class="cls-3" x1="6.61" y1="100.93" x2="32.19" y2="103.83"/>
+          <line class="cls-5" x1="9.91" y1="94.59" x2="34.59" y2="98.93"/>
+          <line class="cls-10" x1="13.22" y1="88.24" x2="36.99" y2="94.04"/>
+          <line class="cls-15" x1="16.52" y1="81.9" x2="39.39" y2="89.15"/>
+          <line class="cls-28" x1="19.83" y1="75.55" x2="41.79" y2="84.25"/>
+          <line class="cls-18" x1="23.13" y1="69.21" x2="44.19" y2="79.36"/>
+          <line class="cls-25" x1="26.43" y1="62.87" x2="46.59" y2="74.46"/>
+          <line class="cls-4" x1="29.74" y1="56.52" x2="49" y2="69.57"/>
+          <line class="cls-23" x1="33.04" y1="50.18" x2="51.4" y2="64.67"/>
+          <line class="cls-7" x1="36.35" y1="43.84" x2="53.8" y2="59.78"/>
+          <line class="cls-13" x1="39.65" y1="37.49" x2="56.2" y2="54.89"/>
+          <line class="cls-17" x1="42.96" y1="31.15" x2="58.6" y2="49.99"/>
+          <line class="cls-21" x1="46.26" y1="24.81" x2="61" y2="45.1"/>
+          <line class="cls-12" x1="49.56" y1="18.46" x2="63.4" y2="40.2"/>
+        </g>
+      </g>
+      <path class="cls-47" d="M101.3,263.99s52.32,5.32,50.2-16c0,0-.98,12.71-24.01,13.41-20.59.63-27.38-.44-27.38-.44l1.18,3.02Z"/>
+      <path class="cls-34" d="M96.29,228.58l-29.68,23.55s-1.13-14.87,26.85-23.36l2.83-.18Z"/>
+      <path class="cls-42" d="M66.61,252.13l34.69,11.86s1.26-5.14-6.45-6.93c-7.72-1.79-26.39-6.4-26.39-6.4l-1.85,1.47Z"/>
+      <path class="cls-47" d="M185.06,266.06s-26.07,29.46-53.93,24.56c0,0,20.74,1.62,40.13-15.04,12.93-11.11,13.8-13.01,13.8-13.01v3.48Z"/>
+      <path class="cls-45" d="M98.16,221.62l-4.71,7.15s9.91,2.78,9.91-11.79l-5.2,4.64Z"/>
+      <path class="cls-37" d="M218.94,239.66l-34.12,28.38s-3.15-4.24,1.51-8.47,31.34-21.04,31.34-21.04l1.27,1.13Z"/>
+      <path class="cls-43" d="M173.48,226.96l45.46,12.71s1.27-5.36-8.75-8.61-39.36-7.62-39.36-7.62l2.66,3.53Z"/>
+      <path class="cls-29" d="M95.58,207.28l2.58,14.34s9.38-1.24,8.83-12.95l-11.41-1.39Z"/>
+      <path class="cls-41" d="M161.2,214.45s13.27,1.22,12.28,12.51l-17.36-12.51h5.08Z"/>
+      <path class="cls-29" d="M145.69,201.05c6.77-2.02,16.64,6.25,15.51,13.4,0,0-18.52,3.03-21.91-10.99l6.4-2.4Z"/>
+    </g>
+  </g>
+</svg>
