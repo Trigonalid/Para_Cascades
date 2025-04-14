@@ -20,18 +20,21 @@ data_main_raw <-
 
 data_main_full <-
   data_main_raw %>%
+  dplyr:: filter(locality != "Ohu2") %>% 
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp)
 
 # dataset with only common caterpillars
 #   reduced to common caterpillars (with 50+ specimens)
 data_main_full_common_cat <-
   data_main_raw %>%
+  dplyr::filter(locality != "Ohu2") %>% 
   dplyr::filter(fifty == "1") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp)
 
 # reduced to common plants occuring on four more localities
 data_main_full_common_plant <-
   data_main_raw %>%
+  dplyr::filter(locality != "Ohu2") %>% 
   dplyr::filter(common_plants_only == "Yes") %>%
   dplyr::select(locality, PAR_sp, CAT_sp, PLANT_sp)
 
@@ -385,15 +388,15 @@ data_to_plot_cat_plant_wn <-
   dplyr::bind_rows(
     data_mantel_cat_plant %>%
       dplyr::mutate(
-        type = "full"
+        type = "Full"
       ),
     data_mantel_common_cat_plant %>%
       dplyr::mutate(
-        type = "common caterpillars only"
+        type = "Common caterpillars only"
       ),
     data_mantel_cat_common_plant %>%
       dplyr::mutate(
-        type = "common plants only"
+        type = "Common plants only"
       )
   ) %>%
   dplyr::filter(
@@ -416,9 +419,9 @@ figure_s2a_pc <-
   ggplot2::geom_jitter(size = 2, position = ggplot2::position_jitter(0.2)) +
   ggpubr::geom_signif(
     comparisons = list(
-      c("full", "common caterpillars only"),
-      c("common caterpillars only", "common plants only"),
-      c("full", "common plants only")
+      c("full", "Common caterpillars only"),
+      c("Common caterpillars only", "common plants only"),
+      c("Full", "common plants only")
     ),
     map_signif_level = TRUE,
     textsize = 6,

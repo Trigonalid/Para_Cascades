@@ -916,7 +916,7 @@ BC_FIG_1_simple <- ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guil
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(y = "Dissimilarity") +  # Keep only one legend for 'fill'
+  labs(title = "Bray-Curtis", x = "Guild", y = "Dissimilarity") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;BC_FIG_1_simple
 
 # Display the plot
@@ -936,7 +936,7 @@ CS_FIG_1_simple <- ggplot(ind_CS_simple, aes(x = guild, y = hodnota, fill = guil
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Chao-Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(title = "Chao-Sorensen", x = "", y = "", fill = "") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;CS_FIG_1_simple
 
 # Display the plot
@@ -956,7 +956,7 @@ SOR_FIG_1_simple <- ggplot(ind_SOR_simple, aes(x = guild, y = hodnota, fill = gu
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(title = "Sorensen", x = "", y = "", fill = "") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;SOR_FIG_1_simple
 
 # Display the plot
