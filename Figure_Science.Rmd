@@ -12,8 +12,13 @@ library(usedist)
 library(ggpubr) # For significance annotations
 library(viridis) # For colorblind-friendly colors
 library(viridisLite)
+library(scales)
 
 ```
+
+
+
+
 
 #Figure 1
 ```{r Food-web dissimilarity, echo=FALSE}
@@ -24,52 +29,27 @@ BC_FIG_1B <-  ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guild)) +
   geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
   geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
   geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
-  scale_fill_manual(values = c("Parasitoids" = "#1B9E77", 
-                               "Caterpillars" = "#D95F02")) +
-  scale_color_manual(values = c("Parasitoids" = "black", 
-                               "Caterpillars" = "black"))  +
-  coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Species beta diversity", x = NULL, y = "Bray-Curtis\n dissimilarity") +  # Keep only the x-axis label (Dissimilarity)
-  theme_classic(base_size = 20) +
-  theme(  # Remove y-axis text
-    legend.position = "none"        # Remove legend
-  )
-
-BC_FIG_1B
-ggplot2::ggsave(
-  here::here("output/fig/figure_1B.tiff"),
-  BC_FIG_1B,
-  height = 17,
-  width = 18,
-  units = "cm"
-)
-
-
-BC_FIG_1B_violet <-  ggplot(ind_BC_simple, aes(x = guild, y = hodnota, fill = guild)) +
-  geom_violin(width = 0.4, trim = FALSE) +  # Violin plot without trimming
-  geom_boxplot(width = 0.1, outlier.shape = NA) +  # Boxplot with no outliers shown
-  geom_jitter(position = position_jitter(0.2), aes(color = guild), show.legend = FALSE) +  # Jitter with color, no legend
   scale_fill_manual(values = c("Parasitoids" = "darkviolet", 
                                "Caterpillars" = "#D95F02")) +
   scale_color_manual(values = c("Parasitoids" = "black", 
                                "Caterpillars" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Species beta diversity", x = NULL, y = "Bray-Curtis\n dissimilarity") +  # Keep only the x-axis label (Dissimilarity)
+  labs(title = "", x = NULL, y = "Bray-Curtis\n dissimilarity") +
+ stat_compare_means(
+  method = "t.test",
+  label = function(p) paste0("p = ", label_number(accuracy = 0.01)(p$p))
+)+
   theme_classic(base_size = 20) +
   theme(  # Remove y-axis text
-    legend.position = "none"        # Remove legend
-  )
+    legend.position = "none")      # Remove legen)
 
-BC_FIG_1B_violet
+BC_FIG_1B
 ggplot2::ggsave(
-  here::here("output/fig/figure_1B_violet.tiff"),
-  BC_FIG_1B_violet,
+  here::here("output/fig/figure_1B.svg"),
+  BC_FIG_1B,
   height = 17,
   width = 18,
-  units = "cm"
-)
-
-
+  units = "cm", dpi = 600)
 ```
 
 
@@ -128,11 +108,11 @@ figure_s23
 
 
 ggplot2::ggsave(
-  here::here("output/fig/figure_1C.tiff"),
+  here::here("output/fig/figure_1C.svg"),
   figure_s23,
   height = 17,
   width = 18,
-  units = "cm"
+  units = "cm", , dpi = 600
 )
 ```
 

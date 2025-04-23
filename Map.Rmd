@@ -47,6 +47,7 @@ pb2 <-pb + ggspatial::annotation_north_arrow(
 )
 
 pb2
+locality_data$IDsource <- match(locality_data$source, nodes$name) - 1
 
 
 pb2

@@ -1,0 +1,194 @@
+# Setup
+
+Load all packages
+
+```{r setup}
+# Load necessary libraries
+library(tidyverse)
+library(ggpubr)
+```
+
+# Data 
+
+```{r}
+data_master <-
+  readr::read_delim(
+    here::here(
+      "DATA/MASTER.csv"
+    )
+  ) %>%
+  tibble::as_tibble()
+
+data_full <-
+  data_master %>%
+  dplyr::filter(locality != "Ohu2")
+
+vec_cat_with_par <-
+  data_full %>%
+  dplyr::group_by(CAT_sp) %>%
+  dplyr::summarize(
+    .groups = "drop",
+    has_parasitoid = ifelse(
+      any(!is.na(PAR_sp) & PAR_sp != ""),
+      TRUE,
+      FALSE
+    )
+  ) %>%
+  filter(has_parasitoid == TRUE) %>%
+  dplyr::pull("CAT_sp")
+
+data_work <-
+  data_full %>%
+  filter(CAT_sp %in% vec_cat_with_par)
+```
+
+# Analysis
+
+```{r}
+# helper function
+get_summary_localities_per_cat <- function(data_source) {
+  data_source %>%
+    dplyr::group_by(CAT_sp) %>%
+    dplyr::summarize(
+      .groups = "drop",
+      localities_total = dplyr::n_distinct(locality),
+      # Localities where the caterpillar is parasitized (PAR_sp is not NA)
+      localities_cat_and_par = dplyr::n_distinct(locality[!is.na(PAR_sp)]),
+      # Localities where the caterpillar is detected but not parasitized
+      localities_cat_no_par = localities_total - localities_cat_and_par,
+      localities_prop = localities_cat_no_par / localities_total
+    ) %>%
+    dplyr::select(CAT_sp, localities_total, localities_prop) %>%
+    return()
+}
+
+get_summary_localities_per_pair <- function(data_source) {
+  data_source %>%
+    dplyr::group_by(CAT_sp, PAR_sp) %>%
+    dplyr::summarize(
+      .groups = "drop",
+      localities_total = dplyr::n_distinct(locality)
+    ) %>%
+    return()
+}
+```
+
+## Enemy free space - full dataset
+
+```{r}
+data_full %>%
+  dplyr::group_by(CAT_sp, PAR_sp) %>%
+  get_summary_localities_per_pair() %>%
+  dplyr::select(CAT_sp, PAR_sp, localities_total) %>%
+  readr::write_csv(
+    here::here("output", "tab_esf_orig.csv")
+  )
+```
+
+## Enemy free space - only caterpillar species with parasitoids
+
+```{r}
+data_interaction_summary_per_cat <-
+  data_work %>%
+  get_summary_localities_per_cat()
+
+data_interaction_summary_per_interaction_pair <-
+  data_interaction_summary_per_cat %>%
+  dplyr::left_join(
+    get_summary_localities_per_pair(data_work),
+    by = "CAT_sp",
+    suffix = c("_cat", "_pair")
+  ) %>%
+  dplyr::mutate(
+    localities_prop = (localities_total_cat - localities_total_pair) /
+      localities_total_cat
+  ) %>%
+  dplyr::filter(!is.na(PAR_sp)) %>%
+  dplyr::select(
+    CAT_sp, PAR_sp, localities_prop
+  )
+```
+
+## Calcutate summary statistic
+
+```{r}
+data_interaction_summary_per_cat %>%
+  dplyr::summarise(
+    mean = mean(localities_prop, na.rm = TRUE),
+    median = median(localities_prop, na.rm = TRUE)
+  )
+
+data_interaction_summary_per_interaction_pair %>%
+  dplyr::summarise(
+    mean = mean(localities_prop, na.rm = TRUE),
+    median = median(localities_prop, na.rm = TRUE)
+  )
+```
+
+# Visualization
+
+```{r}
+get_figure <- function(data_source) {
+  data_source %>%
+    ggplot2::ggplot(
+      mapping = ggplot2::aes(
+        x = "group",
+        y = localities_prop,
+        fill = "group"
+      )
+    ) +
+    ggplot2::geom_violin() +
+    ggplot2::geom_boxplot(width = 0.2, fill = "white") +
+    ggplot2::geom_jitter(width = 0.2, height = 0, alpha = 0.5) +
+    ggplot2::coord_cartesian(ylim = c(0, 1)) +
+    ggplot2::scale_x_discrete(labels = c("")) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
+      x = "",
+      y = "",
+      title = ""
+    ) +
+    ggplot2::theme(
+      legend.position = "none",
+      axis.text.x = ggplot2::element_text(color = "black")
+    ) %>%
+    return()
+}
+
+set.seed(1234)
+fig_a <-
+  data_interaction_summary_per_cat %>%
+  get_figure() +
+  ggplot2::scale_fill_manual(values = c("#E69F00")) +
+  ggplot2::labs(
+    y = "Proportion of localities without parasitoids",
+  )
+
+set.seed(1234)
+fig_b <-
+  data_interaction_summary_per_interaction_pair %>%
+  get_figure() +
+  ggplot2::scale_fill_manual(values = c("#009E73"))
+
+fig_merged <-
+  ggpubr::ggarrange(
+    fig_a, fig_b,
+    ncol = 2,
+    labels = c(
+      "A - Enemy free space from all parasitoids",
+      "B - Enemy free space from concrete parasitoid species"
+    ),
+    hjust = -0.1 # Záporná hodnota zarovná text více vlevo
+  )
+
+ggplot2::ggsave(
+  plot = fig_merged,
+  filename = here::here("output/fig/EFS_means.png"),
+  bg = "white",
+  width = 1933,
+  height = 1597,
+  units = "px"
+)
+```
+
+

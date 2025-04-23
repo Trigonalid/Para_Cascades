@@ -828,7 +828,7 @@ BC_FIG_1 <- ggplot(ind_BC, aes(x = guild, y = hodnota, fill = guild)) +
                                "Caterpillars" = "black", 
                                "Caterpillars-subsampled" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Bray-Curtis", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(title = "Bray-Curtis") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;BC_FIG_1
 
 # Display the plot
@@ -846,7 +846,7 @@ CS_FIG_1 <- ggplot(ind_CS, aes(x = guild, y = hodnota, fill = guild)) +
                                "Caterpillars" = "black", 
                                "Caterpillars-subsampled" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Chao-Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(title = "Chao-Sorensen", ) +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;CS_FIG_1
 
 # Display the plot
@@ -864,7 +864,7 @@ SOR_FIG_1 <- ggplot(ind_SOR, aes(x = guild, y = hodnota, fill = guild)) +
                                "Caterpillars" = "black", 
                                "Caterpillars-subsampled" = "black"))  +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(title = "Sorensen", x = "Guild", y = "Dissimilarity", fill = "Guild") +  # Keep only one legend for 'fill'
+  labs(title = "Sorensen") +  # Keep only one legend for 'fill'
   theme_classic(base_size = 20) ;SOR_FIG_1
 
 # Display the plot
