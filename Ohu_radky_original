@@ -1,0 +1,238 @@
+# Load required packages
+library(vegan)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(readr)
+library(here)
+library(ggsignif)
+library(tibble)
+
+# --- Data Loading ---
+data_master <- read_delim(
+  here("DATA/MASTER.csv"),
+  delim = ";",
+  show_col_types = FALSE
+) %>% as_tibble()
+
+# Select relevant columns
+data <- data_master %>%
+  select(locality, PLANT_sp, CAT_sp, PAR_sp)
+
+# --- Calculate original Bray-Curtis Dissimilarity ---
+original_ohu1_data <- data %>% filter(locality == "Ohu1")
+original_ohu2_data <- data %>% filter(locality == "Ohu2")
+original_combined_data <- bind_rows(original_ohu1_data, original_ohu2_data)
+
+original_cat_counts <- original_combined_data %>%
+  group_by(locality, CAT_sp) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = CAT_sp, values_from = Count, values_fill = 0) %>%
+  column_to_rownames("locality")
+
+original_bray_curtis_caterpillars_val <- NA
+if (nrow(original_cat_counts) == 2 && all(rowSums(original_cat_counts) > 0)) {
+  original_bray_curtis_caterpillars_val <- vegdist(original_cat_counts, method = "bray")[1]
+}
+
+original_par_counts <- original_combined_data %>%
+  filter(PAR_sp != "No parasitoid") %>%
+  group_by(locality, PAR_sp) %>%
+  summarise(Count = n(), .groups = 'drop') %>%
+  pivot_wider(names_from = PAR_sp, values_from = Count, values_fill = 0) %>%
+  column_to_rownames("locality")
+
+original_bray_curtis_parasitoids_val <- NA
+if (nrow(original_par_counts) == 2 && all(rowSums(original_par_counts) > 0)) {
+  original_bray_curtis_parasitoids_val <- vegdist(original_par_counts, method = "bray")[1]
+}
+
+# --- Subsampling Loop ---
+num_iterations <- 999
+
+# Initialize result vectors
+bray_curtis_caterpillars_ohu1_ohu2_common_size <- numeric(num_iterations)
+bray_curtis_parasitoids_ohu1_ohu2_common_size <- numeric(num_iterations)
+bray_curtis_caterpillars_ohu1_subsample_to_ohu1_par_size <- numeric(num_iterations)
+bray_curtis_caterpillars_ohu2_subsample_to_ohu2_par_size <- numeric(num_iterations)
+bray_curtis_caterpillars_ohu1_subsample_to_ohu2_cat_size <- numeric(num_iterations)
+bray_curtis_caterpillars_ohu1_subsample_to_ohu2_par_size <- numeric(num_iterations)
+
+for (i in 1:num_iterations) {
+  data_ohu1_base <- filter(data, locality == "Ohu1")
+  data_ohu2_base <- filter(data, locality == "Ohu2")
+  
+  # 1. Caterpillars (common size)
+  ohu1_cat <- filter(data_ohu1_base, !is.na(CAT_sp))
+  ohu2_cat <- filter(data_ohu2_base, !is.na(CAT_sp))
+  min_cat_size <- min(nrow(ohu1_cat), nrow(ohu2_cat))
+  
+  if (min_cat_size > 0) {
+    sampled1 <- sample_n(ohu1_cat, min_cat_size)
+    sampled2 <- sample_n(ohu2_cat, min_cat_size)
+    counts <- bind_rows(sampled1, sampled2) %>%
+      count(locality, CAT_sp) %>%
+      pivot_wider(names_from = CAT_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_caterpillars_ohu1_ohu2_common_size[i] <- if (nrow(counts) == 2) vegdist(counts, method = "bray")[1] else NA
+  }
+  
+  # 2. Parasitoids (common size)
+  ohu1_par <- filter(data_ohu1_base, PAR_sp != "No parasitoid")
+  ohu2_par <- filter(data_ohu2_base, PAR_sp != "No parasitoid")
+  min_par_size <- min(nrow(ohu1_par), nrow(ohu2_par))
+  
+  if (min_par_size > 0) {
+    sampled1 <- sample_n(ohu1_par, min_par_size)
+    sampled2 <- sample_n(ohu2_par, min_par_size)
+    counts <- bind_rows(sampled1, sampled2) %>%
+      count(locality, PAR_sp) %>%
+      pivot_wider(names_from = PAR_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_parasitoids_ohu1_ohu2_common_size[i] <- if (nrow(counts) == 2) vegdist(counts, method = "bray")[1] else NA
+  }
+  
+  # 3. Caterpillars (Ohu1 resampled to Ohu1 Parasitoid size)
+  size <- nrow(ohu1_par)
+  if (size > 0) {
+    sampled <- sample_n(data_ohu1_base, size)
+    combined <- bind_rows(sampled, data_ohu2_base) %>%
+      count(locality, CAT_sp) %>%
+      pivot_wider(names_from = CAT_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_caterpillars_ohu1_subsample_to_ohu1_par_size[i] <- if (nrow(combined) == 2) vegdist(combined, method = "bray")[1] else NA
+  }
+  
+  # 4. Caterpillars (Ohu2 resampled to Ohu2 Parasitoid size)
+  size <- nrow(ohu2_par)
+  if (size > 0) {
+    sampled <- sample_n(data_ohu2_base, size)
+    combined <- bind_rows(data_ohu1_base, sampled) %>%
+      count(locality, CAT_sp) %>%
+      pivot_wider(names_from = CAT_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_caterpillars_ohu2_subsample_to_ohu2_par_size[i] <- if (nrow(combined) == 2) vegdist(combined, method = "bray")[1] else NA
+  }
+  
+  # 5. Caterpillars (Ohu1 resampled to match Ohu2 size)
+  size <- nrow(data_ohu2_base)
+  if (size > 0) {
+    sampled <- sample_n(data_ohu1_base, min(nrow(data_ohu1_base), size))
+    combined <- bind_rows(sampled, data_ohu2_base) %>%
+      count(locality, CAT_sp) %>%
+      pivot_wider(names_from = CAT_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_caterpillars_ohu1_subsample_to_ohu2_cat_size[i] <- if (nrow(combined) == 2) vegdist(combined, method = "bray")[1] else NA
+  }
+  
+  # 6. Caterpillars (Ohu1 resampled to Ohu2 Parasitoid size)
+  size <- nrow(ohu2_par)
+  if (size > 0) {
+    sampled <- sample_n(data_ohu1_base, min(nrow(data_ohu1_base), size))
+    combined <- bind_rows(sampled, data_ohu2_base) %>%
+      count(locality, CAT_sp) %>%
+      pivot_wider(names_from = CAT_sp, values_from = n, values_fill = 0) %>%
+      column_to_rownames("locality")
+    bray_curtis_caterpillars_ohu1_subsample_to_ohu2_par_size[i] <- if (nrow(combined) == 2) vegdist(combined, method = "bray")[1] else NA
+  }
+}
+
+# --- Combine Results ---
+results_df <- data.frame(
+  Type = c(rep("Original_Caterpillars", 1),
+           rep("Original_Parasitoids", 1),
+           rep("Caterpillars_Ohu1Ohu2_CommonSize", num_iterations),
+           rep("Parasitoids_Ohu1Ohu2_CommonSize", num_iterations),
+           rep("Caterpillars_Ohu1_SubsampleToOhu1ParSize", num_iterations),
+           rep("Caterpillars_Ohu2_SubsampleToOhu2ParSize", num_iterations),
+           rep("Caterpillars_Ohu1_SubsampleToOhu2CatSize", num_iterations),
+           rep("Caterpillars_Ohu1_SubsampleToOhu2ParSize", num_iterations)),
+  Bray_Curtis_Index = c(original_bray_curtis_caterpillars_val,
+                        original_bray_curtis_parasitoids_val,
+                        bray_curtis_caterpillars_ohu1_ohu2_common_size,
+                        bray_curtis_parasitoids_ohu1_ohu2_common_size,
+                        bray_curtis_caterpillars_ohu1_subsample_to_ohu1_par_size,
+                        bray_curtis_caterpillars_ohu2_subsample_to_ohu2_par_size,
+                        bray_curtis_caterpillars_ohu1_subsample_to_ohu2_cat_size,
+                        bray_curtis_caterpillars_ohu1_subsample_to_ohu2_par_size)
+)
+
+results_df <- na.omit(results_df)
+
+print("Number of observations per Type after na.omit:")
+print(count(results_df, Type))
+
+# Set factor levels for correct order in the plot
+results_df$Type <- factor(results_df$Type, levels = c(
+  "Original_Caterpillars",
+  "Original_Parasitoids",
+  "Caterpillars_Ohu1Ohu2_CommonSize",
+  "Parasitoids_Ohu1Ohu2_CommonSize",
+  "Caterpillars_Ohu1_SubsampleToOhu1ParSize",
+  "Caterpillars_Ohu2_SubsampleToOhu2ParSize",
+  "Caterpillars_Ohu1_SubsampleToOhu2CatSize",
+  "Caterpillars_Ohu1_SubsampleToOhu2ParSize"
+))
+
+
+
+Fig_Ohu_subsampling <- ggplot(results_df, aes(x = Type, y = Bray_Curtis_Index)) + # Removed global fill = Type
+  geom_violin(data = filter(results_df, !Type %in% c("Original_Caterpillars", "Original_Parasitoids")),
+              aes(fill = Type),
+              trim = FALSE, alpha = 1) +
+  geom_boxplot(data = filter(results_df, !Type %in% c("Original_Caterpillars", "Original_Parasitoids")),
+               width = 0.4, outlier.shape = NA) +
+  geom_jitter(data = filter(results_df, !Type %in% c("Original_Caterpillars", "Original_Parasitoids")),
+              aes(color = Type),
+              shape = 16, position = position_jitter(0.1), alpha = 0.1) +
+  geom_point(data = filter(results_df, Type %in% c("Original_Caterpillars", "Original_Parasitoids")),
+             aes(fill = Type), # Explicitly map fill for original points (shape 21 uses fill)
+             shape = 21, size = 5, color = "black") + # color="black" for outline
+  scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1.1)) +
+  scale_fill_manual( # This scale will now control both fill and color for the legend
+    values = c(
+      "Original_Caterpillars" = "darkblue",
+      "Original_Parasitoids" = "darkgreen",
+      "Caterpillars_Ohu1Ohu2_CommonSize" = "lightblue",
+      "Parasitoids_Ohu1Ohu2_CommonSize" = "lightgreen",
+      "Caterpillars_Ohu1_SubsampleToOhu1ParSize" = "lightcoral",
+      "Caterpillars_Ohu2_SubsampleToOhu2ParSize" = "darkorange",
+      "Caterpillars_Ohu1_SubsampleToOhu2CatSize" = "cyan",
+      "Caterpillars_Ohu1_SubsampleToOhu2ParSize" = "darkorchid1"
+    ),
+    labels = c(
+      "Original_Caterpillars" = "Caterpillars (Original)",
+      "Original_Parasitoids" = "Parasitoids (Original)",
+      "Caterpillars_Ohu1Ohu2_CommonSize" = "Caterpillars (Ohu1 vs Ohu2, common N)",
+      "Parasitoids_Ohu1Ohu2_CommonSize" = "Parasitoids (Ohu1 vs Ohu2, common N)",
+      "Caterpillars_Ohu1_SubsampleToOhu1ParSize" = "Caterpillars (Ohu1 N=Ohu1 Par N)",
+      "Caterpillars_Ohu2_SubsampleToOhu2ParSize" = "Caterpillars (Ohu2 N=Ohu2 Par N)",
+      "Caterpillars_Ohu1_SubsampleToOhu2CatSize" = "Caterpillars (Ohu1 N=Ohu2 Cat N)",
+      "Caterpillars_Ohu1_SubsampleToOhu2ParSize" = "Caterpillars (Ohu1 N=Ohu2 Par N)"
+    ),
+    aesthetics = c("fill", "color")
+  ) +
+  scale_x_discrete(labels = c(
+    "Original_Caterpillars" = "Caterpillars (Original)",
+    "Original_Parasitoids" = "Parasitoids (Original)",
+    "Caterpillars_Ohu1Ohu2_CommonSize" = "Caterpillars (Ohu1 vs Ohu2, common N)",
+    "Parasitoids_Ohu1Ohu2_CommonSize" = "Parasitoids (Ohu1 vs Ohu2, common N)",
+    "Caterpillars_Ohu1_SubsampleToOhu1ParSize" = "Caterpillars (Ohu1 N=Ohu1 Par N)",
+    "Caterpillars_Ohu2_SubsampleToOhu2ParSize" = "Caterpillars (Ohu2 N=Ohu2 Par N)",
+    "Caterpillars_Ohu1_SubsampleToOhu2CatSize" = "Caterpillars (Ohu1 N=Ohu2 Cat N)",
+    "Caterpillars_Ohu1_SubsampleToOhu2ParSize" = "Caterpillars (Ohu1 N=Ohu2 Par N)"
+  )) +
+  ylab("Bray-Curtis dissimilarity") +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    axis.text.x = element_text(angle = 60, hjust = 1)
+  )
+
+Fig_Ohu_subsampling
+ggsave("output/fig/Fig_Ohu_subsampling.svg",
+       Fig_Ohu_subsampling,
+       height = 25,
+       width = 30,
+       units = "cm")
